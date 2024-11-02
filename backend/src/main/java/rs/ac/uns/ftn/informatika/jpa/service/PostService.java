@@ -33,6 +33,10 @@ public class PostService {
         return postRepository.countPostsForProfile(profileId);
     }
 
+    public Integer countLikesForPost(Integer postId) {
+        return postRepository.countLikesForPost(postId);
+    }
+
     public Post save(Post post) {
         return postRepository.save(post);
     }
@@ -44,6 +48,8 @@ public class PostService {
     public void remove(Integer id) {
         postRepository.deleteById(id);
     }
+
+
 
     public Post updatePost(Integer id, Post updatedPost) {
         Optional<Post> existingPostOpt = postRepository.findById(id);
