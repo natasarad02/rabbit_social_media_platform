@@ -56,3 +56,9 @@ INSERT INTO likes (profile_id, post_id) VALUES
                                          (1, 2),
                                          (2, 3),
                                          (3, 4);
+
+INSERT INTO profile_following (profile_id, followed_profile_id) VALUES
+                                                                    (1, 2),  -- Marko is following Milan
+                                                                    (1, 3),  -- Marko is following Ivana
+                                                                    (2, 3),  -- Milan is following Ivana
+                                                                    (3, 4)

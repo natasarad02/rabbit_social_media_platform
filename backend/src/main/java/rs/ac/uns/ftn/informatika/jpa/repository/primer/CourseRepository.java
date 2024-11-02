@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.informatika.jpa.repository;
+package rs.ac.uns.ftn.informatika.jpa.repository.primer;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

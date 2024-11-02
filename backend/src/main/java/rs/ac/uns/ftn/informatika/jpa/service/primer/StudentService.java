@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.informatika.jpa.service;
+package rs.ac.uns.ftn.informatika.jpa.service.primer;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
-import rs.ac.uns.ftn.informatika.jpa.repository.StudentRepository;
+import rs.ac.uns.ftn.informatika.jpa.repository.primer.StudentRepository;
 
 @Service
 public class StudentService {

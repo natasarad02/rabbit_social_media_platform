@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.informatika.jpa.controller;
+package rs.ac.uns.ftn.informatika.jpa.controller.primer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import rs.ac.uns.ftn.informatika.jpa.dto.CourseDTO;
-import rs.ac.uns.ftn.informatika.jpa.dto.TeacherDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.primer.CourseDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.primer.TeacherDTO;
 import rs.ac.uns.ftn.informatika.jpa.mapper.TeacherDTOMapper;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Course;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Teacher;
-import rs.ac.uns.ftn.informatika.jpa.service.TeacherService;
+import rs.ac.uns.ftn.informatika.jpa.service.primer.TeacherService;
 
 @RestController
 @RequestMapping(value = "api/teachers")

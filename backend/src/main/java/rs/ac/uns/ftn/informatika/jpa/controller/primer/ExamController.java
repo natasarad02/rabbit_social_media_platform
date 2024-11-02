@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.informatika.jpa.controller;
+package rs.ac.uns.ftn.informatika.jpa.controller.primer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import rs.ac.uns.ftn.informatika.jpa.dto.ExamDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.primer.ExamDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Course;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Exam;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
-import rs.ac.uns.ftn.informatika.jpa.service.CourseService;
-import rs.ac.uns.ftn.informatika.jpa.service.ExamService;
-import rs.ac.uns.ftn.informatika.jpa.service.StudentService;
+import rs.ac.uns.ftn.informatika.jpa.service.primer.CourseService;
+import rs.ac.uns.ftn.informatika.jpa.service.primer.ExamService;
+import rs.ac.uns.ftn.informatika.jpa.service.primer.StudentService;
 
 @RestController
 @RequestMapping(value = "api/exams")
