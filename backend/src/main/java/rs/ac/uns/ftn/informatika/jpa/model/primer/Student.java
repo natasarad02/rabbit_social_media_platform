@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.informatika.jpa.model;
+package rs.ac.uns.ftn.informatika.jpa.model.primer;
 
 import java.util.HashSet;
 import java.util.Objects;
@@ -12,7 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 /*
  * @Entity anotacija naznacava da je klasa perzistentni entitet. Klasa ima konstruktor bez parametara.

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import rs.ac.uns.ftn.informatika.jpa.model.Student;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 
 /*
  * Primer repozitorijuma u kojem su navedene metode koje po

@@ -1,6 +1,6 @@
 package rs.ac.uns.ftn.informatika.jpa.dto;
 
-import rs.ac.uns.ftn.informatika.jpa.model.Teacher;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Teacher;
 
 public class TeacherDTO {
 	private Integer id;

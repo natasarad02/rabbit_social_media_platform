@@ -25,3 +25,34 @@ insert into exam (student_id, course_id, date, grade) values (1, 1, '2016-02-01'
 insert into exam (student_id, course_id, date, grade) values (1, 2, '2016-04-19', 8);
 insert into exam (student_id, course_id, date, grade) values (2, 1, '2016-02-01', 10);
 insert into exam (student_id, course_id, date, grade) values (2, 2, '2016-04-19', 10);
+
+INSERT INTO location (longitude, latitude, address, number, deleted) VALUES
+                                                                         (-74.0060, 40.7128, 'New York City', '1', false),
+                                                                         (-73.9352, 40.7306, 'Brooklyn', '2', false),
+                                                                         (-122.4194, 37.7749, 'San Francisco', '3', false),
+                                                                         (-118.2437, 34.0522, 'Los Angeles', '4', false);
+INSERT INTO profile (email, password, name, surname, deleted, role) VALUES
+                                                                        ('marko@example.com', 'password123', 'Marko', 'Marković', false, 'User'),
+                                                                        ('milan@example.com', 'password456', 'Milan', 'Milanović', false, 'User'),
+                                                                        ('ivana@example.com', 'password789', 'Ivana', 'Ivanović', false, 'Administrator'),
+                                                                        ('bojan@example.com', 'password101', 'Bojan', 'Bojanović', false, 'Administrator');
+
+INSERT INTO post (description, picture, deleted, posted_time, profile_id, location_id) VALUES
+                                                                                        ('This is my first post!', 'pic1.jpg', false, NOW(), 1, 1),
+                                                                                        ('Beautiful day at the park!', 'pic2.jpg', false, NOW(), 1, 2),
+                                                                                        ('Loving the city lights.', 'pic3.jpg', false, NOW(), 2, 1),
+                                                                                        ('Foodie adventures!', 'pic4.jpg', false, NOW(), 3, 3);
+
+-- Inserting data into Comment
+INSERT INTO comment (text, profile_id, post_id, commented_time, deleted) VALUES
+                                                                          ('Great post, Marko!', 2, 1, NOW(), false),
+                                                                          ('I love this picture!', 3, 1, NOW(), false),
+                                                                          ('Nice place!', 1, 2, NOW(), false),
+                                                                          ('Looks delicious!', 1, 4, NOW(), false);
+
+-- Inserting data into Likes (assumed the same as likedPosts)
+INSERT INTO likes (profile_id, post_id) VALUES
+                                         (1, 1),
+                                         (1, 2),
+                                         (2, 3),
+                                         (3, 4);

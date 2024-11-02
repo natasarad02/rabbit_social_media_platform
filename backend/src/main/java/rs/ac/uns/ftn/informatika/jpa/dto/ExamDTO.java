@@ -2,7 +2,7 @@ package rs.ac.uns.ftn.informatika.jpa.dto;
 
 import java.time.LocalDate;
 
-import rs.ac.uns.ftn.informatika.jpa.model.Exam;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Exam;
 
 public class ExamDTO {
 	private Integer id;

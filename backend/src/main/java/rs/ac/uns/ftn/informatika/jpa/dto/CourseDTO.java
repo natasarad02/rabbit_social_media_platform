@@ -1,6 +1,6 @@
 package rs.ac.uns.ftn.informatika.jpa.dto;
 
-import rs.ac.uns.ftn.informatika.jpa.model.Course;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Course;
 
 public class CourseDTO {
 	private Integer id;

@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import rs.ac.uns.ftn.informatika.jpa.model.Student;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.StudentRepository;
 
 @Service

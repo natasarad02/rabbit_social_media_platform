@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import rs.ac.uns.ftn.informatika.jpa.dto.ExamDTO;
-import rs.ac.uns.ftn.informatika.jpa.model.Course;
-import rs.ac.uns.ftn.informatika.jpa.model.Exam;
-import rs.ac.uns.ftn.informatika.jpa.model.Student;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Course;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Exam;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.service.CourseService;
 import rs.ac.uns.ftn.informatika.jpa.service.ExamService;
 import rs.ac.uns.ftn.informatika.jpa.service.StudentService;

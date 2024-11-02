@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import rs.ac.uns.ftn.informatika.jpa.dto.CourseDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ExamDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.StudentDTO;
-import rs.ac.uns.ftn.informatika.jpa.model.Exam;
-import rs.ac.uns.ftn.informatika.jpa.model.Student;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Exam;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.service.StudentService;
 
 @RestController

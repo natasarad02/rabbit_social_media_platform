@@ -23,8 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import rs.ac.uns.ftn.informatika.jpa.dto.CourseDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.TeacherDTO;
 import rs.ac.uns.ftn.informatika.jpa.mapper.TeacherDTOMapper;
-import rs.ac.uns.ftn.informatika.jpa.model.Course;
-import rs.ac.uns.ftn.informatika.jpa.model.Teacher;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Course;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Teacher;
 import rs.ac.uns.ftn.informatika.jpa.service.TeacherService;
 
 @RestController

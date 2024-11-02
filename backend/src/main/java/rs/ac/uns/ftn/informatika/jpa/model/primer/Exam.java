@@ -1,4 +1,4 @@
-package rs.ac.uns.ftn.informatika.jpa.model;
+package rs.ac.uns.ftn.informatika.jpa.model.primer;
 
 import java.time.LocalDate;
 
