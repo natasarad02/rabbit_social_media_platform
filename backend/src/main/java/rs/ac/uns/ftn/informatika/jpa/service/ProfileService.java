@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.informatika.jpa.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 
 import java.util.HashSet;
@@ -15,6 +16,10 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
+    public Profile findOne(Integer id) {
+        return profileRepository.findById(id).orElseGet(null);
+    }
+
     public List<Profile> getAllProfilesWithFollowersAndPosts() {
         List<Profile> profiles = profileRepository.findAllActiveProfiles();
         for (Profile profile : profiles) {
@@ -22,5 +27,9 @@ public class ProfileService {
             profile.setFollowers(new HashSet<>(followingProfiles));
         }
         return profiles;
+    }
+
+    public Profile saveProfile(Profile profile) {
+        return profileRepository.save(profile);
     }
 }

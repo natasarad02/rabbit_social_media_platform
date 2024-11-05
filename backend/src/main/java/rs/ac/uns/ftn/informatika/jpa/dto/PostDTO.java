@@ -1,5 +1,7 @@
 package rs.ac.uns.ftn.informatika.jpa.dto;
 
+import rs.ac.uns.ftn.informatika.jpa.model.Post;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -8,10 +10,19 @@ public class PostDTO {
     private String description;
     private String picture;
     private LocalDateTime postedTime;
+    private boolean deleted;
     private int likeCount;
     private List<CommentDTO> comments;
 
     public PostDTO() {}
+
+    public PostDTO(Post post) {
+        this.id = post.getId();
+        this.description = post.getDescription();
+        this.picture = post.getPicture();
+        this.postedTime = post.getPostedTime();
+        this.deleted = post.isDeleted();
+    }
 
     public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments) {
         this.id = id;
@@ -20,6 +31,7 @@ public class PostDTO {
         this.postedTime = postedTime;
         this.likeCount = likeCount;
         this.comments = comments;
+        this.deleted = false;
     }
 
     public Integer getId() {
@@ -68,5 +80,13 @@ public class PostDTO {
 
     public void setComments(List<CommentDTO> comments) {
         this.comments = comments;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

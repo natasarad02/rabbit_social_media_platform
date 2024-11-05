@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -54,6 +55,7 @@ public class Profile {
     @ManyToMany(mappedBy = "following")
     private Set<Profile> followers = new HashSet<>();
 
+
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
@@ -76,6 +78,17 @@ public class Profile {
 
     public Profile() {
 
+    }
+
+    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, Location address) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.role = role;
+        this.deleted = deleted;
+        this.address = address;
     }
 
     public Integer getId() {
