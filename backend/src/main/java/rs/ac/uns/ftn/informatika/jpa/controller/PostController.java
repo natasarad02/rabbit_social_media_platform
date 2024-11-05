@@ -8,6 +8,7 @@ import rs.ac.uns.ftn.informatika.jpa.dto.CommentDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
 import rs.ac.uns.ftn.informatika.jpa.mapper.CommentDTOMapper;
+import rs.ac.uns.ftn.informatika.jpa.mapper.PostDTOMapper;
 import rs.ac.uns.ftn.informatika.jpa.model.Comment;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
@@ -25,6 +26,7 @@ public class PostController {
     private PostService postService;
     private CommentService commentService;
 
+    private PostDTOMapper postDTOMapper;
     public PostController(@Autowired PostService postService, @Autowired CommentService commentService) {
         this.postService = postService;
         this.commentService = commentService;
@@ -87,7 +89,21 @@ public class PostController {
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
     }
 
-   
+    @PostMapping("/createpost")
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO) {
+        Post post = postDTOMapper.fromDTOtoPost(postDTO);
+
+        if(post == null)
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        post = postService.save(post);
+        return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
+
+    }
+
+
 
 
 

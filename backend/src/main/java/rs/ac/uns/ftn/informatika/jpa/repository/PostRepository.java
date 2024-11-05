@@ -22,4 +22,5 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT COUNT(l) FROM Post p JOIN p.likedPosts l WHERE p.id = :postId")
     Integer countLikesForPost(@Param("postId") Integer postId);
+
 }
