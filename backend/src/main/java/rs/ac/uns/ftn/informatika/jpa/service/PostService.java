@@ -45,7 +45,7 @@ public class PostService {
         return postRepository.findAllByProfileId(profileId);
     }
 
-    public void remove(Integer id) {
+   public void remove(Integer id) {
         postRepository.deleteById(id);
     }
 
