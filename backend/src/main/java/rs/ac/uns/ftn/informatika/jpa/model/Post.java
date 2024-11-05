@@ -73,7 +73,6 @@ public class Post {
             inverseJoinColumns = @JoinColumn(name = "post_id" , referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
-
     public Post() {
 
     }

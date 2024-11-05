@@ -87,6 +87,12 @@ public class PostController {
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
     }
 
+    @PostMapping("/like")
+    public ResponseEntity<Void> likePost(@RequestParam Integer profileId, @RequestParam Integer postId) {
+        postService.addLike(profileId, postId);
+        return ResponseEntity.ok().build();
+    }
+
    
 
 

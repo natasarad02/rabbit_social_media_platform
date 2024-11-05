@@ -11,6 +11,7 @@ public class CommentDTO {
     private String text;
     private LocalDateTime commentedTime;
     private ProfileDTO profile;
+    private PostDTO post;
 
     public CommentDTO() {}
 
@@ -19,6 +20,7 @@ public class CommentDTO {
         this.text = comment.getText();
         this.commentedTime = comment.getCommentedTime();
         this.profile = new ProfileDTO(comment.getProfile());
+        this.post = new PostDTO(comment.getPost());
     }
 
     public CommentDTO(Integer id, String text, Profile profile, LocalDateTime commentedTime) {
@@ -50,6 +52,14 @@ public class CommentDTO {
 
     public void setProfile(ProfileDTO profile) {
         this.profile = profile;
+    }
+
+    public PostDTO getPost() {
+        return post;
+    }
+
+    public void setPost(PostDTO post) {
+        this.post = post;
     }
 
     public LocalDateTime getCommentedTime() {
