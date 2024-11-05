@@ -8,7 +8,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 
 import java.util.List;
 
-public interface ProfileRepository extends JpaRepository<Student, Integer> {
+public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT p FROM Profile p WHERE p.deleted = false")
     List<Profile> findAllActiveProfiles();
 

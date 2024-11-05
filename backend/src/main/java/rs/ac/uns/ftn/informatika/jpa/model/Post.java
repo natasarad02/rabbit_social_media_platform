@@ -136,6 +136,15 @@ public class Post {
         comment.setPost(this);
     }
 
+    public Post(Integer id, String description, String picture, boolean deleted, LocalDateTime postedTime, Location location) {
+        this.id = id;
+        this.description = description;
+        this.picture = picture;
+        this.deleted = deleted;
+        this.postedTime = postedTime;
+        this.location = location;
+    }
+
     public Location getLocation() {
         return location;
     }

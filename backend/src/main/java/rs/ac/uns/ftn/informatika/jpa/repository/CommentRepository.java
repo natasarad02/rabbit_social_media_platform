@@ -8,7 +8,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.Post;
 
 import java.util.List;
 
-public interface CommentRepository extends JpaRepository<Post, Integer> {
+public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     @Query("SELECT c from Comment c where c.deleted = false ")
     List<Comment> findAllComments();

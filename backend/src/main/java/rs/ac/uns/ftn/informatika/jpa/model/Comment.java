@@ -27,11 +27,11 @@ public class Comment {
     @Column(name = "text", nullable = false)
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id")
     private Profile profile;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post_id")
     private Post post;
 
@@ -65,6 +65,15 @@ public class Comment {
 
     public Comment() {
 
+    }
+
+    public Comment(String text, Integer id, Profile profile, Post post, LocalDateTime commentedTime, boolean deleted) {
+        this.text = text;
+        this.id = id;
+        this.profile = profile;
+        this.post = post;
+        this.commentedTime = commentedTime;
+        this.deleted = deleted;
     }
 
     public Integer getId() {

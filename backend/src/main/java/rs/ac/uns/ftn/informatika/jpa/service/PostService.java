@@ -25,6 +25,10 @@ public class PostService {
         return postRepository.findAllByProfileId(profileId, page);
     }
 
+    public Post findOne(Integer id) {
+        return postRepository.findById(id).orElseGet(null);
+    }
+
     public List<Post> findAllActive() {
         return postRepository.findAll();
     }

@@ -3,13 +3,12 @@ package rs.ac.uns.ftn.informatika.jpa.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.informatika.jpa.dto.CommentDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
 import rs.ac.uns.ftn.informatika.jpa.mapper.CommentDTOMapper;
+import rs.ac.uns.ftn.informatika.jpa.model.Comment;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
@@ -45,16 +44,51 @@ public class PostController {
             postDTO.setPicture(post.getPicture());
             postDTO.setDescription(post.getDescription());
             postDTO.setLikeCount(postService.countLikesForPost(post.getId()));
-            postDTO.setComments(commentService.findAllForPost(post.getId())
-                    .stream()
-                    .map(CommentDTOMapper::fromCommentToDTO) // Use the mapping method
-                    .collect(Collectors.toList()));
+            List<CommentDTO> commentDTOs = new ArrayList<>();
+            for (Comment comment : commentService.findAllForPost(post.getId())) {
+                commentDTOs.add(new CommentDTO(comment)); // Use the constructor directly
+            }
+            postDTO.setComments(commentDTOs);
             postDTOs.add(postDTO);
 
         }
 
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
     }
+
+    @PutMapping(consumes = "application/json")
+    public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO) {
+
+        Post post = postService.findOne(postDTO.getId());
+
+        if (post == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        post.setDescription(postDTO.getDescription());
+        post.setPicture(postDTO.getPicture());
+
+        post = postService.save(post);
+        return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
+    }
+
+    @PutMapping("/delete/{id}")
+    public ResponseEntity<PostDTO> deletePost(@PathVariable Integer id) {
+
+        Post post = postService.findOne(id);
+
+        if (post == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        post.setDeleted(true);
+
+        post = postService.save(post);
+        return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
+    }
+
+   
+
 
 
 }

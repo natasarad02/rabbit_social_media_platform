@@ -47,6 +47,15 @@ public class Location {
 
     }
 
+    public Location(Integer id, Double longitude, String address, Double latitude, String number, boolean deleted) {
+        this.id = id;
+        this.longitude = longitude;
+        this.address = address;
+        this.latitude = latitude;
+        this.number = number;
+        this.deleted = deleted;
+    }
+
     public Integer getId() {
         return id;
     }
