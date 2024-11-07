@@ -1,8 +1,11 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
+import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 
@@ -28,6 +31,21 @@ public class ProfileService {
         }
         return profiles;
     }
+
+    public Page<Profile> getAllProfilesWithFollowersAndPosts(Pageable pageable) {
+
+        Page<Profile> profiles = profileRepository.findAllActiveProfiles(Role.User ,pageable);
+
+        for (Profile profile : profiles) {
+
+            List<Profile> followingProfiles = profileRepository.findFollowingProfiles(profile.getId());
+            profile.setFollowers(new HashSet<>(followingProfiles));
+
+        }
+
+        return profiles;
+    }
+
 
     public Profile saveProfile(Profile profile) {
         return profileRepository.save(profile);

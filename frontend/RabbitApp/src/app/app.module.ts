@@ -5,6 +5,13 @@ import { AppRoutingModule } from './app.routes';
 import { ViewProfileComponent } from './pages/view-profile/view-profile.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { HttpClientModule } from '@angular/common/http';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+
+
 
 
 @NgModule({
@@ -15,7 +22,12 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    MatInputModule,
+    MatFormFieldModule,
+    MatButtonModule,
+    FormsModule,
+    MatIconModule
   ],
   providers: [
     provideAnimationsAsync()
