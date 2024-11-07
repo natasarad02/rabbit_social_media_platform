@@ -36,10 +36,16 @@ public class CommentController {
         comment.setText(commentDTO.getText());
         comment.setCommentedTime(LocalDateTime.now());
         Post post = postService.findOne(idPost);
+        if (post == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commentDTO);
+        }
         comment.setPost(post);
         comment.setDeleted(false);
 
         Profile profile = profileService.findOne(idProfile);
+        if (profile == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(commentDTO);
+        }
         comment.setProfile(profile);
 
         Comment savedComment = commentService.addComment(comment);
