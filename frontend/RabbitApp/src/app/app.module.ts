@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { MapComponent } from './pages/map/map.component';
+import { HomePageComponent } from './pages/home-page/home-page.component';
 
 
 
@@ -21,7 +22,8 @@ import { MapComponent } from './pages/map/map.component';
     AppComponent,
     ViewProfileComponent,
     CreatePostComponent,
-    MapComponent
+    MapComponent,
+    HomePageComponent
   ],
   imports: [
     BrowserModule,
