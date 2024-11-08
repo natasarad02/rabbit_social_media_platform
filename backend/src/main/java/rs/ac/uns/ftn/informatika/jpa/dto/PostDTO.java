@@ -13,7 +13,6 @@ public class PostDTO {
     private boolean deleted;
     private int likeCount;
     private List<CommentDTO> comments;
-    private String pictureBase64;
 
     public PostDTO() {}
 
@@ -26,7 +25,7 @@ public class PostDTO {
 
     }
 
-    public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments, String pictureBase64) {
+    public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments) {
         this.id = id;
         this.description = description;
         this.picture = picture;
@@ -34,19 +33,10 @@ public class PostDTO {
         this.likeCount = likeCount;
         this.comments = comments;
         this.deleted = false;
-        this.pictureBase64 = pictureBase64;
     }
 
     public Integer getId() {
         return id;
-    }
-
-    public String getPictureBase64() {
-        return pictureBase64;
-    }
-
-    public void setPictureBase64(String pictureBase64) {
-        this.pictureBase64 = pictureBase64;
     }
 
     public void setId(Integer id) {
