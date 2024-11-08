@@ -10,6 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { CreatePostComponent } from './pages/create-post/create-post.component';
+import { MapComponent } from './pages/map/map.component';
 
 
 
@@ -17,7 +19,9 @@ import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [
     AppComponent,
-    ViewProfileComponent
+    ViewProfileComponent,
+    CreatePostComponent,
+    MapComponent
   ],
   imports: [
     BrowserModule,
