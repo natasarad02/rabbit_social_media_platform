@@ -1,13 +1,72 @@
-<div class="card-container">
-    <div class="card" *ngFor="let user of profiles">
-      <div class="card-content">
-        <h3 class="card-title">{{ user.name }}</h3>
-        <h3 class="card-title">{{ user.surname }}</h3>
-        <p class="card-email">{{ user.email }}</p>
-        <p class="card-email">{{ user.postCount }}</p>
-        <p class="card-email">{{ user.followingCount }}</p>
-      </div>
-    </div>
-  </div>
+<h1>Registered Profiles</h1>
+<div class="all">
+<div class="search-form">
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Name</mat-label>
+    <input matInput [(ngModel)]="searchCriteria.name" placeholder="Name">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Surname</mat-label>
+    <input matInput [(ngModel)]="searchCriteria.surname" placeholder="Surname">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Email</mat-label>
+    <input matInput [(ngModel)]="searchCriteria.email" placeholder="Email">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Min Posts</mat-label>
+    <input matInput type="number" [(ngModel)]="searchCriteria.minPosts" placeholder="Min">
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" class="search-field">
+    <mat-label>Max Posts</mat-label>
+    <input matInput type="number" [(ngModel)]="searchCriteria.maxPosts" placeholder="Max">
+  </mat-form-field>
+
+  <button mat-raised-button color="primary" (click)="filterProfiles()">Search</button>
+</div>
+
+<div class="paged">
+<div class="table-container">
+  <table class="profile-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Surname</th>
+        <th (click)="setSortCriteria('email')">Email
+          <mat-icon class="icon" *ngIf="sortCriteria === 'email'">
+            {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+          </mat-icon>
+        </th>
+        <th>Posts</th>
+        <th (click)="setSortCriteria('followingCount')">Following
+          <mat-icon class="icon"  *ngIf="sortCriteria === 'followingCount'">
+            {{ sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward' }}
+          </mat-icon>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of filteredProfiles">
+        <td>{{ user.name }}</td>
+        <td>{{ user.surname }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.postCount }}</td>
+        <td>{{ user.followingCount }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<div>
+  <button (click)="prevPage()" class="pageButton" [disabled]="currentPage === 0">Previous</button>
+  <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+  <button (click)="nextPage()" class="pageButton" [disabled]="currentPage === totalPages - 1">Next</button>
+</div>
+</div>
+
+</div>
   
   
