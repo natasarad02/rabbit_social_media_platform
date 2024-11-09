@@ -10,6 +10,7 @@ import { LocationDTO } from '../../models/LocationDTO.model';
 })
 export class MapComponent implements AfterViewInit{
   private map: any;
+  private currentMarker: L.Marker | null = null; 
 
   @Output() locationChanged = new EventEmitter<LocationDTO>();
 
@@ -46,7 +47,10 @@ export class MapComponent implements AfterViewInit{
 
   ngAfterViewInit(): void {
     let DefaultIcon = L.icon({
-      iconUrl: 'https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png',
+      iconUrl: 'bunnylocation.svg',
+      iconSize: [45, 45],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32]
     });
 
     L.Marker.prototype.options.icon = DefaultIcon;
@@ -59,12 +63,17 @@ export class MapComponent implements AfterViewInit{
       const lat: number = coord.lat;
       const lng: number = coord.lng;
 
+      if (this.currentMarker) {
+        this.map.removeLayer(this.currentMarker);
+      }
+
+
      
 
       console.log(
         'You clicked the map at latitude: ' + lat + ' and longitude: ' + lng
       );
-      new L.Marker([lat, lng]).addTo(this.map);
+      this.currentMarker = new L.Marker([lat, lng]).addTo(this.map);
 
       this.mapService.reverseSearch(lat, lng).subscribe((res) => {
         const address = res.address;
