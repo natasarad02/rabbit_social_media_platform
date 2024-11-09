@@ -1,25 +1,25 @@
 package rs.ac.uns.ftn.informatika.jpa.model;
 
-
-
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.*;
-
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.Collections;
 
 
 
-@SQLDelete(sql
-        = "UPDATE profile "
-        + "SET deleted = true "
-        + "WHERE id = ?")
+@SQLDelete(sql = "UPDATE profile SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 @Entity
-public class Profile {
+public class Profile implements UserDetails {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,10 @@ public class Profile {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @Column(name = "username", nullable = false, unique = true)
+    private String username;
+
+    @JsonIgnore
     @Column(name = "password", nullable = false)
     private String password;
 
@@ -37,7 +41,7 @@ public class Profile {
     @Column(name = "surname", nullable = false)
     private String surname;
 
-    @Enumerated(EnumType.STRING) // or EnumType.ORDINAL, depending on your preference
+    @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
@@ -47,49 +51,63 @@ public class Profile {
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(
             name = "profile_following",
-            joinColumns = @JoinColumn(name = "profile_id" , referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "followed_profile_id" , referencedColumnName = "id")
+            joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_profile_id", referencedColumnName = "id")
     )
     private Set<Profile> following = new HashSet<>();
 
     @ManyToMany(mappedBy = "following")
     private Set<Profile> followers = new HashSet<>();
 
-
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<Post> posts = new HashSet<Post>();
+    private Set<Post> posts = new HashSet<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location address;
 
-    // Set of users that follow this user
-
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "likes",
-            joinColumns = @JoinColumn(name = "profile_id" , referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id" , referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
 
-    public Profile() {
-
+    @JsonIgnore
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singleton(new SimpleGrantedAuthority(role.name())); // Using singleton for a single authority
     }
 
-    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, Location address) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.name = name;
-        this.surname = surname;
-        this.role = role;
-        this.deleted = deleted;
-        this.address = address;
+
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
+
+    @JsonIgnore
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return !deleted;
+    }
+
+    // Getter and Setter methods for all fields...
 
     public Integer getId() {
         return id;
@@ -105,6 +123,14 @@ public class Profile {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -163,32 +189,12 @@ public class Profile {
         this.comments = comments;
     }
 
-    public void addComment(Comment comment) {
-        comments.add(comment);
-        comment.setProfile(this);
-    }
-
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
-        comment.setProfile(this);
-    }
-
     public Set<Post> getPosts() {
         return posts;
     }
 
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
-    }
-
-    public void addPost(Post post) {
-        posts.add(post);
-        post.setProfile(this);
-    }
-
-    public void removePost(Post post) {
-        posts.remove(post);
-        post.setProfile(this);
     }
 
     public Location getAddress() {
@@ -214,6 +220,7 @@ public class Profile {
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -230,7 +237,4 @@ public class Profile {
     public int hashCode() {
         return 1337;
     }
-
 }
-
-
