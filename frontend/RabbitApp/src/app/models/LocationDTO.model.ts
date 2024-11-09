@@ -3,6 +3,6 @@ export interface LocationDTO{
     longitude: number;
     latitude: number;
     address: string;
-    number: number;
+    number: string; // moze biti 17a :(
     deleted: boolean;
 }

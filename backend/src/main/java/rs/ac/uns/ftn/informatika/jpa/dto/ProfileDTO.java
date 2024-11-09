@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+
 public class ProfileDTO {
     private Integer id;
     private String name;
@@ -14,6 +15,8 @@ public class ProfileDTO {
     private String email;
     private String password;
     private Role role;
+
+    public ProfileDTO() {}
 
     public ProfileDTO(Profile profile) {
         this.id = profile.getId();

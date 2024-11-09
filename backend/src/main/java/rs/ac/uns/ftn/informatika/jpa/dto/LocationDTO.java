@@ -20,6 +20,8 @@ public class LocationDTO {
         this.deleted = deleted;
     }
 
+    public LocationDTO(){}
+
     public LocationDTO(Location location)
     {
         this.id = location.getId();

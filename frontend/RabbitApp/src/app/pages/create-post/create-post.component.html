@@ -1,25 +1,28 @@
 <div class="create-post-page-div">
     <h1>Create post</h1>
 
+    
     <div class="create-post-content">
         <div class="create-post-form">
+            <form [formGroup] = "postForm">
             <mat-form-field appearance="fill" class="input-field">
                 <mat-label>Address</mat-label>
-                <input matInput placeholder="Location"/>
+                <input matInput formControlName="address"  placeholder="Location"/>
             </mat-form-field>
 
             
-            <mat-form-field appearance="fill" class="input-field">
+            <mat-form-field appearance="fill"  class="input-field">
                 <mat-label>Description</mat-label>
-                <input matInput placeholder="Description"/>
+                <input matInput formControlName="description" placeholder="Description"/>
             </mat-form-field>
 
             
-            <mat-form-field appearance="fill" class="input-field">
+            <mat-form-field appearance="fill"  class="input-field">
                 <mat-label>Image</mat-label>
-                <input matInput placeholder="Image"/>
+                <input matInput formControlName="image" placeholder="Image"/>
             </mat-form-field>
-            <button mat-raised-button class="create-post-btn" color="primary">Create post</button>
+            <button (click)="createPost()" mat-raised-button formControlName="image" class="create-post-btn" color="primary">Create post</button>
+        </form>
         </div>
         <div class="image-container">
             <h2>No Image</h2>

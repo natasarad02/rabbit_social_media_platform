@@ -18,7 +18,7 @@ export class MapComponent implements AfterViewInit{
     longitude: 0,
     latitude: 0,
     address: '',
-    number: 0,
+    number: '',
     deleted: false
   };
 
@@ -74,7 +74,7 @@ export class MapComponent implements AfterViewInit{
         const country = address.country;
 
       
-        const locationAddress: string = road + ', ' + city + ', ' + country;
+        const locationAddress: string = road + ', ' + houseNumber + ', ' + city + ', ' + country;
         const locationNumber = houseNumber;
 
         this.newLocation.address = locationAddress;
