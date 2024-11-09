@@ -1,5 +1,8 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, Output, EventEmitter } from '@angular/core';
 import * as L from 'leaflet';
+import { MapService } from '../../services/map.service';
+import { LocationDTO } from '../../models/LocationDTO.model';
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -8,7 +11,18 @@ import * as L from 'leaflet';
 export class MapComponent implements AfterViewInit{
   private map: any;
 
-  constructor() {}
+  @Output() locationChanged = new EventEmitter<LocationDTO>();
+
+  newLocation: LocationDTO = {
+    id: 0,
+    longitude: 0,
+    latitude: 0,
+    address: '',
+    number: 0,
+    deleted: false
+  };
+
+  constructor(private mapService: MapService) {}
 
   private initMap(): void {
     this.map = L.map('map', {
@@ -26,10 +40,58 @@ export class MapComponent implements AfterViewInit{
       }
     );
     tiles.addTo(this.map);
+
+    this.registerOnClick();
   }
 
   ngAfterViewInit(): void {
+    let DefaultIcon = L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.6.0/dist/images/marker-icon.png',
+    });
+
+    L.Marker.prototype.options.icon = DefaultIcon;
     this.initMap();
   }
+
+  registerOnClick(): void {
+    this.map.on('click', (e: any) => {
+      const coord = e.latlng;
+      const lat: number = coord.lat;
+      const lng: number = coord.lng;
+
+     
+
+      console.log(
+        'You clicked the map at latitude: ' + lat + ' and longitude: ' + lng
+      );
+      new L.Marker([lat, lng]).addTo(this.map);
+
+      this.mapService.reverseSearch(lat, lng).subscribe((res) => {
+        const address = res.address;
+        const houseNumber = address.house_number;
+        const road = address.road;
+        const city = address.city;   
+        const country = address.country;
+
+      
+        const locationAddress: string = road + ', ' + city + ', ' + country;
+        const locationNumber = houseNumber;
+
+        this.newLocation.address = locationAddress;
+        this.newLocation.latitude = lat;
+        this.newLocation.longitude = lng;
+        this.newLocation.number = locationNumber;
+
+        
+        this.locationChanged.emit(this.newLocation);
+
+       
+       
+      });
+
+     
+    });
+  }
+
 
 }

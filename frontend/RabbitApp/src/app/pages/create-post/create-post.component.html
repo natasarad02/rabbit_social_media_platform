@@ -4,7 +4,7 @@
     <div class="create-post-content">
         <div class="create-post-form">
             <mat-form-field appearance="fill" class="input-field">
-                <mat-label>Location</mat-label>
+                <mat-label>Address</mat-label>
                 <input matInput placeholder="Location"/>
             </mat-form-field>
 
@@ -26,6 +26,6 @@
         </div>
     </div>
     <div class="map-container">
-        <app-map></app-map>
+        <app-map (locationChanged)="setLocation($event)"></app-map>
     </div>
 </div>
