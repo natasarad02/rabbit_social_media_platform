@@ -12,6 +12,7 @@ import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.primer.StudentRepository;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +47,19 @@ public class PostService {
         return postRepository.countLikesForPost(postId);
     }
 
+    @Transactional
     public Post save(Post post) {
         return postRepository.save(post);
+    }
+
+    @Transactional
+    public Post deletePost(Integer id) {
+        Post post = postRepository.findById(id).orElse(null);
+        if (post != null && !post.isDeleted()) {
+            post.setDeleted(true);
+            return postRepository.save(post);
+        }
+        return null;
     }
 
     public List<Post> findByProfileId(Integer profileId) {

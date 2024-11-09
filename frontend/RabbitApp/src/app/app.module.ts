@@ -10,6 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
+import { ViewPostsRegisteredComponent } from './pages/view-posts-registered/view-posts-registered.component';
+import { MatCardModule } from '@angular/material/card';
 
 
 
@@ -17,7 +19,8 @@ import { MatIconModule } from '@angular/material/icon';
 @NgModule({
   declarations: [
     AppComponent,
-    ViewProfileComponent
+    ViewProfileComponent,
+    ViewPostsRegisteredComponent
   ],
   imports: [
     BrowserModule,
@@ -27,7 +30,9 @@ import { MatIconModule } from '@angular/material/icon';
     MatFormFieldModule,
     MatButtonModule,
     FormsModule,
-    MatIconModule
+    MatIconModule,
+    MatCardModule
+    
   ],
   providers: [
     provideAnimationsAsync()

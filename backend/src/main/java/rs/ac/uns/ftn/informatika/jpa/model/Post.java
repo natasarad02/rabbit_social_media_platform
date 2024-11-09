@@ -63,7 +63,7 @@ public class Post {
     @JoinColumn(name = "location_id", referencedColumnName = "id")
     private Location location;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id")
     private Profile profile;
 

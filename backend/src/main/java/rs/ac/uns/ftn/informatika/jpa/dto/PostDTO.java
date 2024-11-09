@@ -13,6 +13,7 @@ public class PostDTO {
     private boolean deleted;
     private int likeCount;
     private List<CommentDTO> comments;
+    private Integer profileId;
 
     public PostDTO() {}
 
@@ -88,5 +89,13 @@ public class PostDTO {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Integer getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(Integer profileId) {
+        this.profileId = profileId;
     }
 }

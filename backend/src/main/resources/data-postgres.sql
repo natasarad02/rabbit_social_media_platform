@@ -54,7 +54,7 @@ INSERT INTO profile (email, password, name, surname, deleted, role) VALUES
 -- Inserting data into Post
 INSERT INTO post (description, picture, deleted, posted_time, profile_id, location_id) VALUES
                                                                                            ('This is my first post!', 'pic1.jpg', false, NOW(), 1, 1),
-                                                                                           ('Beautiful day at the park!', 'pic2.jpg', false, NOW(), 1, 2),
+                                                                                           ('Beautiful day at the park!', 'pic2.jpeg', false, NOW(), 1, 2),
                                                                                            ('Loving the city lights.', 'pic3.jpg', false, NOW(), 2, 1),
                                                                                            ('Foodie adventures!', 'pic4.jpg', false, NOW(), 3, 3),
                                                                                            ('Just finished a run, feeling great!', 'pic5.jpg', false, NOW(), 4, 4),

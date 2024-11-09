@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.informatika.jpa.dto.CommentDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
 import rs.ac.uns.ftn.informatika.jpa.mapper.CommentDTOMapper;
 import rs.ac.uns.ftn.informatika.jpa.model.Comment;
@@ -46,8 +47,35 @@ public class PostController {
             postDTO.setLikeCount(postService.countLikesForPost(post.getId()));
             List<CommentDTO> commentDTOs = new ArrayList<>();
             for (Comment comment : commentService.findAllForPost(post.getId())) {
-                commentDTOs.add(new CommentDTO(comment)); // Use the constructor directly
+                commentDTOs.add(new CommentDTO(comment));
             }
+            postDTO.setComments(commentDTOs);
+            postDTOs.add(postDTO);
+
+        }
+
+        return new ResponseEntity<>(postDTOs, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostDTO>> getAllPosts() {
+
+        List<Post> posts = postService.findAllActive();
+
+        // convert students to DTOs
+        List<PostDTO> postDTOs = new ArrayList<>();
+        for (Post post : posts) {
+            PostDTO postDTO = new PostDTO();
+            postDTO.setId(post.getId());
+            postDTO.setPostedTime(post.getPostedTime());
+            postDTO.setPicture(post.getPicture());
+            postDTO.setDescription(post.getDescription());
+            postDTO.setLikeCount(postService.countLikesForPost(post.getId()));
+            List<CommentDTO> commentDTOs = new ArrayList<>();
+            for (Comment comment : commentService.findAllForPost(post.getId())) {
+                commentDTOs.add(new CommentDTO(comment));
+            }
+            postDTO.setProfileId(post.getProfile().getId());
             postDTO.setComments(commentDTOs);
             postDTOs.add(postDTO);
 
@@ -73,17 +101,10 @@ public class PostController {
     }
 
     @PutMapping("/delete/{id}")
+    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<PostDTO> deletePost(@PathVariable Integer id) {
 
-        Post post = postService.findOne(id);
-
-        if (post == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        post.setDeleted(true);
-
-        post = postService.save(post);
+        Post post = postService.deletePost(id);
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
     }
 
