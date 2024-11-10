@@ -1,8 +1,7 @@
 package rs.ac.uns.ftn.informatika.jpa.model;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.util.*;
 import javax.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,8 +9,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import java.util.Collections;
-
 
 
 @SQLDelete(sql = "UPDATE profile SET deleted = true WHERE id = ?")
@@ -25,7 +22,7 @@ public class Profile implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "username", nullable = false, unique = true)
@@ -48,6 +45,9 @@ public class Profile implements UserDetails {
     @Column(name = "deleted")
     private boolean deleted;
 
+    @Column(name = "last_password_reset_date")
+    private Timestamp lastPasswordResetDate;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(
             name = "profile_following",
@@ -65,9 +65,8 @@ public class Profile implements UserDetails {
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Post> posts = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
-    private Location address;
+    @Column(name = "address", nullable = true)
+    private String address;
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(name = "likes",
@@ -81,7 +80,6 @@ public class Profile implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority(role.name())); // Using singleton for a single authority
     }
-
 
 
     @JsonIgnore
@@ -138,7 +136,17 @@ public class Profile implements UserDetails {
     }
 
     public void setPassword(String password) {
+        Timestamp now = new Timestamp(new Date().getTime());
+        this.setLastPasswordResetDate(now);
         this.password = password;
+    }
+
+    public Timestamp getLastPasswordResetDate() {
+        return lastPasswordResetDate;
+    }
+
+    public void setLastPasswordResetDate(Timestamp lastPasswordResetDate) {
+        this.lastPasswordResetDate = lastPasswordResetDate;
     }
 
     public String getName() {
@@ -197,11 +205,11 @@ public class Profile implements UserDetails {
         this.posts = posts;
     }
 
-    public Location getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(Location address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
