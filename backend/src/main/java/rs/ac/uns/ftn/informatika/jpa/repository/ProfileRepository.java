@@ -25,4 +25,10 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT f FROM Profile p JOIN p.following f WHERE p.id = :profileId AND p.deleted = false")
     Page<Profile> findFollowingProfiles(@Param("profileId") Integer profileId, Pageable pageable);
 
+    @Query("SELECT p FROM Profile p WHERE p.username = :username AND p.deleted = false")
+    Profile findActiveProfileByUsername(@Param("username") String username);
+
+    @Query("SELECT MAX(p.id) FROM Profile p")
+    Integer findMaxId();
+
 }
