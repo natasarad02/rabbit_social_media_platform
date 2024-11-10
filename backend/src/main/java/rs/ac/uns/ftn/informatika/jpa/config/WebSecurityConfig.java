@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import rs.ac.uns.ftn.informatika.jpa.security.auth.RestAuthenticationEntryPoint;
 import rs.ac.uns.ftn.informatika.jpa.security.auth.TokenAuthenticationFilter;
+import rs.ac.uns.ftn.informatika.jpa.service.CustomUserDetailsService;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
 
 @Configuration
@@ -32,8 +33,7 @@ public class WebSecurityConfig {
     // Servis koji se koristi za citanje podataka o korisnicima aplikacije
     @Bean
     public UserDetailsService userDetailsService() {
-        return null;
-        // return new CustomUserDetailsService();
+        return new CustomUserDetailsService();
     }
 
     // Implementacija PasswordEncoder-a koriscenjem BCrypt hashing funkcije.
