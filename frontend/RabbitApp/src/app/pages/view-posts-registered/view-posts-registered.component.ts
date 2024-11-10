@@ -10,7 +10,8 @@ import { PostService } from '../../services/post-service.service';
 })
 export class ViewPostsRegisteredComponent implements OnInit {
   posts: PostDTO[] = [];
-  profileId: number = 0;
+  profileId: number = 1;
+  likeIds: number[] = [];
 
   constructor(private postService: PostService){}
 
@@ -25,8 +26,19 @@ export class ViewPostsRegisteredComponent implements OnInit {
         console.error('Error loading profiles', error);
       }
     );
+      this.loadLikedPosts();
+  }
 
-    this.profileId = 1;
+  loadLikedPosts()
+  {
+      this.postService.getLikedPosts(this.profileId).subscribe(
+        (response) => {
+          this.likeIds = response;
+        },
+        (error) => {
+          console.error('Error loading profiles', error);
+        }
+      );
   }
 
   deletePost(id: number): void {
@@ -35,9 +47,22 @@ export class ViewPostsRegisteredComponent implements OnInit {
     if (confirmed) {
       this.postService.deletePost(id).subscribe(() => {
         this.ngOnInit();
-        console.log("success")
+      },
+      (error) => {
+        console.error('Error delete', error);
       });
     }
+  }
+
+  likePost(postId: number): void {
+    this.postService.likePost(this.profileId, postId).subscribe(()=> {
+      this.ngOnInit();
+      console.log("success")
+
+    },
+    (error) => {
+      console.error('Error liking', error);
+    })
   }
 
   
