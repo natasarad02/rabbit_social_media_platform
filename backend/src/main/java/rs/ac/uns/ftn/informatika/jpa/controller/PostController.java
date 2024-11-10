@@ -114,6 +114,12 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/likes")
+    public ResponseEntity<List<Integer>> getAllLikes(@RequestParam Integer profileId) {
+        List<Integer> likes = postService.getPostIdsForProfile(profileId);
+        return new ResponseEntity<>(likes, HttpStatus.OK);
+    }
+
    
 
 

@@ -16,7 +16,8 @@
       </mat-card-content>
     </div>
     <mat-card-actions class="post-actions">
-      <button mat-button color="primary">Like</button>
+      <button mat-button color="primary" *ngIf="!likeIds.includes(post.id)" (click)="likePost(post.id)">Like</button>
+      <button mat-button color="primary" *ngIf="likeIds.includes(post.id)" disabled>Liked</button>
       <button mat-button color="accent">Comment</button>
       <div *ngIf="profileId === post.profileId">
       <button mat-button color="warn" >Edit</button>
