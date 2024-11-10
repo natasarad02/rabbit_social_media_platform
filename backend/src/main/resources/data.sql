@@ -1,4 +1,4 @@
-/*insert into student (index_number, first_name, last_name) values ('5', 'Marko', 'Marković');
+insert into student (index_number, first_name, last_name) values ('5', 'Marko', 'Marković');
 insert into student (index_number, first_name, last_name) values ('ra2-2014', 'Milan', 'Milanović');
 insert into student (index_number, first_name, last_name) values ('ra3-2014', 'Ivana', 'Ivanović');
 insert into student (index_number, first_name, last_name) values ('ra4-2014', 'Bojan', 'Bojanović');
@@ -25,34 +25,44 @@ insert into exam (student_id, course_id, date, grade) values (1, 1, '2016-02-01'
 insert into exam (student_id, course_id, date, grade) values (1, 2, '2016-04-19', 8);
 insert into exam (student_id, course_id, date, grade) values (2, 1, '2016-02-01', 10);
 insert into exam (student_id, course_id, date, grade) values (2, 2, '2016-04-19', 10);
-
+-- Inserting data into Location
+INSERT INTO location (longitude, latitude, address, number, deleted) VALUES
+                                                                         (-74.0060, 40.7128, 'New York City', '1', false),
+                                                                         (-73.9352, 40.7306, 'Brooklyn', '2', false),
+                                                                         (-122.4194, 37.7749, 'San Francisco', '3', false),
+                                                                         (-118.2437, 34.0522, 'Los Angeles', '4', false),
+                                                                         (-0.1276, 51.5074, 'London', '5', false),
+                                                                         (2.3522, 48.8566, 'Paris', '6', false),
+                                                                         (139.6917, 35.6895, 'Tokyo', '7', false),
+                                                                         (13.4050, 52.5200, 'Berlin', '8', false),
+                                                                         (4.9041, 52.3676, 'Amsterdam', '9', false),
+                                                                         (12.4964, 41.9028, 'Rome', '10', false);
 
 -- Inserting data into Profile
-INSERT INTO profile (email, username, password, name, surname, deleted, role, last_password_reset_date, address) VALUES
-                                                                                                                     ('marko@example.com', 'marko', 'password123', 'Marko', 'Marković', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('milan@example.com', 'milan', 'password456', 'Milan', 'Milanović', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('ivana@example.com', 'ivana', 'password789', 'Ivana', 'Ivanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('bojan@example.com', 'bojan', 'password101', 'Bojan', 'Bojanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('jane@example.com', 'jane', 'password202', 'Jane', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('alex@example.com', 'alex', 'password303', 'Alex', 'Smith', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('lisa@example.com', 'lisa', 'password404', 'Lisa', 'Johnson', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('john@example.com', 'john', 'password505', 'John', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('anna@example.com', 'anna', 'password606', 'Anna', 'Taylor', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('james@example.com', 'james', 'password707', 'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL);
-
+INSERT INTO profile (email, password, name, surname, deleted, role) VALUES
+                                                                        ('marko@example.com', 'password123', 'Marko', 'Marković', false, 'User'),
+                                                                        ('milan@example.com', 'password456', 'Milan', 'Milanović', false, 'User'),
+                                                                        ('ivana@example.com', 'password789', 'Ivana', 'Ivanović', false, 'Administrator'),
+                                                                        ('bojan@example.com', 'password101', 'Bojan', 'Bojanović', false, 'Administrator'),
+                                                                        ('jane@example.com', 'password202', 'Jane', 'Doe', false, 'User'),
+                                                                        ('alex@example.com', 'password303', 'Alex', 'Smith', false, 'User'),
+                                                                        ('lisa@example.com', 'password404', 'Lisa', 'Johnson', false, 'User'),
+                                                                        ('john@example.com', 'password505', 'John', 'Doe', false, 'User'),
+                                                                        ('anna@example.com', 'password606', 'Anna', 'Taylor', false, 'Administrator'),
+                                                                        ('james@example.com', 'password707', 'James', 'Brown', false, 'User');
 
 -- Inserting data into Post
-INSERT INTO post (description, picture, deleted, posted_time, profile_id) VALUES
-                                                                                           ('This is my first post!', 'pic1.jpg', false, NOW(), 1),
-                                                                                           ('Beautiful day at the park!', 'pic2.jpeg', false, NOW(), 1),
-                                                                                           ('Loving the city lights.', 'pic3.jpg', false, NOW(), 2),
-                                                                                           ('Foodie adventures!', 'pic4.jpg', false, NOW(), 3),
-                                                                                           ('Just finished a run, feeling great!', 'pic5.jpg', false, NOW(), 4),
-                                                                                           ('Sunset at the beach.', 'pic6.jpg', false, NOW(), 5),
-                                                                                           ('Exploring the countryside.', 'pic7.jpg', false, NOW(), 6),
-                                                                                           ('Weekend getaway in the mountains.', 'pic8.jpg', false, NOW(), 7),
-                                                                                           ('Cozy evening by the fire.', 'pic9.jpg', false, NOW(), 8),
-                                                                                           ('Delicious homemade dinner.', 'pic10.jpg', false, NOW(), 9);
+INSERT INTO post (description, picture, deleted, posted_time, profile_id, location_id) VALUES
+                                                                                           ('This is my first post!', 'pic1.jpg', false, NOW(), 1, 1),
+                                                                                           ('Beautiful day at the park!', 'pic2.jpeg', false, NOW(), 1, 2),
+                                                                                           ('Loving the city lights.', 'pic3.jpg', false, NOW(), 2, 1),
+                                                                                           ('Foodie adventures!', 'pic4.jpg', false, NOW(), 3, 3),
+                                                                                           ('Just finished a run, feeling great!', 'pic5.jpg', false, NOW(), 4, 4),
+                                                                                           ('Sunset at the beach.', 'pic6.jpg', false, NOW(), 5, 5),
+                                                                                           ('Exploring the countryside.', 'pic7.jpg', false, NOW(), 6, 6),
+                                                                                           ('Weekend getaway in the mountains.', 'pic8.jpg', false, NOW(), 7, 7),
+                                                                                           ('Cozy evening by the fire.', 'pic9.jpg', false, NOW(), 8, 8),
+                                                                                           ('Delicious homemade dinner.', 'pic10.jpg', false, NOW(), 9, 9);
 
 -- Inserting data into Comment
 INSERT INTO comment (text, profile_id, post_id, commented_time, deleted) VALUES
@@ -96,4 +106,3 @@ INSERT INTO profile_following (profile_id, followed_profile_id) VALUES
                                                                     (10, 3), -- James is following Ivana
                                                                     (3, 2),  -- Ivana is following Milan
                                                                     (5, 4);  -- Jane is following Bojan
-*/

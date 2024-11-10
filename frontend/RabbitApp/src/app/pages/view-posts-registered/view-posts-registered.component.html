@@ -20,8 +20,8 @@
       <button mat-button color="primary" *ngIf="likeIds.includes(post.id)" disabled>Liked</button>
       <button mat-button color="accent">Comment</button>
       <div *ngIf="profileId === post.profileId">
-      <button mat-button color="warn" >Edit</button>
-      <button mat-button color="warn" (click)="deletePost(post.id)">Delete</button>
+      <button mat-button style="color: #ba79ba;" >Edit</button>
+      <button mat-button style="color: #ba79ba;" (click)="deletePost(post.id)">Delete</button>
     </div>
     </mat-card-actions>
   </mat-card>
