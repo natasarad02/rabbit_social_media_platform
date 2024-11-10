@@ -59,10 +59,6 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
-    private Location location;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id")
     private Profile profile;
@@ -135,21 +131,12 @@ public class Post {
         comment.setPost(this);
     }
 
-    public Post(Integer id, String description, String picture, boolean deleted, LocalDateTime postedTime, Location location) {
+    public Post(Integer id, String description, String picture, boolean deleted, LocalDateTime postedTime) {
         this.id = id;
         this.description = description;
         this.picture = picture;
         this.deleted = deleted;
         this.postedTime = postedTime;
-        this.location = location;
-    }
-
-    public Location getLocation() {
-        return location;
-    }
-
-    public void setLocation(Location location) {
-        this.location = location;
     }
 
     public Profile getProfile() {
