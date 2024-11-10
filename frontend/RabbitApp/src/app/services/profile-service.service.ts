@@ -16,10 +16,11 @@ export class ProfileService {
         return this.http.get<ProfileViewDTO[]>(`${this.apiUrl}/all`);
     }
 
-    getPaginatedProfiles(page: number, size: number): Observable<PaginatedResponse<ProfileViewDTO>> {
+    getPaginatedProfiles(page: number, size: number, idProfile: number[]): Observable<PaginatedResponse<ProfileViewDTO>> {
         const params = {
             page: page.toString(),
-            size: size.toString()
+            size: size.toString(),
+            profileIds: idProfile.join(',')
         };
         
         return this.http.get<PaginatedResponse<ProfileViewDTO>>(`${this.apiUrl}/allPaged`, { params });
