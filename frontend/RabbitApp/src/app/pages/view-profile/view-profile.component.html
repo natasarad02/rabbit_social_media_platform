@@ -50,7 +50,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of filteredProfiles">
+      <tr *ngFor="let user of paginatedProfiles">
         <td>{{ user.name }}</td>
         <td>{{ user.surname }}</td>
         <td>{{ user.email }}</td>
@@ -65,6 +65,7 @@
   <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
   <button (click)="nextPage()" class="pageButton" [disabled]="currentPage === totalPages - 1">Next</button>
 </div>
+
 </div>
 
 </div>

@@ -12,10 +12,12 @@ export class ViewProfileComponent implements OnInit{
 
   profiles: ProfileViewDTO[] = [];
   filteredProfiles: ProfileViewDTO[] = [];
+  paginatedProfiles: ProfileViewDTO[] = [];
   currentPage: number = 0; 
   itemsPerPage: number = 5; 
   totalItems: number = 0; 
   totalPages: number = 0;
+  profileIds: number[] = [];
 
   searchCriteria = {
     name: '',
@@ -28,6 +30,9 @@ export class ViewProfileComponent implements OnInit{
   sortCriteria: string = ''; 
   sortDirection: 'asc' | 'desc' = 'asc';
 
+  sortEmail: string = '';
+  sortFolowing: string = '';
+
   constructor(private profileService: ProfileService) {}
 
   ngOnInit(): void {
@@ -35,14 +40,32 @@ export class ViewProfileComponent implements OnInit{
   }
 
   private loadProfiles(): void {
-    this.profileService.getPaginatedProfiles(this.currentPage, this.itemsPerPage).subscribe(
+    this.profileService.getAllProfiles().subscribe(
       (response) => {
         console.log(response)
         console.log("ovde")
-        this.profiles = response.content;
-        this.totalItems = response.totalElements; 
-        this.totalPages = response.totalPages; 
+        this.profiles = response;
         this.filteredProfiles = this.profiles; 
+        this.updateProfileIds();
+        console.log(response);
+        
+      },
+      (error) => {
+        console.error('Error loading profiles', error);
+      }
+    );
+  }
+
+  
+
+  private loadProfilesPaged(): void {
+    this.profileService.getPaginatedProfiles(this.currentPage, this.itemsPerPage, this.profileIds).subscribe(
+      (response) => {
+        console.log(response)
+        console.log("ovde")
+        this.paginatedProfiles = response.content;
+        this.totalItems = response.totalElements; 
+        this.totalPages = response.totalPages;  
         console.log(response);
       },
       (error) => {
@@ -61,6 +84,7 @@ export class ViewProfileComponent implements OnInit{
 
       return matchesName && matchesSurname && matchesEmail && matchesMinPosts && matchesMaxPosts;
     });
+    this.updateProfileIds();
     this.sortProfiles();
   }
 
@@ -75,36 +99,42 @@ export class ViewProfileComponent implements OnInit{
       }
       return 0;
     });
+
+    this.updateProfileIds();
   }
 
   setSortCriteria(criteria: string): void {
     if (this.sortCriteria === criteria) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc'; // Toggle sort direction
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc'; 
     } else {
       this.sortCriteria = criteria;
-      this.sortDirection = 'asc'; // Default to ascending on new criteria
+      this.sortDirection = 'asc'; 
     }
     this.sortProfiles();
+  }
+
+  private updateProfileIds(): void {
+    this.profileIds = this.filteredProfiles.map(profile => profile.id);
+    this.loadProfilesPaged();
   }
 
   changePage(page: number): void {
     if (page < 0 || page >= this.totalPages) return; 
     this.currentPage = page;
-    this.loadProfiles(); 
+    this.loadProfilesPaged(); 
   }
 
-  // Method to go to next page
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1) {
       this.currentPage++;
-      this.loadProfiles();
+      this.loadProfilesPaged();
     }
   }
 
   prevPage(): void {
     if (this.currentPage > 0) {
       this.currentPage--;
-      this.loadProfiles();
+      this.loadProfilesPaged();
     }
   }
 

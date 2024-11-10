@@ -6,10 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
@@ -59,20 +56,20 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/allPaged")
-    public ResponseEntity<Page<ProfileViewDTO>> getAllProfiles(Pageable pageable) {
-        Page<Profile> profiles = profileService.getAllProfilesWithFollowersAndPosts(pageable);
+    public ResponseEntity<Page<ProfileViewDTO>> getAllProfiles(Pageable pageable, @RequestParam("profileIds") List<Integer> profileIds) {
+        Page<Profile> profiles = profileService.getAllProfilesWithFollowersAndPosts(pageable, profileIds);
 
         List<ProfileViewDTO> profileViewDTOs = new ArrayList<>();
         for (Profile profile : profiles.getContent()) {
 
-                ProfileViewDTO profileViewDTO = new ProfileViewDTO();
-                profileViewDTO.setId(profile.getId());
-                profileViewDTO.setName(profile.getName());
-                profileViewDTO.setEmail(profile.getEmail());
-                profileViewDTO.setSurname(profile.getSurname());
-                profileViewDTO.setFollowingCount(profile.getFollowers().size());
-                profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
-                profileViewDTOs.add(profileViewDTO);
+            ProfileViewDTO profileViewDTO = new ProfileViewDTO();
+            profileViewDTO.setId(profile.getId());
+            profileViewDTO.setName(profile.getName());
+            profileViewDTO.setEmail(profile.getEmail());
+            profileViewDTO.setSurname(profile.getSurname());
+            profileViewDTO.setFollowingCount(profile.getFollowers().size());
+            profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
+            profileViewDTOs.add(profileViewDTO);
 
         }
 
@@ -80,6 +77,8 @@ public class ProfileController {
 
         return new ResponseEntity<>(new PageImpl<>(profileViewDTOs, pageable, profiles.getTotalElements()), HttpStatus.OK);
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ProfileDTO> getProfile(@PathVariable Integer id) {
