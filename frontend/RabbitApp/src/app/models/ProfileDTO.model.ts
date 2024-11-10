@@ -4,5 +4,6 @@ export interface ProfileDTO{
     surname: string;
     email: string;
     password: string;
-    role: number; //za sad kao 0, 1, 2
+    role: string; 
+    address: string;
 }

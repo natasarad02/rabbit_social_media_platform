@@ -39,30 +39,30 @@ INSERT INTO location (longitude, latitude, address, number, deleted) VALUES
                                                                          (12.4964, 41.9028, 'Rome', '10', false);
 
 -- Inserting data into Profile
-INSERT INTO profile (email, password, name, surname, deleted, role) VALUES
-                                                                        ('marko@example.com', 'password123', 'Marko', 'Marković', false, 'User'),
-                                                                        ('milan@example.com', 'password456', 'Milan', 'Milanović', false, 'User'),
-                                                                        ('ivana@example.com', 'password789', 'Ivana', 'Ivanović', false, 'Administrator'),
-                                                                        ('bojan@example.com', 'password101', 'Bojan', 'Bojanović', false, 'Administrator'),
-                                                                        ('jane@example.com', 'password202', 'Jane', 'Doe', false, 'User'),
-                                                                        ('alex@example.com', 'password303', 'Alex', 'Smith', false, 'User'),
-                                                                        ('lisa@example.com', 'password404', 'Lisa', 'Johnson', false, 'User'),
-                                                                        ('john@example.com', 'password505', 'John', 'Doe', false, 'User'),
-                                                                        ('anna@example.com', 'password606', 'Anna', 'Taylor', false, 'Administrator'),
-                                                                        ('james@example.com', 'password707', 'James', 'Brown', false, 'User');
+INSERT INTO profile (email, password, name, surname, deleted, role, address) VALUES
+                                                                        ('marko@example.com', 'password123', 'Marko', 'Marković', false, 'User', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('milan@example.com', 'password456', 'Milan', 'Milanović', false, 'User', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('ivana@example.com', 'password789', 'Ivana', 'Ivanović', false, 'Administrator', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('bojan@example.com', 'password101', 'Bojan', 'Bojanović', false, 'Administrator', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('jane@example.com', 'password202', 'Jane', 'Doe', false, 'User', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('alex@example.com', 'password303', 'Alex', 'Smith', false, 'User', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('lisa@example.com', 'password404', 'Lisa', 'Johnson', false, 'User', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('john@example.com', 'password505', 'John', 'Doe', false, 'User', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('anna@example.com', 'password606', 'Anna', 'Taylor', false, 'Administrator', 'Karađorđeva 45, Novi Sad'),
+                                                                        ('james@example.com', 'password707', 'James', 'Brown', false, 'User', 'Karađorđeva 45, Novi Sad');
 
 -- Inserting data into Post
-INSERT INTO post (description, picture, deleted, posted_time, profile_id, location_id) VALUES
-                                                                                           ('This is my first post!', 'pic1.jpg', false, NOW(), 1, 1),
-                                                                                           ('Beautiful day at the park!', 'pic2.jpg', false, NOW(), 1, 2),
-                                                                                           ('Loving the city lights.', 'pic3.jpg', false, NOW(), 2, 1),
-                                                                                           ('Foodie adventures!', 'pic4.jpg', false, NOW(), 3, 3),
-                                                                                           ('Just finished a run, feeling great!', 'pic5.jpg', false, NOW(), 4, 4),
-                                                                                           ('Sunset at the beach.', 'pic6.jpg', false, NOW(), 5, 5),
-                                                                                           ('Exploring the countryside.', 'pic7.jpg', false, NOW(), 6, 6),
-                                                                                           ('Weekend getaway in the mountains.', 'pic8.jpg', false, NOW(), 7, 7),
-                                                                                           ('Cozy evening by the fire.', 'pic9.jpg', false, NOW(), 8, 8),
-                                                                                           ('Delicious homemade dinner.', 'pic10.jpg', false, NOW(), 9, 9);
+INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude) VALUES
+                                                                                           ('This is my first post!', 'pic1.jpg', false, NOW(), 1, 'Nemanjina 12, Beograd', 20.457273, 44.817611),
+                                                                                           ('Beautiful day at the park!', 'pic2.jpg', false, NOW(), 1, 'Bulevar kralja Aleksandra 54, Beograd', 20.476521, 44.805850),
+                                                                                           ('Loving the city lights.', 'pic3.jpg', false, NOW(), 2, 'Karađorđeva 65, Novi Sad', 19.842545, 45.255325),
+                                                                                           ('Foodie adventures!', 'pic4.jpg', false, NOW(), 3, 'Vojvode Stepe 130, Niš', 21.895758, 43.321206),
+                                                                                           ('Just finished a run, feeling great!', 'pic5.jpg', false, NOW(), 4, 'Trg slobode 1, Subotica', 19.668652, 46.097435),
+                                                                                           ('Sunset at the beach.', 'pic6.jpg', false, NOW(), 5, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
+                                                                                           ('Exploring the countryside.', 'pic7.jpg', false, NOW(), 6, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
+                                                                                           ('Weekend getaway in the mountains.', 'pic8.jpg', false, NOW(), 7, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
+                                                                                           ('Cozy evening by the fire.', 'pic9.jpg', false, NOW(), 8, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
+                                                                                           ('Delicious homemade dinner.', 'pic10.jpg', false, NOW(), 9, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167);
 
 -- Inserting data into Comment
 INSERT INTO comment (text, profile_id, post_id, commented_time, deleted) VALUES

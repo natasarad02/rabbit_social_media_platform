@@ -3,6 +3,7 @@ import { PostDTO } from '../../models/PostDTO.mode';
 import { LocationDTO } from '../../models/LocationDTO.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreatePostService } from '../../services/create-post.service';
+import { ProfileDTO } from '../../models/ProfileDTO.model';
 
 @Component({
   selector: 'app-create-post',
@@ -19,7 +20,22 @@ export class CreatePostComponent implements OnInit {
     deleted: false,
     likeCount: 0,
     comments: [],
-    
+    address: '',
+    longitude: 0,
+    latitude: 0,
+   
+
+  }
+
+  // Fiksiran profil dok se ne doda login
+  profile: ProfileDTO = {
+    id: 1,
+    name: 'Marko',
+    surname: 'Markovic',
+    email: 'marko@example.com',
+    password: 'aaa',
+    role: 'User',
+    address: 'Karadjordjeva 45'
 
   }
   location: LocationDTO = {
@@ -53,7 +69,10 @@ export class CreatePostComponent implements OnInit {
       postedTime:  new Date(),
       deleted: false,
       likeCount: 0,
-      comments: []
+      comments: [],
+      address: this.location.address,
+      longitude: this.location.longitude,
+      latitude: this.location.latitude
     
      
     }
@@ -77,7 +96,7 @@ export class CreatePostComponent implements OnInit {
    // this.newPost.profile = 1;
     console.log("Post");
     console.log(this.newPost);
-    this.service.createPost(this.newPost).subscribe({
+    this.service.createPost(this.newPost, this.profile.id).subscribe({
       next: (result: PostDTO) => {
         alert("Post created successfully");
         window.location.reload();

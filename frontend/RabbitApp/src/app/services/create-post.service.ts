@@ -16,7 +16,7 @@ export class CreatePostService {
     return this.http.post<LocationDTO>(this.locationUrl + '/savelocation', location);
   }
 
-  createPost(post: PostDTO) : Observable<PostDTO>{
-    return this.http.post<PostDTO>(this.postUrl + '/createpost', post);
+  createPost(post: PostDTO, profileId: number) : Observable<PostDTO>{
+    return this.http.post<PostDTO>(this.postUrl + '/createpost/' + profileId, post);
   }
 }

@@ -28,6 +28,14 @@ public class Post {
     @Column(name = "picture", nullable = false)
     private String picture;
 
+    @Column(name = "address", nullable = false)
+    private String address;
+
+    @Column(name = "longitude", nullable = false)
+    private double longitude;
+
+    @Column(name = "latitude", nullable = false)
+    private double latitude;
 
 
     @Column(name = "deleted")
@@ -59,9 +67,9 @@ public class Post {
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    /*@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
-    private Location location;
+    private Location location;*/
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "profile_id")
@@ -135,21 +143,40 @@ public class Post {
         comment.setPost(this);
     }
 
-    public Post(Integer id, String description, String picture, boolean deleted, LocalDateTime postedTime, Location location) {
+    public Post(Integer id, String description, String picture, boolean deleted, LocalDateTime postedTime, String address, double longitude, double latitude) {
         this.id = id;
         this.description = description;
         this.picture = picture;
         this.deleted = deleted;
         this.postedTime = postedTime;
-        this.location = location;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
+
     }
 
-    public Location getLocation() {
-        return location;
+    public String getAddress() {
+        return address;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public Profile getProfile() {

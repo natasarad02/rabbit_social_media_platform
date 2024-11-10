@@ -68,6 +68,9 @@ public class PostService {
             existingPost.setPicture(updatedPost.getPicture());
             existingPost.setDeleted(updatedPost.isDeleted());
             existingPost.setDescription(updatedPost.getDescription());
+            existingPost.setAddress(updatedPost.getAddress());
+            existingPost.setLongitude(updatedPost.getLongitude());
+            existingPost.setLatitude(updatedPost.getLatitude());
 
             return postRepository.save(existingPost);
         } else {

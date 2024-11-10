@@ -15,6 +15,7 @@ public class ProfileDTO {
     private String email;
     private String password;
     private Role role;
+    private String address;
 
     public ProfileDTO() {}
 
@@ -25,16 +26,18 @@ public class ProfileDTO {
         this.email = profile.getEmail();
         this.password = profile.getPassword();
         this.role = profile.getRole();
+        this.address = profile.getAddress();
 
     }
 
-    public ProfileDTO(Integer id, String name, String surname, String email, String password, Role role) {
+    public ProfileDTO(Integer id, String name, String surname, String email, String password, Role role, String address) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.address = address;
     }
 
     public Integer getId() {
@@ -75,6 +78,14 @@ public class ProfileDTO {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Role getRole() {

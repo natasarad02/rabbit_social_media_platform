@@ -44,6 +44,9 @@ public class Profile {
     @Column(name = "deleted")
     private boolean deleted;
 
+    @Column(name = "address", nullable = false)
+    private String address;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(
             name = "profile_following",
@@ -62,9 +65,9 @@ public class Profile {
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<Post> posts = new HashSet<Post>();
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    /*@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
-    private Location address;
+    private Location address;*/
 
     // Set of users that follow this user
 
@@ -80,7 +83,11 @@ public class Profile {
 
     }
 
-    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, Location address) {
+    public String getAddress() {
+        return address;
+    }
+
+    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, String address) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -89,6 +96,7 @@ public class Profile {
         this.role = role;
         this.deleted = deleted;
         this.address = address;
+
     }
 
     public Integer getId() {
@@ -105,6 +113,10 @@ public class Profile {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPassword() {
@@ -191,13 +203,7 @@ public class Profile {
         post.setProfile(this);
     }
 
-    public Location getAddress() {
-        return address;
-    }
 
-    public void setAddress(Location address) {
-        this.address = address;
-    }
 
     public Set<Post> getLikedPosts() {
         return likedPosts;

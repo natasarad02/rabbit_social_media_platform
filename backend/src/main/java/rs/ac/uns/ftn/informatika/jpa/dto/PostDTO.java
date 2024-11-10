@@ -16,6 +16,11 @@ public class PostDTO {
     private List<CommentDTO> comments;
    // private LocationDTO location;
  //   private ProfileDTO profile;
+    private String address;
+    private double longitude;
+    private double latitude;
+
+    private ProfileDTO profile;
 
     public PostDTO() {}
 
@@ -25,6 +30,10 @@ public class PostDTO {
         this.picture = post.getPicture();
         this.postedTime = post.getPostedTime();
         this.deleted = post.isDeleted();
+        this.address = post.getAddress();
+        this.longitude = post.getLongitude();
+        this.latitude = post.getLatitude();
+        this.profile = new ProfileDTO(post.getProfile());
        // this.location = new LocationDTO(post.getLocation());
        // this.profile = new ProfileDTO(post.getProfile());
 
@@ -32,7 +41,7 @@ public class PostDTO {
 
     }
 
-    public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments) {
+    public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments, String address, double longitude, double latitude, ProfileDTO profile) {
         this.id = id;
         this.description = description;
         this.picture = picture;
@@ -42,7 +51,19 @@ public class PostDTO {
         this.deleted = false;
       //  this.location = location;
       //  this.profile = profile;
+        this.address = address;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.profile = profile;
 
+    }
+
+    public ProfileDTO getProfile() {
+        return profile;
+    }
+
+    public void setProfile(ProfileDTO profile) {
+        this.profile = profile;
     }
 
     public Integer getId() {
@@ -93,7 +114,29 @@ public class PostDTO {
         this.comments = comments;
     }
 
-    
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
 
     public boolean isDeleted() {
         return deleted;

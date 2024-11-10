@@ -10,5 +10,9 @@ export interface PostDTO{
     deleted: boolean;
     likeCount: number;
     comments: CommentDTO[];
+    address: string;
+    latitude: number;
+    longitude: number;
+    
    
 }
