@@ -12,13 +12,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import rs.ac.uns.ftn.informatika.jpa.model.Profile;
+import rs.ac.uns.ftn.informatika.jpa.model.Role;
 
 // Utility klasa za rad sa JSON Web Tokenima
 @Component
 public class TokenUtils {
 
     // Izdavac tokena
-    @Value("spring-security-example")
+    // @Value("spring-security-example")
+    @Value("only_buns_app")
     private String APP_NAME;
 
     // Tajna koju samo backend aplikacija treba da zna kako bi mogla da generise i proveri JWT https://jwt.io/
@@ -54,13 +57,14 @@ public class TokenUtils {
      * @param username Korisničko ime korisnika kojem se token izdaje
      * @return JWT token
      */
-    public String generateToken(String username) {
+    public String generateToken(String username, Role role) {
         return Jwts.builder()
                 .setIssuer(APP_NAME)
                 .setSubject(username)
                 .setAudience(generateAudience())
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpirationDate())
+                .claim("role", role.toString())
                 .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
 
 
@@ -139,6 +143,25 @@ public class TokenUtils {
 
         return username;
     }
+
+    public Role getRoleFromToken(String token) {
+        Role role = null;
+
+        try {
+            final Claims claims = this.getAllClaimsFromToken(token);
+            String roleString = claims.get("role", String.class); // get the role as a string
+            if (roleString != null) {
+                role = Role.valueOf(roleString); // convert the string to a Role enum
+            }
+        } catch (ExpiredJwtException ex) {
+            throw ex;
+        } catch (Exception e) {
+            role = null;
+        }
+
+        return role;
+    }
+
 
     /**
      * Funkcija za preuzimanje datuma kreiranja tokena.
@@ -243,7 +266,17 @@ public class TokenUtils {
                 && username.equals(userDetails.getUsername()) // korisnicko ime iz tokena se podudara sa korisnickom imenom koje pise u bazi
                 && !isCreatedBeforeLastPasswordReset(created, user.getLastPasswordResetDate())); // nakon kreiranja tokena korisnik nije menjao svoju lozinku
          */
-        return false;
+        Profile profile = (Profile) userDetails;
+        final String username = getUsernameFromToken(token);
+        final Date created = getIssuedAtDateFromToken(token);
+        final Role role = getRoleFromToken(token);
+
+        // Token je validan kada:
+        return (username != null // korisnicko ime nije null
+                && role != null
+                && username.equals(userDetails.getUsername()) // korisnicko ime iz tokena se podudara sa korisnickom imenom koje pise u bazi
+                && !isCreatedBeforeLastPasswordReset(created, profile.getLastPasswordResetDate())); // nakon kreiranja tokena korisnik nije menjao svoju lozinku
+
     }
 
 
