@@ -38,7 +38,7 @@ public class ProfileService {
 
     public Page<Profile> getAllProfilesWithFollowersAndPosts(Pageable pageable, List<Integer> orderedProfileIds) {
 
-        
+
         List<Profile> allProfiles = profileRepository.findAllActiveProfilesSorted(Role.User, orderedProfileIds);
 
 
