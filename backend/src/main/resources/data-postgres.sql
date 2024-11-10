@@ -39,17 +39,18 @@ INSERT INTO location (longitude, latitude, address, number, deleted) VALUES
                                                                          (12.4964, 41.9028, 'Rome', '10', false);
 
 -- Inserting data into Profile
-INSERT INTO profile (email, password, name, surname, deleted, role) VALUES
-                                                                        ('marko@example.com', 'password123', 'Marko', 'Marković', false, 'User'),
-                                                                        ('milan@example.com', 'password456', 'Milan', 'Milanović', false, 'User'),
-                                                                        ('ivana@example.com', 'password789', 'Ivana', 'Ivanović', false, 'Administrator'),
-                                                                        ('bojan@example.com', 'password101', 'Bojan', 'Bojanović', false, 'Administrator'),
-                                                                        ('jane@example.com', 'password202', 'Jane', 'Doe', false, 'User'),
-                                                                        ('alex@example.com', 'password303', 'Alex', 'Smith', false, 'User'),
-                                                                        ('lisa@example.com', 'password404', 'Lisa', 'Johnson', false, 'User'),
-                                                                        ('john@example.com', 'password505', 'John', 'Doe', false, 'User'),
-                                                                        ('anna@example.com', 'password606', 'Anna', 'Taylor', false, 'Administrator'),
-                                                                        ('james@example.com', 'password707', 'James', 'Brown', false, 'User');
+INSERT INTO profile (email, username, password, name, surname, deleted, role, last_password_reset_date, address) VALUES
+                                                                                                                     ('marko@example.com', 'marko', 'password123', 'Marko', 'Marković', false, 'User', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('milan@example.com', 'milan', 'password456', 'Milan', 'Milanović', false, 'User', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('ivana@example.com', 'ivana', 'password789', 'Ivana', 'Ivanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('bojan@example.com', 'bojan', 'password101', 'Bojan', 'Bojanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('jane@example.com', 'jane', 'password202', 'Jane', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('alex@example.com', 'alex', 'password303', 'Alex', 'Smith', false, 'User', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('lisa@example.com', 'lisa', 'password404', 'Lisa', 'Johnson', false, 'User', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('john@example.com', 'john', 'password505', 'John', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('anna@example.com', 'anna', 'password606', 'Anna', 'Taylor', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
+                                                                                                                     ('james@example.com', 'james', 'password707', 'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL);
+
 
 -- Inserting data into Post
 INSERT INTO post (description, picture, deleted, posted_time, profile_id, location_id) VALUES
