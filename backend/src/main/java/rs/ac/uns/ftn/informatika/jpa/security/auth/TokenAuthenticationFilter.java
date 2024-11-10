@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.ExpiredJwtException;
+import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
 
 // Filter koji ce presretati SVAKI zahtev klijenta ka serveru
 // (sem nad putanjama navedenim u WebSecurityConfig.configure(WebSecurity web))
@@ -22,11 +23,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 // Ukoliko token postoji, proverava se da li je validan. Ukoliko je sve u redu, postavlja se autentifikacija
 // u SecurityContext holder kako bi podaci o korisniku bili dostupni u ostalim delovima aplikacije gde su neophodni
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-    @Override
-    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
 
-    }
-    /*
     private TokenUtils tokenUtils;
 
     private UserDetailsService userDetailsService;
@@ -77,5 +74,5 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         // prosledi request dalje u sledeci filter
         chain.doFilter(request, response);
     }
-    */
+
 }
