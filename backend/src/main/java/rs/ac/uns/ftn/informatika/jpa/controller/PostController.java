@@ -14,9 +14,11 @@ import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.service.CommentService;
+import rs.ac.uns.ftn.informatika.jpa.service.ImageService;
 import rs.ac.uns.ftn.informatika.jpa.service.PostService;
 import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,12 +29,14 @@ public class PostController {
     private PostService postService;
     private CommentService commentService;
     private ProfileService profileService;
+    private ImageService imageService;
 
     private PostDTOMapper postDTOMapper;
-    public PostController(@Autowired PostService postService, @Autowired CommentService commentService, @Autowired ProfileService profileService ) {
+    public PostController(@Autowired PostService postService, @Autowired CommentService commentService, @Autowired ProfileService profileService, @Autowired ImageService imageService ) {
         this.postService = postService;
         this.commentService = commentService;
         this.profileService = profileService;
+        this.imageService = imageService;
     }
 
     @GetMapping(value = "/forProfile/{id}")
@@ -99,9 +103,11 @@ public class PostController {
     }
 
     @PostMapping("/createpost/{profileId}")
-    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO, @PathVariable Integer profileId) {
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO, @PathVariable Integer profileId) throws IOException {
         Post post = postDTOMapper.fromDTOtoPost(postDTO);
         Profile profile = profileService.findOne(profileId);
+        String imagePath = imageService.saveImage(postDTO.getImageBase64());
+        post.setPicture(imagePath);
         post.setProfile(profile);
         if(post == null)
         {

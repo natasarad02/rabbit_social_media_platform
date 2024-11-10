@@ -17,16 +17,14 @@
             </mat-form-field>
 
             
-            <mat-form-field appearance="fill"  class="input-field">
-                <mat-label>Image</mat-label>
-                <input matInput formControlName="image" placeholder="Image"/>
-            </mat-form-field>
+            <input
+              type="file"
+              (change)="onFileSelected($event)"/>
+           
             <button (click)="createPost()" mat-raised-button formControlName="image" class="create-post-btn" color="primary">Create post</button>
         </form>
         </div>
-        <div class="image-container">
-            <h2>No Image</h2>
-        </div>
+       
     </div>
     <div class="map-container">
         <app-map (locationChanged)="setLocation($event)"></app-map>

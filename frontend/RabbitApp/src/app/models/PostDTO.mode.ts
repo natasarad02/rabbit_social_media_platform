@@ -13,6 +13,7 @@ export interface PostDTO{
     address: string;
     latitude: number;
     longitude: number;
+    imageBase64: string;
     
    
 }

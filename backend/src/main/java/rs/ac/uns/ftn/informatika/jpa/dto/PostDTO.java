@@ -22,6 +22,8 @@ public class PostDTO {
 
     private ProfileDTO profile;
 
+    private String imageBase64;
+
     public PostDTO() {}
 
     public PostDTO(Post post) {
@@ -41,7 +43,7 @@ public class PostDTO {
 
     }
 
-    public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments, String address, double longitude, double latitude, ProfileDTO profile) {
+    public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments, String address, double longitude, double latitude, ProfileDTO profile, String imageBase64) {
         this.id = id;
         this.description = description;
         this.picture = picture;
@@ -55,7 +57,16 @@ public class PostDTO {
         this.longitude = longitude;
         this.latitude = latitude;
         this.profile = profile;
+        this.imageBase64 = imageBase64;
 
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
     }
 
     public ProfileDTO getProfile() {

@@ -23,11 +23,18 @@ export class CreatePostComponent implements OnInit {
     address: '',
     longitude: 0,
     latitude: 0,
+    imageBase64: ''
    
 
   }
 
+  imageBase64: string = '';
+  
+
+  path: string = '/images/4e8abe61-bfbe-4d07-b61b-f398d289dd35.jpg';
+  //imageBeginningPath: string = 'http://localhost:8080';
   // Fiksiran profil dok se ne doda login
+  //uploadedImage: string = '';// = 'http://localhost:8080/images/4e8abe61-bfbe-4d07-b61b-f398d289dd35.jpg';
   profile: ProfileDTO = {
     id: 1,
     name: 'Marko',
@@ -56,6 +63,7 @@ export class CreatePostComponent implements OnInit {
 
   constructor(private service: CreatePostService){}
   ngOnInit(): void {
+    //this.uploadedImage = 'http://localhost:8080/images/4e8abe61-bfbe-4d07-b61b-f398d289dd35.jpg';
 
     
   }
@@ -72,7 +80,8 @@ export class CreatePostComponent implements OnInit {
       comments: [],
       address: this.location.address,
       longitude: this.location.longitude,
-      latitude: this.location.latitude
+      latitude: this.location.latitude,
+      imageBase64: this.imageBase64
     
      
     }
@@ -99,7 +108,8 @@ export class CreatePostComponent implements OnInit {
     this.service.createPost(this.newPost, this.profile.id).subscribe({
       next: (result: PostDTO) => {
         alert("Post created successfully");
-        window.location.reload();
+        this.path = result.picture;
+       // this.showImage(this.path);
       },
       error: (err: any) => {
         alert("Error creating post.");
@@ -118,6 +128,37 @@ export class CreatePostComponent implements OnInit {
     
    
   }
+  onFileSelected(event: any){
+    const file:File = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+       /* this.imageBase64 = reader.result as string;
+        this.keypointForm.patchValue({
+          imageBase64: this.imageBase64
+        });*/
+        this.imageBase64 = reader.result as string;
+        this.postForm.patchValue({
+          image: this.imageBase64
+        })
+
+     
+
+    };
+    reader.readAsDataURL(file); 
+
+}
+
+/*showImage(path: string) : void
+{
+   alert(this.imageBeginningPath + path);
+   this.uploadedImage =  this.imageBeginningPath + this.path;
+   
+}*/
+
+
+
+
+
 
 
 
