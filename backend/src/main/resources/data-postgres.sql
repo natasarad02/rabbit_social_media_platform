@@ -1,4 +1,4 @@
-/*insert into student (index_number, first_name, last_name) values ('5', 'Marko', 'Marković');
+insert into student (index_number, first_name, last_name) values ('5', 'Marko', 'Marković');
 insert into student (index_number, first_name, last_name) values ('ra2-2014', 'Milan', 'Milanović');
 insert into student (index_number, first_name, last_name) values ('ra3-2014', 'Ivana', 'Ivanović');
 insert into student (index_number, first_name, last_name) values ('ra4-2014', 'Bojan', 'Bojanović');
@@ -96,4 +96,3 @@ INSERT INTO profile_following (profile_id, followed_profile_id) VALUES
                                                                     (10, 3), -- James is following Ivana
                                                                     (3, 2),  -- Ivana is following Milan
                                                                     (5, 4);  -- Jane is following Bojan
-*/
