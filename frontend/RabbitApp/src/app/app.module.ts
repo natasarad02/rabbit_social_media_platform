@@ -8,10 +8,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { ViewPostsRegisteredComponent } from './pages/view-posts-registered/view-posts-registered.component';
 import { MatCardModule } from '@angular/material/card';
+import { CreatePostComponent } from './pages/create-post/create-post.component';
+import { MapComponent } from './pages/map/map.component';
+import { HomePageComponent } from './pages/home-page/home-page.component';
 
 
 
@@ -20,7 +23,10 @@ import { MatCardModule } from '@angular/material/card';
   declarations: [
     AppComponent,
     ViewProfileComponent,
-    ViewPostsRegisteredComponent
+    ViewPostsRegisteredComponent, 
+    CreatePostComponent,
+    MapComponent,
+    HomePageComponent
   ],
   imports: [
     BrowserModule,
@@ -31,8 +37,8 @@ import { MatCardModule } from '@angular/material/card';
     MatButtonModule,
     FormsModule,
     MatIconModule,
-    MatCardModule
-    
+    MatCardModule,    
+    ReactiveFormsModule
   ],
   providers: [
     provideAnimationsAsync()

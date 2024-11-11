@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 public class ProfileDTO {
     private Integer id;
     private String name;
@@ -24,6 +25,9 @@ public class ProfileDTO {
     private Set<Integer> commentIds;
     private Set<Integer> postIds;
     private Set<Integer> likedPostIds;
+    private String address;
+
+    public ProfileDTO() {}
 
     public ProfileDTO(Profile profile) {
         this.id = profile.getId();
@@ -79,6 +83,14 @@ public class ProfileDTO {
 
     public String getUsername() {
         return username;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public Role getRole() {

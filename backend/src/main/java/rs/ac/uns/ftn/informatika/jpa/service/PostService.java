@@ -66,7 +66,7 @@ public class PostService {
         return postRepository.findAllByProfileId(profileId);
     }
 
-    public void remove(Integer id) {
+   public void remove(Integer id) {
         postRepository.deleteById(id);
     }
 
@@ -80,6 +80,9 @@ public class PostService {
             existingPost.setPicture(updatedPost.getPicture());
             existingPost.setDeleted(updatedPost.isDeleted());
             existingPost.setDescription(updatedPost.getDescription());
+            existingPost.setAddress(updatedPost.getAddress());
+            existingPost.setLongitude(updatedPost.getLongitude());
+            existingPost.setLatitude(updatedPost.getLatitude());
 
             return postRepository.save(existingPost);
         } else {
