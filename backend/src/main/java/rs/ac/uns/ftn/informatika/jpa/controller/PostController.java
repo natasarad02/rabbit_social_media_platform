@@ -110,7 +110,7 @@ public class PostController {
     }
 
     @PutMapping(consumes = "application/json")
-    public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO) {
+    public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO) throws IOException {
 
         Post post = postService.findOne(postDTO.getId());
 
@@ -119,9 +119,10 @@ public class PostController {
         }
 
         post.setDescription(postDTO.getDescription());
-        if (post.getPicture() != null && !post.getPicture().isEmpty()) {
-            post.setPicture(postDTO.getPicture());
-        }
+
+        String imagePath = imageService.saveImage(postDTO.getImageBase64());
+        post.setPicture(imagePath);
+
 
         post.setAddress(postDTO.getAddress());
         post.setLongitude(postDTO.getLongitude());

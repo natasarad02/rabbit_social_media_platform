@@ -6,7 +6,7 @@ import { ProfileDTO } from '../../models/ProfileDTO.model';
 import { LocationDTO } from '../../models/LocationDTO.model';
 import { CreatePostService } from '../../services/create-post.service';
 import { PostService } from '../../services/post-service.service';
-import { ActivatedRoute, Route } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
 
 @Component({
@@ -53,7 +53,7 @@ export class UpdatePostComponent implements OnInit {
    
   })
 
-  constructor(private service: CreatePostService, private postService: PostService, private route: ActivatedRoute){}
+  constructor(private service: CreatePostService, private postService: PostService, private route: ActivatedRoute, private router: Router){}
   ngOnInit(): void {
 
       this.route.paramMap.subscribe(params => {
@@ -112,6 +112,8 @@ export class UpdatePostComponent implements OnInit {
       this.postService.updatePost(this.newPost).subscribe(
         (response) => {
           console.log(response);
+          this.path = response.picture;
+          this.router.navigate([`/view-posts`]);
         },
         (error) => {
           console.error('Error updating post', error);

@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class ViewPostsRegisteredComponent implements OnInit {
   posts: PostViewDTO[] = [];
-  profileId: number = 2;
+  profileId: number = 1;
   likeIds: number[] = [];
   imageStartPath: string = 'http://localhost:8080';
 
