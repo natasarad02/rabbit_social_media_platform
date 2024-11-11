@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { PostDTO } from '../../models/PostDTO.model';
 import { PostService } from '../../services/post-service.service';
+import { PostViewDTO } from '../../models/PostViewDTO.model';
 
 @Component({
   selector: 'app-view-posts-registered',
@@ -9,7 +9,7 @@ import { PostService } from '../../services/post-service.service';
   styleUrls: ['view-posts-registered.component.css']
 })
 export class ViewPostsRegisteredComponent implements OnInit {
-  posts: PostDTO[] = [];
+  posts: PostViewDTO[] = [];
   profileId: number = 1;
   likeIds: number[] = [];
 
@@ -20,7 +20,8 @@ export class ViewPostsRegisteredComponent implements OnInit {
     this.postService.getAllPosts().subscribe(
       (response) => {
         this.posts = response;
-        console.log(this.posts);
+        console.log(response);
+        console.log(this.posts)
       },
       (error) => {
         console.error('Error loading profiles', error);

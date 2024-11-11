@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
 import { PaginatedResponse } from "../models/Pagebale.model";
-import { PostDTO } from "../models/PostDTO.model";
+import { PostViewDTO } from "../models/PostViewDTO.model";
 
 @Injectable({
     providedIn: 'root'
@@ -13,8 +13,8 @@ export class PostService {
     private apiUrl = 'http://localhost:8080/api/posts';
     constructor(private http: HttpClient) { }
 
-    getAllPosts(): Observable<PostDTO[]> {
-        return this.http.get<PostDTO[]>(this.apiUrl);
+    getAllPosts(): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(this.apiUrl);
     }
 
     deletePost(id: number): Observable<void>
