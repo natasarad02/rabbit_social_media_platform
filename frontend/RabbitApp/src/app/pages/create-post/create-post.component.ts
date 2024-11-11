@@ -91,14 +91,6 @@ export class CreatePostComponent implements OnInit {
     console.log("Location");
     console.log(this.location);
 
-    this.service.createLocation(this.location).subscribe({
-      next: (result: LocationDTO) =>{
-  
-      },
-      error: (err: any) => {
-        alert("Error saving location");
-      }
-    });
 
     //this.newPost.location = this.location;
     // treba dodati profile id kad budemo imali logovanje

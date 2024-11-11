@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Base64Utils;
 import java.io.File;
@@ -10,7 +11,8 @@ import java.util.UUID;
 @Service
 public class ImageService {
 
-    private static final String IMAGE_DIRECTORY = "src/main/resources/static/images/";
+    @Value("${image.upload.dir}")
+    private String IMAGE_DIRECTORY;
 
     public String saveImage(String imageBase64) throws IOException {
         // Remove the prefix if it exists
