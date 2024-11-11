@@ -87,7 +87,6 @@ public class PostController {
             for (Comment comment : commentService.findAllForPost(post.getId())) {
                 commentDTOs.add(new CommentDTO(comment));
             }
-            postDTO.setProfileId(post.getProfile().getId());
             postDTO.setComments(commentDTOs);
             postDTO.setAddress(post.getAddress());
             postDTO.setLongitude(post.getLongitude());

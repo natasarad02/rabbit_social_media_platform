@@ -46,6 +46,8 @@ export class PostService {
       updatePost(postDTO: PostViewDTO): Observable<PostViewDTO> {
         return this.http.put<PostViewDTO>(this.apiUrl, postDTO);
     }
+
+    
     
 
     

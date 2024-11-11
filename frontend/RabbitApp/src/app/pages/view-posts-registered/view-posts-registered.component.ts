@@ -11,7 +11,7 @@ import { Router } from '@angular/router';
 })
 export class ViewPostsRegisteredComponent implements OnInit {
   posts: PostViewDTO[] = [];
-  profileId: number = 1;
+  profileId: number = 2;
   likeIds: number[] = [];
   imageStartPath: string = 'http://localhost:8080';
 
@@ -25,10 +25,13 @@ export class ViewPostsRegisteredComponent implements OnInit {
         console.log(this.posts);
 
         this.posts.forEach(post => {
+        })
+
+        this.posts.forEach(post => {
           if(post.picture.includes("/images"))
            {
              post.picture = this.imageStartPath + post.picture;
-             alert(post.picture);
+             
            } 
         });
       },
@@ -37,7 +40,10 @@ export class ViewPostsRegisteredComponent implements OnInit {
       }
     );
       this.loadLikedPosts();
+      
   }
+
+
 
   loadLikedPosts()
   {
@@ -68,7 +74,6 @@ export class ViewPostsRegisteredComponent implements OnInit {
     this.postService.likePost(this.profileId, postId).subscribe(()=> {
       this.ngOnInit();
       console.log("success")
-
     },
     (error) => {
       console.error('Error liking', error);

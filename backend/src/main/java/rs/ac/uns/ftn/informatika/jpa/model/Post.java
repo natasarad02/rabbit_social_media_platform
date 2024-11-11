@@ -77,8 +77,8 @@ public class Post {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH})
     @JoinTable(name = "likes",
-            joinColumns = @JoinColumn(name = "profile_id" , referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id" , referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "post_id" , referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "profile_id" , referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
     public Post() {
