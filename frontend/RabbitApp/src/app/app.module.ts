@@ -15,6 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { MapComponent } from './pages/map/map.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
+import { UpdatePostComponent } from './pages/update-post/update-post.component';
 
 
 
@@ -26,7 +27,8 @@ import { HomePageComponent } from './pages/home-page/home-page.component';
     ViewPostsRegisteredComponent, 
     CreatePostComponent,
     MapComponent,
-    HomePageComponent
+    HomePageComponent,
+    UpdatePostComponent
   ],
   imports: [
     BrowserModule,

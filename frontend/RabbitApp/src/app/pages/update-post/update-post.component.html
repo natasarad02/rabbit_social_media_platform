@@ -1,0 +1,32 @@
+<div class="create-post-page-div">
+    <h1>Update post</h1>
+
+    
+    <div class="create-post-content">
+        <div class="create-post-form">
+            <form [formGroup] = "postForm" (submit)="updatePost()">
+            <mat-form-field appearance="fill" class="input-field">
+                <mat-label>Address</mat-label>
+                <input matInput formControlName="address"  placeholder="Location"/>
+            </mat-form-field>
+
+            
+            <mat-form-field appearance="fill"  class="input-field">
+                <mat-label>Description</mat-label>
+                <input matInput formControlName="description" placeholder="Description"/>
+            </mat-form-field>
+
+            
+            <input
+              type="file"
+              (change)="onFileSelected($event)"/>
+           
+            <button mat-raised-button formControlName="image" class="create-post-btn" color="primary">Update post</button>
+        </form>
+        </div>
+       
+    </div>
+    <div class="map-container">
+        <app-map (locationChanged)="setLocation($event)"></app-map>
+    </div>
+</div>

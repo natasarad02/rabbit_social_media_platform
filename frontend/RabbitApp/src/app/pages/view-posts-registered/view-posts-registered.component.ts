@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { PostService } from '../../services/post-service.service';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-view-posts-registered',
@@ -14,7 +15,7 @@ export class ViewPostsRegisteredComponent implements OnInit {
   likeIds: number[] = [];
   imageStartPath: string = 'http://localhost:8080';
 
-  constructor(private postService: PostService){}
+  constructor(private postService: PostService, private router: Router){}
 
 
   ngOnInit(): void {
@@ -26,7 +27,6 @@ export class ViewPostsRegisteredComponent implements OnInit {
         this.posts.forEach(post => {
           if(post.picture.includes("/images"))
            {
-             //alert(this.imageStartPath + post.picture);
              post.picture = this.imageStartPath + post.picture;
              alert(post.picture);
            } 
@@ -73,6 +73,11 @@ export class ViewPostsRegisteredComponent implements OnInit {
     (error) => {
       console.error('Error liking', error);
     })
+  }
+
+  goToUpdate(id: number)
+  {
+    this.router.navigate([`/update-post/${id}`]);
   }
 
   

@@ -1,0 +1,56 @@
+h1{
+  font-size: 2.5em;
+  text-align: center;
+}
+
+
+.create-post-form {
+  display: flex;
+  flex-direction: column;
+  
+  width: 15%;
+  background-color: #f9f9f9; 
+  align-items: center;
+  border-radius: 8px; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+
+}
+
+.create-post-content{
+  display: flex;
+  gap: 2%;
+  width: 100%;
+  justify-content: center;
+}
+
+.image-container{
+  display: flex;
+  background-color: blanchedalmond;
+  align-items: center;
+  justify-content: center;
+  width: 20%;
+}
+
+h2{
+  font-size: 1.5em;
+  text-align: center;
+  width: 80%;
+}
+
+.create-post-page-div{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+ 
+  
+
+}
+
+.create-post-btn{
+  width: 50%;
+}
+
+.map-container{
+  width: 50%;
+  margin-top: 5vh;
+}

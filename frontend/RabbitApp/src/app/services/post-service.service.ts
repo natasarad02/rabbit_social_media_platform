@@ -4,6 +4,7 @@ import { Observable } from "rxjs";
 import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
 import { PaginatedResponse } from "../models/Pagebale.model";
 import { PostViewDTO } from "../models/PostViewDTO.model";
+import { PostDTO } from "../models/PostDTO.mode";
 
 @Injectable({
     providedIn: 'root'
@@ -36,6 +37,16 @@ export class PostService {
             params: new HttpParams().set('profileId', idProfile)
         });
     }
+
+    getPostById(id: number): Observable<PostViewDTO> {
+        const url = `${this.apiUrl}/id/${id}`;
+        return this.http.get<PostViewDTO>(url);
+      }
+
+      updatePost(postDTO: PostViewDTO): Observable<PostViewDTO> {
+        return this.http.put<PostViewDTO>(this.apiUrl, postDTO);
+    }
+    
 
     
 

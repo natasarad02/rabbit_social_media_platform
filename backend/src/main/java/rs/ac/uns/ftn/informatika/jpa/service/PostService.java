@@ -98,6 +98,10 @@ public class PostService {
         return postRepository.findLikedPostIdsByProfileId(profileId);
     }
 
+    public  Post getById(Integer id) {
+        return postRepository.findById(id).orElse(null);
+    }
+
 
 
 

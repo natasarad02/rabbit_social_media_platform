@@ -8,7 +8,11 @@ export interface PostViewDTO {
     likeCount: number;
     followingCount: number;
     comments: CommentDTO[];
-    profile: ProfileDTO;
+    profile?: ProfileDTO;
+    address: string;
+    latitude: number;
+    longitude: number;
+    imageBase64: string;
 }
 
 

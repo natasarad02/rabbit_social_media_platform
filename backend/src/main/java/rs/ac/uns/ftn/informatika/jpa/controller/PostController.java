@@ -100,6 +100,16 @@ public class PostController {
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping(value = "/id/{id}")
+    public ResponseEntity<PostDTO> getPostById(@PathVariable("id") Integer id) {
+
+        Post post = postService.findOne(id);
+        PostDTO postDTO = new PostDTO(post);
+
+        return new ResponseEntity<>(postDTO, HttpStatus.OK);
+    }
+
     @PutMapping(consumes = "application/json")
     public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO) {
 
@@ -110,7 +120,10 @@ public class PostController {
         }
 
         post.setDescription(postDTO.getDescription());
-        post.setPicture(postDTO.getPicture());
+        if (post.getPicture() != null && !post.getPicture().isEmpty()) {
+            post.setPicture(postDTO.getPicture());
+        }
+
         post.setAddress(postDTO.getAddress());
         post.setLongitude(postDTO.getLongitude());
         post.setLatitude(postDTO.getLatitude());
