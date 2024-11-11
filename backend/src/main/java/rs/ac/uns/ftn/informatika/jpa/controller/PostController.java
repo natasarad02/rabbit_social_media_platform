@@ -9,13 +9,17 @@ import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
 import rs.ac.uns.ftn.informatika.jpa.mapper.CommentDTOMapper;
+import rs.ac.uns.ftn.informatika.jpa.mapper.PostDTOMapper;
 import rs.ac.uns.ftn.informatika.jpa.model.Comment;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.service.CommentService;
+import rs.ac.uns.ftn.informatika.jpa.service.ImageService;
 import rs.ac.uns.ftn.informatika.jpa.service.PostService;
+import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,12 +29,17 @@ import java.util.stream.Collectors;
 public class PostController {
     private PostService postService;
     private CommentService commentService;
+    private ProfileService profileService;
+    private ImageService imageService;
 
-    public PostController(@Autowired PostService postService, @Autowired CommentService commentService) {
+    private PostDTOMapper postDTOMapper;
+    public PostController(@Autowired PostService postService, @Autowired CommentService commentService, @Autowired ProfileService profileService, @Autowired ImageService imageService ) {
         this.postService = postService;
         this.commentService = commentService;
+        this.profileService = profileService;
+        this.imageService = imageService;
     }
-
+    /*
     @GetMapping(value = "/forProfile/{id}")
     public ResponseEntity<List<PostDTO>> getAllPostsForProfile(@PathVariable Integer id) {
 
@@ -44,6 +53,9 @@ public class PostController {
             postDTO.setPostedTime(post.getPostedTime());
             postDTO.setPicture(post.getPicture());
             postDTO.setDescription(post.getDescription());
+            postDTO.setAddress(post.getAddress());
+            postDTO.setLongitude(post.getLongitude());
+            postDTO.setLatitude(post.getLatitude());
             postDTO.setLikeCount(postService.countLikesForPost(post.getId()));
             List<CommentDTO> commentDTOs = new ArrayList<>();
             for (Comment comment : commentService.findAllForPost(post.getId())) {
@@ -55,7 +67,7 @@ public class PostController {
         }
 
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping
     public ResponseEntity<List<PostDTO>> getAllPosts() {
@@ -77,6 +89,10 @@ public class PostController {
             }
             postDTO.setProfileId(post.getProfile().getId());
             postDTO.setComments(commentDTOs);
+            postDTO.setAddress(post.getAddress());
+            postDTO.setLongitude(post.getLongitude());
+            postDTO.setLatitude(post.getLatitude());
+            postDTO.setProfile(new ProfileDTO(post.getProfile()));
             postDTOs.add(postDTO);
 
         }
@@ -95,6 +111,9 @@ public class PostController {
 
         post.setDescription(postDTO.getDescription());
         post.setPicture(postDTO.getPicture());
+        post.setAddress(postDTO.getAddress());
+        post.setLongitude(postDTO.getLongitude());
+        post.setLatitude(postDTO.getLatitude());
 
         post = postService.save(post);
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
@@ -108,6 +127,23 @@ public class PostController {
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
     }
 
+    @PostMapping("/createpost/{profileId}")
+    public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO, @PathVariable Integer profileId) throws IOException {
+        Post post = postDTOMapper.fromDTOtoPost(postDTO);
+        Profile profile = profileService.findOne(profileId);
+        String imagePath = imageService.saveImage(postDTO.getImageBase64());
+        post.setPicture(imagePath);
+        post.setProfile(profile);
+        if(post == null)
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        post = postService.save(post);
+        return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
+
+    }
+
     @PostMapping("/like")
     public ResponseEntity<Void> likePost(@RequestParam Integer profileId, @RequestParam Integer postId) {
         postService.addLike(profileId, postId);
@@ -119,9 +155,6 @@ public class PostController {
         List<Integer> likes = postService.getPostIdsForProfile(profileId);
         return new ResponseEntity<>(likes, HttpStatus.OK);
     }
-
-   
-
 
 
 }

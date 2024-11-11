@@ -1,4 +1,4 @@
-/*package rs.ac.uns.ftn.informatika.jpa.model;
+package rs.ac.uns.ftn.informatika.jpa.model;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -135,4 +135,3 @@ public class Location {
                 '}';
     }
 }
-*/

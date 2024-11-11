@@ -28,6 +28,14 @@ public class Post {
     @Column(name = "picture", nullable = false)
     private String picture;
 
+    @Column(name = "address", nullable = false)
+    private String address;
+
+    @Column(name = "longitude", nullable = false)
+    private double longitude;
+
+    @Column(name = "latitude", nullable = false)
+    private double latitude;
 
 
     @Column(name = "deleted")
@@ -58,6 +66,10 @@ public class Post {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
+
+    /*@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    private Location location;*/
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id")
@@ -103,6 +115,30 @@ public class Post {
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
     }
 
     public LocalDateTime getPostedTime() {

@@ -74,6 +74,9 @@ public class Profile implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
+    public Profile() {
+    }
+
 
     @JsonIgnore
     @Override
@@ -86,6 +89,21 @@ public class Profile implements UserDetails {
     @Override
     public boolean isAccountNonExpired() {
         return true;
+    }
+    public String getAddress() {
+        return address;
+    }
+
+    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, String address) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.surname = surname;
+        this.role = role;
+        this.deleted = deleted;
+        this.address = address;
+
     }
 
     @JsonIgnore
@@ -129,6 +147,9 @@ public class Profile implements UserDetails {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPassword() {
@@ -205,13 +226,17 @@ public class Profile implements UserDetails {
         this.posts = posts;
     }
 
-    public String getAddress() {
-        return address;
+    public void addPost(Post post) {
+        posts.add(post);
+        post.setProfile(this);
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void removePost(Post post) {
+        posts.remove(post);
+        post.setProfile(this);
     }
+
+
 
     public Set<Post> getLikedPosts() {
         return likedPosts;

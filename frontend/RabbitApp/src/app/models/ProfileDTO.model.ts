@@ -1,7 +1,9 @@
-export interface ProfileDTO {
+export interface ProfileDTO{
     id: number;
     name: string;
     surname: string;
     email: string;
-    role: number;
+    password: string;
+    role: string; 
+    address: string;
 }
