@@ -39,7 +39,7 @@ public class PostController {
         this.profileService = profileService;
         this.imageService = imageService;
     }
-
+    /*
     @GetMapping(value = "/forProfile/{id}")
     public ResponseEntity<List<PostDTO>> getAllPostsForProfile(@PathVariable Integer id) {
 
@@ -67,7 +67,7 @@ public class PostController {
         }
 
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping
     public ResponseEntity<List<PostDTO>> getAllPosts() {
@@ -89,6 +89,10 @@ public class PostController {
             }
             postDTO.setProfileId(post.getProfile().getId());
             postDTO.setComments(commentDTOs);
+            postDTO.setAddress(post.getAddress());
+            postDTO.setLongitude(post.getLongitude());
+            postDTO.setLatitude(post.getLatitude());
+            postDTO.setProfile(new ProfileDTO(post.getProfile()));
             postDTOs.add(postDTO);
 
         }

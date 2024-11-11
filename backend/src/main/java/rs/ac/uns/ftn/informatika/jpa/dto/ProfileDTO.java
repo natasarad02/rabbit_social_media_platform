@@ -20,12 +20,11 @@ public class ProfileDTO {
     private boolean deleted;
     private Timestamp lastPasswordResetDate;
     private String address;
-    private Set<Integer> followingIds;
-    private Set<Integer> followerIds;
-    private Set<Integer> commentIds;
-    private Set<Integer> postIds;
-    private Set<Integer> likedPostIds;
-    private String address;
+    //private Set<Integer> followingIds;
+    //private Set<Integer> followerIds;
+   // private Set<Integer> commentIds;
+    //private Set<Integer> postIds;
+    //private Set<Integer> likedPostIds;
 
     public ProfileDTO() {}
 
@@ -39,16 +38,15 @@ public class ProfileDTO {
         this.deleted = profile.isDeleted();
         this.lastPasswordResetDate = profile.getLastPasswordResetDate();
         this.address = profile.getAddress();
-        this.followingIds = profile.getFollowing().stream().map(Profile::getId).collect(Collectors.toSet());
-        this.followerIds = profile.getFollowers().stream().map(Profile::getId).collect(Collectors.toSet());
-        this.commentIds = profile.getComments().stream().map(Comment::getId).collect(Collectors.toSet());
-        this.postIds = profile.getPosts().stream().map(Post::getId).collect(Collectors.toSet());
-        this.likedPostIds = profile.getLikedPosts().stream().map(Post::getId).collect(Collectors.toSet());
+       // this.followingIds = profile.getFollowing().stream().map(Profile::getId).collect(Collectors.toSet());
+       // this.followerIds = profile.getFollowers().stream().map(Profile::getId).collect(Collectors.toSet());
+       // this.commentIds = profile.getComments().stream().map(Comment::getId).collect(Collectors.toSet());
+       // this.postIds = profile.getPosts().stream().map(Post::getId).collect(Collectors.toSet());
+       // this.likedPostIds = profile.getLikedPosts().stream().map(Post::getId).collect(Collectors.toSet());
     }
 
     public ProfileDTO(Integer id, String name, String surname, String email, String username, Role role,
-                      boolean deleted, Timestamp lastPasswordResetDate, String address, Set<Integer> followingIds,
-                      Set<Integer> followerIds, Set<Integer> commentIds, Set<Integer> postIds, Set<Integer> likedPostIds) {
+                      boolean deleted, Timestamp lastPasswordResetDate, String address) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -58,11 +56,11 @@ public class ProfileDTO {
         this.deleted = deleted;
         this.lastPasswordResetDate = lastPasswordResetDate;
         this.address = address;
-        this.followingIds = followingIds;
-        this.followerIds = followerIds;
-        this.commentIds = commentIds;
-        this.postIds = postIds;
-        this.likedPostIds = likedPostIds;
+       // this.followingIds = followingIds;
+       // this.followerIds = followerIds;
+       // this.commentIds = commentIds;
+       // this.postIds = postIds;
+      //  this.likedPostIds = likedPostIds;
     }
 
     public Integer getId() {
@@ -105,30 +103,6 @@ public class ProfileDTO {
         return lastPasswordResetDate;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public Set<Integer> getFollowingIds() {
-        return followingIds;
-    }
-
-    public Set<Integer> getFollowerIds() {
-        return followerIds;
-    }
-
-    public Set<Integer> getCommentIds() {
-        return commentIds;
-    }
-
-    public Set<Integer> getPostIds() {
-        return postIds;
-    }
-
-    public Set<Integer> getLikedPostIds() {
-        return likedPostIds;
-    }
-
     public void setId(Integer id) {
         this.id = id;
     }
@@ -161,27 +135,4 @@ public class ProfileDTO {
         this.lastPasswordResetDate = lastPasswordResetDate;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public void setFollowingIds(Set<Integer> followingIds) {
-        this.followingIds = followingIds;
-    }
-
-    public void setFollowerIds(Set<Integer> followerIds) {
-        this.followerIds = followerIds;
-    }
-
-    public void setCommentIds(Set<Integer> commentIds) {
-        this.commentIds = commentIds;
-    }
-
-    public void setPostIds(Set<Integer> postIds) {
-        this.postIds = postIds;
-    }
-
-    public void setLikedPostIds(Set<Integer> likedPostIds) {
-        this.likedPostIds = likedPostIds;
-    }
 }

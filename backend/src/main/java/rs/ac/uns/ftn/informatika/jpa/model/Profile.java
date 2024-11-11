@@ -74,6 +74,9 @@ public class Profile implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
+    public Profile() {
+    }
+
 
     @JsonIgnore
     @Override
