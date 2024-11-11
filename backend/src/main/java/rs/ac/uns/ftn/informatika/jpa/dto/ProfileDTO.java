@@ -20,11 +20,6 @@ public class ProfileDTO {
     private boolean deleted;
     private Timestamp lastPasswordResetDate;
     private String address;
-    //private Set<Integer> followingIds;
-    //private Set<Integer> followerIds;
-   // private Set<Integer> commentIds;
-    //private Set<Integer> postIds;
-    //private Set<Integer> likedPostIds;
 
     public ProfileDTO() {}
 
@@ -38,11 +33,6 @@ public class ProfileDTO {
         this.deleted = profile.isDeleted();
         this.lastPasswordResetDate = profile.getLastPasswordResetDate();
         this.address = profile.getAddress();
-       // this.followingIds = profile.getFollowing().stream().map(Profile::getId).collect(Collectors.toSet());
-       // this.followerIds = profile.getFollowers().stream().map(Profile::getId).collect(Collectors.toSet());
-       // this.commentIds = profile.getComments().stream().map(Comment::getId).collect(Collectors.toSet());
-       // this.postIds = profile.getPosts().stream().map(Post::getId).collect(Collectors.toSet());
-       // this.likedPostIds = profile.getLikedPosts().stream().map(Post::getId).collect(Collectors.toSet());
     }
 
     public ProfileDTO(Integer id, String name, String surname, String email, String username, Role role,
@@ -56,11 +46,6 @@ public class ProfileDTO {
         this.deleted = deleted;
         this.lastPasswordResetDate = lastPasswordResetDate;
         this.address = address;
-       // this.followingIds = followingIds;
-       // this.followerIds = followerIds;
-       // this.commentIds = commentIds;
-       // this.postIds = postIds;
-      //  this.likedPostIds = likedPostIds;
     }
 
     public Integer getId() {
