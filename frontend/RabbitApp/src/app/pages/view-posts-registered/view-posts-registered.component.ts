@@ -12,6 +12,7 @@ export class ViewPostsRegisteredComponent implements OnInit {
   posts: PostDTO[] = [];
   profileId: number = 1;
   likeIds: number[] = [];
+  imageStartPath: string = 'http://localhost:8080';
 
   constructor(private postService: PostService){}
 
@@ -21,6 +22,15 @@ export class ViewPostsRegisteredComponent implements OnInit {
       (response) => {
         this.posts = response;
         console.log(this.posts);
+
+        this.posts.forEach(post => {
+          if(post.picture.includes("/images"))
+           {
+             //alert(this.imageStartPath + post.picture);
+             post.picture = this.imageStartPath + post.picture;
+             alert(post.picture);
+           } 
+        });
       },
       (error) => {
         console.error('Error loading profiles', error);
