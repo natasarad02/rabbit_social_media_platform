@@ -46,7 +46,7 @@ public class AuthenticationController {
         // AuthenticationException
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-        
+
         // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
         // kontekst
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -61,16 +61,16 @@ public class AuthenticationController {
     }
 
     // Endpoint za registraciju novog korisnika
-    @PostMapping("/signup")
-    public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-        Profile existUser = this.userService.findByUsername(userRequest.getUsername());
 
-        if (existUser != null) {
-            throw new ResourceConflictException(userRequest.getId(), "Username already exists");
-        }
+}@PostMapping("/signup")
+public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
+    Profile existUser = this.userService.findByUsername(userRequest.getUsername());
 
-        Profile user = this.userService.saveProfile(userRequest);
-
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    if (existUser != null) {
+        throw new ResourceConflictException(userRequest.getId(), "Username already exists");
     }
+
+    Profile user = this.userService.saveProfile(userRequest);
+
+    return new ResponseEntity<>(user, HttpStatus.CREATED);
 }
