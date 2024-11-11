@@ -9,7 +9,6 @@ import { HomePageComponent } from './pages/home-page/home-page.component';
 export const routes: Routes = [
     { path: 'view-profile', component: ViewProfileComponent },
     { path: 'view-posts', component: ViewPostsRegisteredComponent },
-    { path: 'view-profile', component: ViewProfileComponent },
     { path: 'create-post', component: CreatePostComponent},
     { path: '', component: HomePageComponent}
 ];

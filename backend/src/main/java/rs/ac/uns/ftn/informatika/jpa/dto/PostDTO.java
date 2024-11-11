@@ -38,7 +38,7 @@ public class PostDTO {
         this.latitude = post.getLatitude();
         this.profile = new ProfileDTO(post.getProfile());
        // this.location = new LocationDTO(post.getLocation());
-       // this.profile = new ProfileDTO(post.getProfile());
+
 
 
 
@@ -53,7 +53,6 @@ public class PostDTO {
         this.comments = comments;
         this.deleted = false;
       //  this.location = location;
-      //  this.profile = profile;
         this.address = address;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -158,11 +157,9 @@ public class PostDTO {
         this.deleted = deleted;
     }
 
-    public Integer getProfileId() {
-        return profileId;
-    }
-
     public void setProfileId(Integer profileId) {
         this.profileId = profileId;
     }
+
+
 }
