@@ -6,6 +6,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
@@ -32,6 +33,7 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/all")
+    @PreAuthorize("hasAuthority('Administrator')")
     public ResponseEntity<List<ProfileViewDTO>> getAllProfiles() {
 
         List<Profile> profiles = profileService.getAllProfilesWithFollowersAndPosts();
@@ -56,6 +58,7 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/allPaged")
+    @PreAuthorize("hasAuthority('Administrator')")
     public ResponseEntity<Page<ProfileViewDTO>> getAllProfiles(Pageable pageable, @RequestParam("profileIds") List<Integer> profileIds) {
         Page<Profile> profiles = profileService.getAllProfilesWithFollowersAndPosts(pageable, profileIds);
 
@@ -81,6 +84,7 @@ public class ProfileController {
 
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
     public ResponseEntity<ProfileDTO> getProfile(@PathVariable Integer id) {
         Profile profile = profileService.findOne(id);
         ProfileDTO profileDTO = new ProfileDTO(profile);
