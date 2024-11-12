@@ -101,6 +101,7 @@ export class CreatePostComponent implements OnInit {
       next: (result: PostDTO) => {
         alert("Post created successfully");
         this.path = result.picture;
+        window.location.reload();
        // this.showImage(this.path);
       },
       error: (err: any) => {
