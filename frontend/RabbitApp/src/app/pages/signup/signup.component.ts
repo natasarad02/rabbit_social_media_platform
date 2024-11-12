@@ -48,7 +48,7 @@ export class SignupComponent {
         next: response => {
           console.log('Signup successful:', response);
           alert("sucessfully made a profile");
-          this.router.navigate(['/login']); // Redirect to login on success
+          this.router.navigate(['/login']); 
         },
         error: error => {
           console.error('Signup failed:', error);
