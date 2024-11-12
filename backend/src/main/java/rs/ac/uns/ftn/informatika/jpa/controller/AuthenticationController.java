@@ -6,14 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.JwtAuthenticationRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
@@ -22,6 +20,8 @@ import rs.ac.uns.ftn.informatika.jpa.exception.ResourceConflictException;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
+
+import java.security.Principal;
 
 //Kontroler zaduzen za autentifikaciju korisnika
 @RestController
@@ -61,16 +61,22 @@ public class AuthenticationController {
     }
 
     // Endpoint za registraciju novog korisnika
+    @PostMapping("/signup")
+    public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
+        Profile existUser = this.userService.findByUsername(userRequest.getUsername());
 
-}@PostMapping("/signup")
-public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-    Profile existUser = this.userService.findByUsername(userRequest.getUsername());
+        if (existUser != null) {
+            throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+        }
 
-    if (existUser != null) {
-        throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+        Profile user = this.userService.saveProfile(userRequest);
+
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    Profile user = this.userService.saveProfile(userRequest);
-
-    return new ResponseEntity<>(user, HttpStatus.CREATED);
+    @GetMapping("/whoami")
+    // @PreAuthorize("hasAnyRole('ADMIN', 'USER')") // obrisati komentar posle
+    public Profile user(Principal user) {
+        return this.userService.findByUsername(user.getName());
+    }
 }
