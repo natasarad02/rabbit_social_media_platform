@@ -36,10 +36,36 @@ public class TokenUtils {
     private String AUTH_HEADER;
 
     private static final String AUDIENCE_WEB = "web";
+    private final String SECRET_KEY = "your-secret-key";
 
     // Algoritam za potpisivanje JWT
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
+    public String generateActivationToken(String email) {
+        return Jwts.builder()
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // 24-hour expiration
+                .signWith(SECRET, SIGNATURE_ALGORITHM)
+                .compact();
+    }
+
+    public String extractEmail(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+
+    public boolean isTokenExpired(String token) {
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration()
+                .before(new Date());
+    }
 
     // ============= Funkcije za generisanje JWT tokena =============
 

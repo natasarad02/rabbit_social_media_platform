@@ -38,6 +38,8 @@ public class AuthenticationController {
 
     @Autowired
     private ProfileService userService;
+    @Autowired
+    private ProfileService profileService;
 
     // Prvi endpoint koji pogadja korisnik kada se loguje.
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
@@ -57,7 +59,6 @@ public class AuthenticationController {
         Profile user = (Profile) authentication.getPrincipal();
         String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole());
         int expiresIn = tokenUtils.getExpiredIn();
-
         // Vrati token kao odgovor na uspesnu autentifikaciju
         return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
     }
@@ -72,7 +73,7 @@ public class AuthenticationController {
         }
 
         Profile user = this.userService.saveProfile(userRequest);
-
+        profileService.sendActivationEmail(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 

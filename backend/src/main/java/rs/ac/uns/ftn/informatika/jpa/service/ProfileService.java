@@ -1,9 +1,12 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
@@ -12,6 +15,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
+import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,6 +26,15 @@ public class ProfileService {
     private final ProfileRepository profileRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JavaMailSender mailSender;
+
+    @Autowired
+    private TokenUtils tokenUtils;
+
+    @Value("${spring.mail.username}")
+    private String fromEmail;
 
     public ProfileService(@Autowired ProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
@@ -81,5 +94,32 @@ public class ProfileService {
         profileToSave.setSurname(profile.getLastname());
         profileToSave.setAddress(profile.getAddress());
         return profileRepository.save(profileToSave);
+    }
+
+    public void sendActivationEmail(Profile user) {
+        String token = tokenUtils.generateActivationToken(user.getEmail());
+        String activationLink = "http://localhost:8080/api/profiles/activate?token=" + token;
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Complete Registration!");
+        mailMessage.setFrom(fromEmail);
+        mailMessage.setText("To activate your account, click here: " + activationLink);
+
+        mailSender.send(mailMessage);
+    }
+
+    public boolean activateUser(String token) {
+        if (tokenUtils.isTokenExpired(token)) {
+            return false;
+        }
+        String email = tokenUtils.extractEmail(token);
+        Profile user = profileRepository.findActiveProfileByEmail(email);
+        if (user != null && !user.isActivated()) {
+            user.setActivated(true);
+            profileRepository.save(user);
+            return true;
+        }
+        return false;
     }
 }

@@ -95,4 +95,14 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTO);
     }
 
+
+
+    @GetMapping("/activate")
+    public ResponseEntity<String> activateUser(@RequestParam("email") String email) {
+        if (profileService.activateUser(email)) {
+            return ResponseEntity.ok("Account activated successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Activation failed. User not found or already activated.");
+        }
+    }
 }
