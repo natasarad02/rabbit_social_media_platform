@@ -16,6 +16,8 @@ import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { MapComponent } from './pages/map/map.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { LoginComponent } from './pages/login/login.component';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -38,7 +40,9 @@ import { LoginComponent } from './pages/login/login.component';
     FormsModule,
     MatIconModule,
     MatCardModule,    
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule,
+    CommonModule
   ],
   providers: [
     provideAnimationsAsync()
