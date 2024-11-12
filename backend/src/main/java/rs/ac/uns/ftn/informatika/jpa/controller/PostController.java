@@ -119,24 +119,13 @@ public class PostController {
     @PreAuthorize("hasAuthority('User')")
     public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO) throws IOException {
 
-        Post post = postService.findOne(postDTO.getId());
+        Post updatedPost = postService.updatePost(postDTO);
 
-        if (post == null) {
+        if (updatedPost == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        post.setDescription(postDTO.getDescription());
-
-        String imagePath = imageService.saveImage(postDTO.getImageBase64());
-        post.setPicture(imagePath);
-
-
-        post.setAddress(postDTO.getAddress());
-        post.setLongitude(postDTO.getLongitude());
-        post.setLatitude(postDTO.getLatitude());
-
-        post = postService.save(post);
-        return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
+        return new ResponseEntity<>(new PostDTO(updatedPost), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyAuthority('Administrator', 'User')")

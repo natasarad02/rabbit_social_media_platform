@@ -3,6 +3,8 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { PostService } from '../../services/post-service.service';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
 import { Router } from '@angular/router';
+import { ProfileDTO } from '../../models/ProfileDTO.model';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-view-posts-registered',
@@ -14,11 +16,13 @@ export class ViewPostsRegisteredComponent implements OnInit {
   profileId: number = 1;
   likeIds: number[] = [];
   imageStartPath: string = 'http://localhost:8080';
+  loggedProfile: ProfileDTO | null = null;
 
-  constructor(private postService: PostService, private router: Router){}
+  constructor(private postService: PostService, private router: Router, private userService: UserService){}
 
 
   ngOnInit(): void {
+    this.loadUser();
     this.postService.getAllPosts().subscribe(
       (response) => {
         this.posts = response;
@@ -43,6 +47,24 @@ export class ViewPostsRegisteredComponent implements OnInit {
       
   }
 
+  loadUser()
+  {
+    this.userService.getUserProfile().subscribe(
+      (data) => {
+        if (data) {
+          console.log(data);
+          this.loggedProfile = data;
+          this.profileId = this.loggedProfile.id;
+        } else {
+          console.log('No profile found or token expired');
+        }
+      },
+      (error) => {
+        console.error('Error loading profile:', error);
+      }
+    );
+  }
+
 
 
   loadLikedPosts()
@@ -62,6 +84,7 @@ export class ViewPostsRegisteredComponent implements OnInit {
   
     if (confirmed) {
       this.postService.deletePost(id).subscribe(() => {
+        console.log(this.posts);
         this.ngOnInit();
       },
       (error) => {

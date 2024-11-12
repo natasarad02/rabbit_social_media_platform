@@ -4,12 +4,14 @@
         <h1 class="app-name">OnlyBuns</h1>
     </div>
     <div class = "home-page-content">
-        <a href="view-posts"><button mat-raised-button color="accent">Posts</button></a>
+        <button (click)="logIn()" *ngIf="loggedProfile === null" mat-raised-button color="accent">Login</button>
+        <button (click)="logOut()"  *ngIf="loggedProfile !== null" mat-raised-button color="accent">Logout</button>
+        <button (click)="navigateToPost()" mat-raised-button color="accent">Posts</button>
         <a href="posts-map"><button mat-raised-button color="accent">Map</button></a>
         <a href="trends"><button mat-raised-button color="accent">Trends</button></a>
         <a href="analytics"><button mat-raised-button color="accent">Analytics</button></a>
         <a href="chat"><button mat-raised-button color="accent">Chat</button></a>
-        <a href="my-profile"><button mat-raised-button color="accent">Profile</button></a>
+        <button (click)="navigateToProfile()" mat-raised-button color="accent">Profile</button>
 
     </div>
 </div>

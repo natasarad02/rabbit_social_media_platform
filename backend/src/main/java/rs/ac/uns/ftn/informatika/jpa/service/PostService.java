@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
@@ -13,6 +14,7 @@ import rs.ac.uns.ftn.informatika.jpa.repository.primer.StudentRepository;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,10 +23,12 @@ public class PostService {
 
     private PostRepository postRepository;
     private ProfileRepository profileRepository;
+    private ImageService imageService;
 
-    public PostService(@Autowired PostRepository postRepository, @Autowired ProfileRepository profileRepository) {
+    public PostService(@Autowired PostRepository postRepository, @Autowired ProfileRepository profileRepository, @Autowired ImageService imageService) {
         this.postRepository = postRepository;
         this.profileRepository = profileRepository;
+        this.imageService = imageService;
     }
 
     public Page<Post> findAllByProfileId(Pageable page, Integer profileId) {
@@ -60,6 +64,30 @@ public class PostService {
             return postRepository.save(post);
         }
         return null;
+    }
+
+    @Transactional
+    public Post updatePost(PostDTO postDTO) throws IOException {
+
+        Post post = findOne(postDTO.getId());
+
+        if (post == null) {
+            return null;
+        }
+
+        post.setDescription(postDTO.getDescription());
+
+        if(postDTO.getImageBase64() != null && !postDTO.getImageBase64().isEmpty()) {
+            String imagePath = imageService.saveImage(postDTO.getImageBase64());
+            post.setPicture(imagePath);
+        }
+        post.setAddress(postDTO.getAddress());
+        post.setLongitude(postDTO.getLongitude());
+        post.setLatitude(postDTO.getLatitude());
+
+        System.out.println(post);
+
+        return postRepository.save(post);
     }
 
     public List<Post> findByProfileId(Integer profileId) {
