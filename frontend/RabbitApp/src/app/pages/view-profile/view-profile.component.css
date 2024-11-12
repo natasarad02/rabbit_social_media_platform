@@ -1,0 +1,152 @@
+h1{
+  font-size: 2.5em;
+  text-align: center;
+}
+
+.table-container {
+  max-width: 140vw; /* Set the width of the table container to 90% of the viewport width */
+  overflow-x: auto;
+  margin: 20px auto; /* Center the table container */
+}
+
+.profile-table {
+  width: 130vh; 
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+  margin: 0 auto; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+  margin-right: 5vh;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 1vh;
+  vertical-align: middle;
+  font-size: 1.3rem;
+}
+
+.profile-table th,
+.profile-table td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.profile-table th {
+  cursor: pointer;
+  background-color: #d691d6; 
+  color: white; 
+  font-weight: bold;
+}
+
+.profile-table th:hover {
+  background-color: #ba79ba;
+}
+
+.profile-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9; 
+}
+
+.profile-table tbody tr:hover {
+  background-color: #f1f1f1; 
+}
+
+.profile-table td {
+  font-size: 0.9rem;
+}
+
+.profile-table td:hover {
+  background-color: #f1f1f1; 
+}
+
+.profile-table th .icon {
+  font-size: 1.2rem; 
+  margin-left: 5px;
+}
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 400px; /* Fixed width */
+  height: 400px; /* Fixed height */
+  margin: 10px auto; 
+  padding: 5px;
+  background-color: #f9f9f9; 
+  border-radius: 8px; 
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+
+}
+
+.search-field {
+  width: 100%;
+}
+
+mat-form-field {
+  margin-bottom: 8px;
+}
+
+button {
+  padding: 4px 10px;
+  font-size: 0.9rem;
+}
+
+button:hover {
+  background-color: #ba79ba;
+  color: white;
+}
+
+mat-label {
+  font-size: 0.9rem;
+}
+
+input {
+  font-size: 0.9rem;
+  height: 10px;
+  padding: 2px;
+}
+
+.all {
+  display: flex;
+  justify-content: space-between; /* Space out the elements */
+  gap: 10px; 
+}
+
+
+.pageButton {
+  padding: 6px 16px; 
+  font-size: 1rem; 
+  color: #fff;
+  background-color: #ba79ba; 
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 15vh; 
+}
+
+button:hover {
+  background-color: #9e5f9e; 
+  transform: scale(1.05); 
+}
+
+button:disabled {
+  background-color: #e0e0e0; 
+  cursor: not-allowed; 
+}
+
+button:disabled:hover {
+  background-color: #e0e0e0; 
+}
+
+button + span {
+  margin-left: 10px; 
+  margin-right: 10px;
+}
+
+
+
+
+
+

@@ -4,8 +4,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import rs.ac.uns.ftn.informatika.jpa.dto.TeacherDTO;
-import rs.ac.uns.ftn.informatika.jpa.model.Teacher;
+import rs.ac.uns.ftn.informatika.jpa.dto.primer.TeacherDTO;
+import rs.ac.uns.ftn.informatika.jpa.model.primer.Teacher;
 
 @Component
 public class TeacherDTOMapper {

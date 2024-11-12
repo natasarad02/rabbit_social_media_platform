@@ -1,0 +1,62 @@
+<div class="signup-container">
+    <button class="back-button" (click)="goBack()">← Back</button>
+    <div class="signup-card">
+      <h2 class="signup-title">Create an Account</h2>
+      <form (ngSubmit)="onSignup()" #signupForm="ngForm" class="signup-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="input-field">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="name" name="name" #nameField="ngModel" required />
+            <mat-error *ngIf="nameField.invalid && nameField.touched">Name is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="input-field">
+            <mat-label>Surname</mat-label>
+            <input matInput [(ngModel)]="surname" name="surname" #surnameField="ngModel" required />
+            <mat-error *ngIf="surnameField.invalid && surnameField.touched">Surname is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="input-field">
+            <mat-label>Email</mat-label>
+            <input matInput [(ngModel)]="email" name="email" #emailField="ngModel" required type="email" />
+            <mat-error *ngIf="emailField.invalid && emailField.touched">Valid email is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="input-field">
+            <mat-label>Username</mat-label>
+            <input matInput [(ngModel)]="username" name="username" #usernameField="ngModel" required />
+            <mat-error *ngIf="usernameField.invalid && usernameField.touched">Username is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="input-field">
+            <mat-label>Password</mat-label>
+            <input matInput [(ngModel)]="password" name="password" #passwordField="ngModel" required type="password" />
+            <mat-error *ngIf="passwordField.invalid && passwordField.touched">Password is required</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="input-field">
+            <mat-label>Confirm Password</mat-label>
+            <input matInput [(ngModel)]="confirmPassword" name="confirmPassword" #confirmPasswordField="ngModel" required type="password" />
+            <mat-error *ngIf="confirmPasswordField.invalid && confirmPasswordField.touched">Password confirmation is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="input-field address-field">
+            <mat-label>Address</mat-label>
+            <input matInput [(ngModel)]="address" name="address" #addressField="ngModel" required />
+            <mat-error *ngIf="addressField.invalid && addressField.touched">Address is required</mat-error>
+          </mat-form-field>
+          
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="!signupForm.valid || passwordMismatch">Sign Up</button>
+      </form>
+
+      <p class="login-link">
+        Already have an account? <a (click)="goToLogin()">Log in here</a>
+      </p>
+    </div>
+</div>
