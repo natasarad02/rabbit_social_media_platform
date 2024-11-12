@@ -1,0 +1,26 @@
+<div class="login-container">
+    <button class="back-button" (click)="goBack()">← Back</button>
+    <div class="login-card">
+      <h2 class="login-title">Welcome Back!</h2>
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Username</mat-label>
+          <input matInput [(ngModel)]="username" name="username" #usernameField="ngModel" required />
+          <mat-error *ngIf="usernameField.invalid && usernameField.touched">Username is required</mat-error>
+        </mat-form-field>
+  
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Password</mat-label>
+          <input matInput [(ngModel)]="password" name="password" #passwordField="ngModel" required type="password" />
+          <mat-error *ngIf="passwordField.invalid && passwordField.touched">Password is required</mat-error>
+        </mat-form-field>
+  
+        <button mat-raised-button color="primary" type="submit" [disabled]="!loginForm.valid">Login</button>
+      </form>
+  
+      <p class="signup-link">
+        Don't have an account? <a routerLink="/signup">Sign up here</a>
+      </p>
+    </div>
+  </div>
+  
