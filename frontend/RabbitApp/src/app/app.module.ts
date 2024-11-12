@@ -15,7 +15,7 @@ import { MatCardModule } from '@angular/material/card';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { MapComponent } from './pages/map/map.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
-
+import { LoginComponent } from './pages/login/login.component';
 
 
 
