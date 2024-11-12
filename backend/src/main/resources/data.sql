@@ -29,17 +29,16 @@ insert into exam (student_id, course_id, date, grade) values (2, 2, '2016-04-19'
 
 -- Inserting data into Profile
 INSERT INTO profile (email, username, password, name, surname, deleted, role, last_password_reset_date, address) VALUES
-                                                                                                                     ('marko@example.com', 'marko', 'password123', 'Marko', 'Marković', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('milan@example.com', 'milan', 'password456', 'Milan', 'Milanović', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('ivana@example.com', 'ivana', 'password789', 'Ivana', 'Ivanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('bojan@example.com', 'bojan', 'password101', 'Bojan', 'Bojanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('jane@example.com', 'jane', 'password202', 'Jane', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('alex@example.com', 'alex', 'password303', 'Alex', 'Smith', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('lisa@example.com', 'lisa', 'password404', 'Lisa', 'Johnson', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('john@example.com', 'john', 'password505', 'John', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('anna@example.com', 'anna', 'password606', 'Anna', 'Taylor', false, 'Administrator', CURRENT_TIMESTAMP, NULL),
-                                                                                                                     ('james@example.com', 'james', 'password707', 'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL);
-
+                                                                                                                     ('marko@example.com', 'marko', '$2b$12$Iw1jjOdqw8JZJL/eAFBnXezQ4VUZtSqv0JV11D2U9Zh4EGLO1Fe.W', 'Marko', 'Marković', false, 'User', CURRENT_TIMESTAMP, NULL), -- password123
+                                                                                                                     ('milan@example.com', 'milan', '$2b$12$78BjztYb6FrR0kQQikohmu97pAWWtSzpD9c/dGYOE59dTA2rVhy2S', 'Milan', 'Milanović', false, 'User', CURRENT_TIMESTAMP, NULL), -- password456
+                                                                                                                     ('ivana@example.com', 'ivana', '$2b$12$4bC1fa0JaOEZYG/eceeLDelbCNVJYtcLJrrSD34laTpLRCziNct.S', 'Ivana', 'Ivanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL), -- password789
+                                                                                                                     ('bojan@example.com', 'bojan', '$2b$12$j4M37/WpAurLS/KlWoke2Oa0fdAoikEfbqepfWrtN0euqSOS4T.Nq', 'Bojan', 'Bojanović', false, 'Administrator', CURRENT_TIMESTAMP, NULL), -- password101
+                                                                                                                     ('jane@example.com', 'jane', '$2b$12$CyUjPoyeQbENBzVNCsqnBe08ZTCjk2X5WjEspmvxBrCx7ZMMdV/OC', 'Jane', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL), -- password202
+                                                                                                                     ('alex@example.com', 'alex', '$2b$12$siwPZyZpPMG8WaYzp1YjCeBSBEt1.LV85sKh1T/fuJCjDcqTEHIaa', 'Alex', 'Smith', false, 'User', CURRENT_TIMESTAMP, NULL), -- password303
+                                                                                                                     ('lisa@example.com', 'lisa', '$2b$12$PiY9CaeNOA/plJ76ZrYHUOa/xfhdSHh4SIbwRANv8okkkCV6LmwTu', 'Lisa', 'Johnson', false, 'User', CURRENT_TIMESTAMP, NULL), -- password404
+                                                                                                                     ('john@example.com', 'john', '$2b$12$3rPK12xTrJy8v.iaHxG6s.bNefU8dJmQnLxuVca8kHx8mxFIRdA6K', 'John', 'Doe', false, 'User', CURRENT_TIMESTAMP, NULL), -- password505
+                                                                                                                     ('anna@example.com', 'anna', '$2b$12$Ils5FtBFBZgyXrRao.YkPe3wprDnZ50wt4/qzqrz4J1dT4vx8.rSq', 'Anna', 'Taylor', false, 'Administrator', CURRENT_TIMESTAMP, NULL), -- password606
+                                                                                                                     ('james@example.com', 'james', '$2b$12$A7Y4k.ql2AFTO6vRkWivte0FGC5fI/VBZadxHeHEr1nFnug7ti0k.', 'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL); -- password707
 
 -- Inserting data into Post
 INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude) VALUES

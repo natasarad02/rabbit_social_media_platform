@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
+import io.jsonwebtoken.security.Keys;
+import javax.crypto.SecretKey;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,33 +16,24 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 
+
 // Utility klasa za rad sa JSON Web Tokenima
 @Component
 public class TokenUtils {
 
-    // Izdavac tokena
-    // @Value("spring-security-example")
+    // Issuer of the token
     @Value("only_buns_app")
     private String APP_NAME;
 
-    // Tajna koju samo backend aplikacija treba da zna kako bi mogla da generise i proveri JWT https://jwt.io/
-    @Value("somesecret")
-    public String SECRET;
+    // Secret key for signing and verifying JWTs
+    private final SecretKey SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    // Period vazenja tokena - 30 minuta
+    // Token expiration time - 30 minutes
     @Value("1800000")
     private int EXPIRES_IN;
 
-    // Naziv headera kroz koji ce se prosledjivati JWT u komunikaciji server-klijent
     @Value("Authorization")
     private String AUTH_HEADER;
-
-    // Moguce je generisati JWT za razlicite klijente (npr. web i mobilni klijenti nece imati isto trajanje JWT,
-    // JWT za mobilne klijente ce trajati duze jer se mozda aplikacija redje koristi na taj nacin)
-    // Radi jednostavnosti primera, necemo voditi racuna o uređaju sa kojeg zahtev stiže.
-    //	private static final String AUDIENCE_UNKNOWN = "unknown";
-    //	private static final String AUDIENCE_MOBILE = "mobile";
-    //	private static final String AUDIENCE_TABLET = "tablet";
 
     private static final String AUDIENCE_WEB = "web";
 
@@ -51,12 +43,6 @@ public class TokenUtils {
 
     // ============= Funkcije za generisanje JWT tokena =============
 
-    /**
-     * Funkcija za generisanje JWT tokena.
-     *
-     * @param username Korisničko ime korisnika kojem se token izdaje
-     * @return JWT token
-     */
     public String generateToken(String username, Role role) {
         return Jwts.builder()
                 .setIssuer(APP_NAME)
@@ -65,10 +51,8 @@ public class TokenUtils {
                 .setIssuedAt(new Date())
                 .setExpiration(generateExpirationDate())
                 .claim("role", role.toString())
-                .signWith(SIGNATURE_ALGORITHM, SECRET).compact();
-
-
-        // moguce je postavljanje proizvoljnih podataka u telo JWT tokena pozivom funkcije .claim("key", value), npr. .claim("role", user.getRole())
+                .signWith(SECRET)
+                .compact();
     }
 
     /**
@@ -229,8 +213,9 @@ public class TokenUtils {
     private Claims getAllClaimsFromToken(String token) {
         Claims claims;
         try {
-            claims = Jwts.parser()
+            claims = Jwts.parserBuilder()
                     .setSigningKey(SECRET)
+                    .build()
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException ex) {
@@ -238,9 +223,6 @@ public class TokenUtils {
         } catch (Exception e) {
             claims = null;
         }
-
-        // Preuzimanje proizvoljnih podataka je moguce pozivom funkcije claims.get(key)
-
         return claims;
     }
 
