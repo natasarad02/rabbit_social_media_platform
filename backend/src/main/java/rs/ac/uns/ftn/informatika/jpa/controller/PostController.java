@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.informatika.jpa.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.informatika.jpa.dto.CommentDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
@@ -69,6 +70,9 @@ public class PostController {
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
     }*/
 
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+
     @GetMapping
     public ResponseEntity<List<PostDTO>> getAllPosts() {
 
@@ -100,6 +104,8 @@ public class PostController {
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('USER')")
+
     @PutMapping(consumes = "application/json")
     public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO) {
 
@@ -119,6 +125,8 @@ public class PostController {
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+
     @PutMapping("/delete/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<PostDTO> deletePost(@PathVariable Integer id) {
@@ -126,6 +134,8 @@ public class PostController {
         Post post = postService.deletePost(id);
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
     }
+
+    @PreAuthorize("hasRole('USER')")
 
     @PostMapping("/createpost/{profileId}")
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO, @PathVariable Integer profileId) throws IOException {
@@ -143,6 +153,8 @@ public class PostController {
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
 
     }
+
+    @PreAuthorize("hasRole('USER')")
 
     @PostMapping("/like")
     public ResponseEntity<Void> likePost(@RequestParam Integer profileId, @RequestParam Integer postId) {
