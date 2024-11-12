@@ -61,16 +61,16 @@ public class AuthenticationController {
     }
 
     // Endpoint za registraciju novog korisnika
+    @PostMapping("/signup")
+    public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
+        Profile existUser = this.userService.findByUsername(userRequest.getUsername());
 
-}@PostMapping("/signup")
-public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-    Profile existUser = this.userService.findByUsername(userRequest.getUsername());
+        if (existUser != null) {
+            throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+        }
 
-    if (existUser != null) {
-        throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+        Profile user = this.userService.saveProfile(userRequest);
+
+        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
-
-    Profile user = this.userService.saveProfile(userRequest);
-
-    return new ResponseEntity<>(user, HttpStatus.CREATED);
 }
