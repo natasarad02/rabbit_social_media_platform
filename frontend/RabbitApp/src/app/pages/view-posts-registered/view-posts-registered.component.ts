@@ -33,7 +33,31 @@ export class ViewPostsRegisteredComponent implements OnInit {
       (response) => {
         this.posts = response;
         console.log(this.posts);
-
+  
+        this.posts.sort((a, b) => {
+          const aTime = new Date(Date.UTC(
+            a.postedTime[0], 
+            a.postedTime[1] - 1, 
+            a.postedTime[2], 
+            a.postedTime[3], 
+            a.postedTime[4], 
+            a.postedTime[5], 
+            a.postedTime[6]  
+          ));
+  
+          const bTime = new Date(Date.UTC(
+            b.postedTime[0], 
+            b.postedTime[1] - 1, 
+            b.postedTime[2], 
+            b.postedTime[3], 
+            b.postedTime[4], 
+            b.postedTime[5], 
+            b.postedTime[6]  
+          ));
+  
+          return bTime.getTime() - aTime.getTime(); 
+        });
+  
         this.posts.forEach(post => {
           if (post.picture.includes("/images")) {
             post.picture = this.imageStartPath + post.picture;
@@ -41,10 +65,13 @@ export class ViewPostsRegisteredComponent implements OnInit {
         });
       },
       (error) => {
-        console.error('Error loading profiles', error);
+        console.error('Error loading posts', error);
       }
     );
   }
+  
+  
+  
 
   loadUser(): void {
     this.userService.getUserProfile().subscribe(
@@ -53,7 +80,7 @@ export class ViewPostsRegisteredComponent implements OnInit {
           console.log(data);
           this.loggedProfile = data;
           this.profileId = this.loggedProfile.id;
-          this.loadLikedPosts();  // Load liked posts only if user is logged in
+          this.loadLikedPosts();  
         } else {
           console.log('No profile found or token expired');
           this.profileId = -1;
@@ -113,17 +140,18 @@ export class ViewPostsRegisteredComponent implements OnInit {
         console.error('Error liking post', error);
       });
     } else {
-      this.showLoginAlert();  // Show alert if user is not logged in
+      this.showLoginAlert();  
     }
   }
+  
 
   commentOnPost(postId: number): void {
     if (this.loggedProfile) {
-      // Logic for authenticated users to comment on the post.
+      
       console.log(`Commenting on post with ID: ${postId}`);
-      // Here, you might open a comment dialog or redirect to a comment form.
+     
     } else {
-      this.showLoginAlert();  // Show alert if user is not logged in
+      this.showLoginAlert();  
     }
   }
 
@@ -133,7 +161,7 @@ export class ViewPostsRegisteredComponent implements OnInit {
       <strong>Surname:</strong> ${post.profile?.surname || 'N/A'}<br>
       <strong>Email:</strong> ${post.profile?.email || 'N/A'}
     `;
-  
+    
     Swal.fire({
       title: 'Creator Information',
       html: creatorInfo,

@@ -25,23 +25,34 @@ export class LoginComponent {
   onLogin() {
     if (this.username && this.password) {
       const loginData = {
-        username : this.username ,
-        password : this.password
-      }
+        username: this.username,
+        password: this.password
+      };
       this.auth.login(loginData).subscribe({
-        next: response => {
-          console.log('Signup successful:', response);
-          alert("sucessfully logged in");
-          
+        next: (response) => {
+          console.log('Login successful:', response);
+          alert('Successfully logged in');
           console.log(this.auth.getToken());
+          this.router.navigate(['/dashboard']);
         },
-        error: error => {
-          console.error('Signup failed:', error);
+        error: (error) => {
+          console.error('Login failed:', error);
+
+          if (error.status === 401) {
+            alert('Invalid username or password. Please try again.');
+          } else if (error.status === 403) {
+            alert('Account not activated. Please activate your account to log in.');
+          } else {
+            alert('An unexpected error occurred. Please try again later.');
+          }
         }
       });
       console.log('Logged in with', this.username);
+    } else {
+      alert('Please enter both username and password.');
     }
   }
+  
 
   goBack() {
     this.router.navigate(['/']); // Adjust this to navigate to the desired route

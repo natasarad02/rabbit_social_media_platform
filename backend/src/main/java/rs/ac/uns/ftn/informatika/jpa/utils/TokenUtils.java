@@ -28,6 +28,10 @@ public class TokenUtils {
     // Secret key for signing and verifying JWTs
     private final SecretKey SECRET = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
+    public SecretKey getSECRET() {
+        return SECRET;
+    }
+
     // Token expiration time - 30 minutes
     @Value("1800000")
     private int EXPIRES_IN;
@@ -36,31 +40,31 @@ public class TokenUtils {
     private String AUTH_HEADER;
 
     private static final String AUDIENCE_WEB = "web";
-    private final String SECRET_KEY = "your-secret-key";
 
     // Algoritam za potpisivanje JWT
     private SignatureAlgorithm SIGNATURE_ALGORITHM = SignatureAlgorithm.HS512;
 
+    //email
     public String generateActivationToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000)) // 24-hour expiration
-                .signWith(SECRET, SIGNATURE_ALGORITHM)
+                .signWith(SECRET, SignatureAlgorithm.HS512)  // Use the simple secret string
                 .compact();
     }
-
+    //email
     public String extractEmail(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(SECRET)
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
     }
-
+    // email
     public boolean isTokenExpired(String token) {
         return Jwts.parser()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(SECRET)
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration()

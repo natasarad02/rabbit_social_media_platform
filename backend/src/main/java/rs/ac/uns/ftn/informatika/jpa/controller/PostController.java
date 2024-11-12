@@ -78,7 +78,8 @@ public class PostController {
 
         List<Post> posts = postService.findAllActive();
 
-        // convert students to DTOs
+        posts.sort((p1, p2) -> p2.getPostedTime().compareTo(p1.getPostedTime()));
+
         List<PostDTO> postDTOs = new ArrayList<>();
         for (Post post : posts) {
             PostDTO postDTO = new PostDTO();
