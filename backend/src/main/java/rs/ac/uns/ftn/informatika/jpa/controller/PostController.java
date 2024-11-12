@@ -74,7 +74,6 @@ public class PostController {
 
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     public ResponseEntity<List<PostDTO>> getAllPosts() {
 
         List<Post> posts = postService.findAllActive();
@@ -165,7 +164,6 @@ public class PostController {
     }
 
     @GetMapping("/likes")
-    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     public ResponseEntity<List<Integer>> getAllLikes(@RequestParam Integer profileId) {
         List<Integer> likes = postService.getPostIdsForProfile(profileId);
         return new ResponseEntity<>(likes, HttpStatus.OK);

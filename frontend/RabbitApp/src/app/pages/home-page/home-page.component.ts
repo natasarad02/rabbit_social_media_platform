@@ -40,11 +40,7 @@ export class HomePageComponent implements OnInit {
   }
 
   navigateToPost() {
-    if (this.loggedProfile) {
-      this.router.navigate(['view-posts']);
-    } else {
-      console.log("please log in");
-    }
+    this.router.navigate(['view-posts']);
   }
 
   logOut()

@@ -5,6 +5,8 @@ import { PostViewDTO } from '../../models/PostViewDTO.model';
 import { Router } from '@angular/router';
 import { ProfileDTO } from '../../models/ProfileDTO.model';
 import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-view-posts-registered',
@@ -18,8 +20,12 @@ export class ViewPostsRegisteredComponent implements OnInit {
   imageStartPath: string = 'http://localhost:8080';
   loggedProfile: ProfileDTO | null = null;
 
-  constructor(private postService: PostService, private router: Router, private userService: UserService){}
-
+  constructor(
+    private postService: PostService, 
+    private router: Router, 
+    private userService: UserService,
+    private auth: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadUser();
@@ -29,54 +35,58 @@ export class ViewPostsRegisteredComponent implements OnInit {
         console.log(this.posts);
 
         this.posts.forEach(post => {
-        })
-
-        this.posts.forEach(post => {
-          if(post.picture.includes("/images"))
-           {
-             post.picture = this.imageStartPath + post.picture;
-             
-           } 
+          if (post.picture.includes("/images")) {
+            post.picture = this.imageStartPath + post.picture;
+          }
         });
       },
       (error) => {
         console.error('Error loading profiles', error);
       }
     );
-      this.loadLikedPosts();
-      
   }
 
-  loadUser()
-  {
+  loadUser(): void {
     this.userService.getUserProfile().subscribe(
       (data) => {
         if (data) {
           console.log(data);
           this.loggedProfile = data;
           this.profileId = this.loggedProfile.id;
+          this.loadLikedPosts();  // Load liked posts only if user is logged in
         } else {
           console.log('No profile found or token expired');
+          this.profileId = -1;
         }
       },
       (error) => {
         console.error('Error loading profile:', error);
+        this.auth.logout();
+        this.profileId = -1;
       }
     );
   }
 
+  showLoginAlert(): void {
+    Swal.fire({
+      icon: 'warning',
+      title: 'Action Not Allowed',
+      text: 'You need to log in to like or comment on posts!',
+      confirmButtonText: 'OK'
+    });
+  }
 
-
-  loadLikedPosts()
-  {
+  loadLikedPosts(): void {
+    if (this.loggedProfile) {
       this.postService.getLikedPosts(this.profileId).subscribe(
         (response) => {
           this.likeIds = response;
         },
         (error) => {
-          console.error('Error loading profiles', error);
+          console.error('Error loading liked posts', error);
         }
       );
+    }
   }
 
   deletePost(id: number): void {
@@ -88,30 +98,67 @@ export class ViewPostsRegisteredComponent implements OnInit {
         this.ngOnInit();
       },
       (error) => {
-        console.error('Error delete', error);
+        console.error('Error deleting post', error);
       });
     }
   }
 
   likePost(postId: number): void {
-    this.postService.likePost(this.profileId, postId).subscribe(()=> {
-      this.ngOnInit();
-      console.log("success")
-    },
-    (error) => {
-      console.error('Error liking', error);
-    })
+    if (this.loggedProfile) {
+      this.postService.likePost(this.profileId, postId).subscribe(() => {
+        this.ngOnInit();
+        console.log("success");
+      },
+      (error) => {
+        console.error('Error liking post', error);
+      });
+    } else {
+      this.showLoginAlert();  // Show alert if user is not logged in
+    }
   }
 
-  goToUpdate(id: number)
-  {
-    this.router.navigate([`/update-post/${id}`]);
+  commentOnPost(postId: number): void {
+    if (this.loggedProfile) {
+      // Logic for authenticated users to comment on the post.
+      console.log(`Commenting on post with ID: ${postId}`);
+      // Here, you might open a comment dialog or redirect to a comment form.
+    } else {
+      this.showLoginAlert();  // Show alert if user is not logged in
+    }
   }
 
+  showCreatorInfo(post: PostViewDTO): void {
+    const creatorInfo = `
+      <strong>Name:</strong> ${post.profile?.name || 'N/A'}<br>
+      <strong>Surname:</strong> ${post.profile?.surname || 'N/A'}<br>
+      <strong>Email:</strong> ${post.profile?.email || 'N/A'}
+    `;
+  
+    Swal.fire({
+      title: 'Creator Information',
+      html: creatorInfo,
+      icon: 'info',
+      confirmButtonText: 'Close'
+    });
+  }
+
+  showCommentCreatorInfo(comment: any): void {
+    const commentCreatorInfo = `
+      <strong>Name:</strong> ${comment.profile?.name || 'N/A'}<br>
+      <strong>Username:</strong> ${comment.profile?.username || 'N/A'}<br>
+      <strong>Email:</strong> ${comment.profile?.email || 'N/A'}
+    `;
+  
+    Swal.fire({
+      title: 'Comment Creator Information',
+      html: commentCreatorInfo,
+      icon: 'info',
+      confirmButtonText: 'Close'
+    });
+  }
   
 
-
-
-
-
- }
+  goToUpdate(id: number): void {
+    this.router.navigate([`/update-post/${id}`]);
+  }
+}

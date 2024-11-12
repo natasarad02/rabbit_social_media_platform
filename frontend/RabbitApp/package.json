@@ -23,6 +23,8 @@
     "@types/leaflet": "^1.9.14",
     "leaflet": "^1.9.4",
     "rxjs": "~7.8.0",
+    "swal": "^0.1.0",
+    "sweetalert2": "^11.14.5",
     "tslib": "^2.3.0",
     "zone.js": "~0.14.10"
   },
