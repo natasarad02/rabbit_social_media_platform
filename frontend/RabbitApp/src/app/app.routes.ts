@@ -11,6 +11,8 @@ import { TrendsComponent } from './pages/trends/trends.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { MapPostsComponent } from './pages/map-posts/map-posts.component';
 import { ChatComponent } from './pages/chat/chat.component';
+import { LoginComponent } from './pages/login/login.component';
+import { SignupComponent } from './pages/signup/signup.component';
 
 export const routes: Routes = [
     { path: 'view-profile', component: ViewProfileComponent },
@@ -23,7 +25,9 @@ export const routes: Routes = [
     { path: 'analytics', component: AnalyticsComponent},
     { path: 'posts-map', component: MapPostsComponent},
     { path: 'chat', component: ChatComponent},
-    { path: '', component: HomePageComponent}
+    { path: '', component: HomePageComponent},
+    { path: 'login', component: LoginComponent},
+    { path: 'signup', component: SignupComponent}
 ];
 @NgModule({
     imports: [RouterModule.forRoot(routes)],

@@ -79,6 +79,7 @@ public class ProfileService {
         profileToSave.setEmail(profile.getEmail());
         profileToSave.setName(profile.getFirstname());
         profileToSave.setSurname(profile.getLastname());
+        profileToSave.setAddress(profile.getAddress());
         return profileRepository.save(profileToSave);
     }
 }

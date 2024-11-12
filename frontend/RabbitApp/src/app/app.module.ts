@@ -22,6 +22,9 @@ import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { ChatComponent } from './pages/chat/chat.component';
 
+import { LoginComponent } from './pages/login/login.component';
+import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -50,7 +53,9 @@ import { ChatComponent } from './pages/chat/chat.component';
     FormsModule,
     MatIconModule,
     MatCardModule,    
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule,
+    CommonModule
   ],
   providers: [
     provideAnimationsAsync()
