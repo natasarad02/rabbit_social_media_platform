@@ -24,7 +24,7 @@ public class ImageCompressionScheduler {
     @Value("${image.upload.dir}")
     private String uploadDir;
 
-    @Scheduled(cron = "0 53 15 * * ?") // Every day at midnight
+    @Scheduled(cron = "0 0 0 * * ?") // Every day at midnight
     public void compressOldImages() {
         File imageDir = new File(uploadDir);
         if (imageDir.exists() && imageDir.isDirectory()) {
@@ -47,9 +47,9 @@ public class ImageCompressionScheduler {
         LocalDateTime fileDate = new Date(file.lastModified()).toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
-        //LocalDate oneMonthAgo = LocalDate.now().minusMonths(1);
-        LocalDateTime oneMinuteAgo = LocalDateTime.now().minusMinutes(1);
-        return fileDate.isBefore(oneMinuteAgo);
+        LocalDateTime oneMonthAgo = LocalDateTime.now().minusMonths(1);
+        //LocalDateTime oneMinuteAgo = LocalDateTime.now().minusMinutes(1);
+        return fileDate.isBefore(oneMonthAgo);
     }
 
     private void compressImage(File file) throws IOException {
