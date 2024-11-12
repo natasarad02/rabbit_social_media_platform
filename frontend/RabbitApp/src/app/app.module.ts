@@ -16,6 +16,11 @@ import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { MapComponent } from './pages/map/map.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { UpdatePostComponent } from './pages/update-post/update-post.component';
+import { MapPostsComponent } from './pages/map-posts/map-posts.component';
+import { TrendsComponent } from './pages/trends/trends.component';
+import { AnalyticsComponent } from './pages/analytics/analytics.component';
+import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { ChatComponent } from './pages/chat/chat.component';
 
 
 
@@ -28,7 +33,12 @@ import { UpdatePostComponent } from './pages/update-post/update-post.component';
     CreatePostComponent,
     MapComponent,
     HomePageComponent,
-    UpdatePostComponent
+    UpdatePostComponent,
+    MapPostsComponent,
+    TrendsComponent,
+    AnalyticsComponent,
+    UserProfileComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
