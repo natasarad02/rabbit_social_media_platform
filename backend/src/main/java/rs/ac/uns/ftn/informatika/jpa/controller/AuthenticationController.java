@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.informatika.jpa.controller;
 
 import javax.servlet.http.HttpServletResponse;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -75,14 +76,38 @@ public class AuthenticationController {
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
-    @GetMapping("/whoami")
-    public ProfileDTO user(Principal user) {
-        if (user != null) {
-            Profile profile = this.userService.findByUsername(user.getName());
-            return new ProfileDTO(profile);
-        }
-        else return null;
+    @GetMapping("/userFromToken")
+    public ResponseEntity<ProfileDTO> GetUserProfile(@RequestHeader(value = "Authorization") String authorizationHeader) {
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            try {
 
+                String token = authorizationHeader.substring(7);
+
+
+                String username = tokenUtils.getUsernameFromToken(token);
+
+
+                if (username != null) {
+                    Profile profile = userService.findByUsername(username);
+
+
+                    if (profile != null) {
+                        return new ResponseEntity<>(new ProfileDTO(profile), HttpStatus.OK);
+                    } else {
+                        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                    }
+                }
+            } catch (ExpiredJwtException ex) {
+
+                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            } catch (Exception e) {
+
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
+
+
 
 }
