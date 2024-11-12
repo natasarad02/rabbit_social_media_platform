@@ -4,6 +4,7 @@ import { LocationDTO } from '../../models/LocationDTO.model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreatePostService } from '../../services/create-post.service';
 import { ProfileDTO } from '../../models/ProfileDTO.model';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-create-post',
@@ -36,13 +37,13 @@ export class CreatePostComponent implements OnInit {
   // Fiksiran profil dok se ne doda login
   //uploadedImage: string = '';// = 'http://localhost:8080/images/4e8abe61-bfbe-4d07-b61b-f398d289dd35.jpg';
   profile: ProfileDTO = {
-    id: 1,
-    name: 'Marko',
-    surname: 'Markovic',
-    email: 'marko@example.com',
-    password: 'aaa',
-    role: 'User',
-    address: 'Karadjordjeva 45'
+    id: 0,
+    name: '',
+    surname: '',
+    email: '',
+    password: '',
+    role: '',
+    address: ''
 
   }
   location: LocationDTO = {
@@ -61,10 +62,23 @@ export class CreatePostComponent implements OnInit {
    
   })
 
-  constructor(private service: CreatePostService){}
+  constructor(private userService: UserService, private service: CreatePostService){}
   ngOnInit(): void {
     //this.uploadedImage = 'http://localhost:8080/images/4e8abe61-bfbe-4d07-b61b-f398d289dd35.jpg';
 
+    this.userService.getUserProfile().subscribe(
+      (data) => {
+        if (data) {
+          console.log(data);
+          this.profile = data;
+        } else {
+          console.log('No profile found or token expired');
+        }
+      },
+      (error) => {
+        console.error('Error loading profile:', error);
+      }
+    );
     
   }
 
