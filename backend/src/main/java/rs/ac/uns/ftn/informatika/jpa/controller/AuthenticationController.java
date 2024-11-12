@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
+import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.JwtAuthenticationRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserTokenState;
@@ -75,8 +76,13 @@ public class AuthenticationController {
     }
 
     @GetMapping("/whoami")
-    public Profile user(Principal user) {
-        return this.userService.findByUsername(user.getName());
+    public ProfileDTO user(Principal user) {
+        if (user != null) {
+            Profile profile = this.userService.findByUsername(user.getName());
+            return new ProfileDTO(profile);
+        }
+        else return null;
+
     }
 
 }

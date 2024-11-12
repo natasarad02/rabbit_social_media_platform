@@ -2,13 +2,14 @@ import {Injectable} from '@angular/core';
 import {ApiService} from './api.service';
 import {ConfigService} from './config.service';
 import {map} from 'rxjs/operators';
+import { ProfileDTO } from '../models/ProfileDTO.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
 
-  currentUser!:any;
+  currentUser: ProfileDTO | null = null;
 
   constructor(
     private apiService: ApiService,

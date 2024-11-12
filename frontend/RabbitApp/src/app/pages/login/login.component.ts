@@ -32,7 +32,9 @@ export class LoginComponent {
         next: response => {
           console.log('Signup successful:', response);
           alert("sucessfully logged in");
-          this.userservice.getMyInfo().subscribe();
+          this.userservice.getMyInfo().subscribe((response)=> {
+            console.log(response);
+          });
           console.log(this.auth.getToken());
         },
         error: error => {

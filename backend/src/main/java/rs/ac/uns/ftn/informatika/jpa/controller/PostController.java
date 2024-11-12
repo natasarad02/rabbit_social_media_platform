@@ -20,6 +20,7 @@ import rs.ac.uns.ftn.informatika.jpa.service.ImageService;
 import rs.ac.uns.ftn.informatika.jpa.service.PostService;
 import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 
+import javax.annotation.security.PermitAll;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,7 +74,7 @@ public class PostController {
 
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('Aministrator', 'User')")
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     public ResponseEntity<List<PostDTO>> getAllPosts() {
 
         List<Post> posts = postService.findAllActive();
@@ -105,6 +106,7 @@ public class PostController {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping(value = "/id/{id}")
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     public ResponseEntity<PostDTO> getPostById(@PathVariable("id") Integer id) {
 
         Post post = postService.findOne(id);
@@ -114,7 +116,7 @@ public class PostController {
     }
 
     @PutMapping(consumes = "application/json")
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasAuthority('User')")
     public ResponseEntity<PostDTO> updatePost(@RequestBody PostDTO postDTO) throws IOException {
 
         Post post = postService.findOne(postDTO.getId());
@@ -137,7 +139,7 @@ public class PostController {
         return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyRole('Aministrator', 'User')")
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     @PutMapping("/delete/{id}")
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<PostDTO> deletePost(@PathVariable Integer id) {
@@ -147,7 +149,7 @@ public class PostController {
     }
 
 
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasAuthority('User')")
     @PostMapping("/createpost/{profileId}")
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO, @PathVariable Integer profileId) throws IOException {
         Post post = postDTOMapper.fromDTOtoPost(postDTO);
@@ -166,7 +168,7 @@ public class PostController {
     }
 
 
-    @PreAuthorize("hasRole('User')")
+    @PreAuthorize("hasAuthority('User')")
     @PostMapping("/like")
     public ResponseEntity<Void> likePost(@RequestParam Integer profileId, @RequestParam Integer postId) {
         postService.addLike(profileId, postId);
@@ -174,6 +176,7 @@ public class PostController {
     }
 
     @GetMapping("/likes")
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     public ResponseEntity<List<Integer>> getAllLikes(@RequestParam Integer profileId) {
         List<Integer> likes = postService.getPostIdsForProfile(profileId);
         return new ResponseEntity<>(likes, HttpStatus.OK);

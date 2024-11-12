@@ -37,7 +37,7 @@ export class AuthService {
       .pipe(map((res) => {
         console.log('Login success');
         this.access_token = res.body.accessToken;
-        localStorage.setItem("jwt", res.body.accessToken)
+        localStorage.setItem("jwt", res.body.accessToken);
       }));
   }
 
@@ -60,11 +60,11 @@ export class AuthService {
   }
 
   tokenIsPresent() {
-    return this.access_token != undefined && this.access_token != null;
+    return localStorage.getItem("jwt") != undefined && localStorage.getItem("jwt") != null;
   }
 
   getToken() {
-    return this.access_token;
+    return localStorage.getItem("jwt");
   }
 
 }
