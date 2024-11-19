@@ -56,7 +56,7 @@ export class AuthService {
     this.userService.currentUser = null;
     localStorage.removeItem("jwt");
     this.access_token = null;
-    this.router.navigate(['/login']);
+    // this.router.navigate(['/login']);
   }
 
   tokenIsPresent() {

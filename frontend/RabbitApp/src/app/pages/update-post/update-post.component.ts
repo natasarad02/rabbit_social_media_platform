@@ -29,7 +29,16 @@ export class UpdatePostComponent implements OnInit {
     address: '',
     longitude: 0,
     latitude: 0,
-    imageBase64: ''
+    imageBase64: '',
+    postedTime: [
+      new Date().getFullYear(),            
+      new Date().getMonth() + 1,           
+      new Date().getDate(),                
+      new Date().getHours(),               
+      new Date().getMinutes(),             
+      new Date().getSeconds(),             
+      new Date().getMilliseconds()         
+    ]
   };
 
   imageBase64: string = '';

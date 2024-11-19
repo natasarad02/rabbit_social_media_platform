@@ -13,6 +13,7 @@ export interface PostViewDTO {
     latitude: number;
     longitude: number;
     imageBase64: string;
+    postedTime: [number, number, number, number, number, number, number];
 }
 
 

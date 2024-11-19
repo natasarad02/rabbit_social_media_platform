@@ -38,12 +38,23 @@ public class Profile implements UserDetails {
     @Column(name = "surname", nullable = false)
     private String surname;
 
+    public void setActivated(boolean activated) {
+        this.activated = activated;
+    }
+
     @Enumerated(EnumType.STRING)
     @Column(name = "role")
     private Role role;
 
     @Column(name = "deleted")
     private boolean deleted;
+
+    @Column(name = "activated")
+    private boolean activated;
+
+    public boolean isActivated() {
+        return activated;
+    }
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;

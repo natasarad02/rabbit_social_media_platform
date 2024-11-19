@@ -25,9 +25,8 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT p FROM Profile p WHERE p.deleted = false AND p.role = :role AND p.id IN :profileIds")
     List<Profile> findAllActiveProfilesSorted(@Param("role") Role role, @Param("profileIds") List<Integer> profileIds);
 
-
-
-
+    @Query("SELECT p FROM Profile p WHERE p.email = :email AND p.deleted = false")
+    Profile findActiveProfileByEmail(@Param("email") String email);
 
     // Fetch following profiles for a specific profile with pagination
     @Query("SELECT f FROM Profile p JOIN p.following f WHERE p.id = :profileId AND p.deleted = false")

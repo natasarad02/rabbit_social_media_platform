@@ -1,5 +1,8 @@
 package rs.ac.uns.ftn.informatika.jpa.controller;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,7 +19,9 @@ import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.service.PostService;
 import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
+import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
 
+import javax.crypto.SecretKey;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,10 +31,12 @@ public class ProfileController {
 
     private ProfileService profileService;
     private PostService postService;
+    private final TokenUtils tokenUtils;
 
     public ProfileController(@Autowired ProfileService profileService, @Autowired PostService postService) {
         this.profileService = profileService;
         this.postService = postService;
+        this.tokenUtils = new TokenUtils();
     }
 
     @GetMapping(value = "/all")
@@ -93,6 +100,24 @@ public class ProfileController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(profileDTO);
+    }
+
+
+
+    @GetMapping("/activate")
+    public ResponseEntity<String> activateUser(@RequestParam("token") String token) {
+        try {
+            System.out.println("Received token: " + token);
+
+            if (profileService.activateUser(token)) {
+                return ResponseEntity.ok("Account activated successfully.");
+            } else {
+                return ResponseEntity.badRequest().body("Activation failed. User not found or already activated.");
+            }
+        } catch (Exception e) {
+            // Handle invalid token case
+            return ResponseEntity.badRequest().body("Invalid activation token."+ e.getMessage());
+        }
     }
 
 }

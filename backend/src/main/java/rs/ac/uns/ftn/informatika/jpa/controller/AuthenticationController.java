@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -38,29 +39,44 @@ public class AuthenticationController {
 
     @Autowired
     private ProfileService userService;
+    @Autowired
+    private ProfileService profileService;
 
     // Prvi endpoint koji pogadja korisnik kada se loguje.
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
-    public ResponseEntity<UserTokenState> createAuthenticationToken(
+    public ResponseEntity<Object> createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
-        // Ukoliko kredencijali nisu ispravni, logovanje nece biti uspesno, desice se
-        // AuthenticationException
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                authenticationRequest.getUsername(), authenticationRequest.getPassword()));
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getUsername(),
+                            authenticationRequest.getPassword()
+                    )
+            );
 
-        // Ukoliko je autentifikacija uspesna, ubaci korisnika u trenutni security
-        // kontekst
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Da li je aktiviran
+            Profile user = (Profile) authentication.getPrincipal();
+            if (!user.isActivated()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Account not activated. Please activate your account via email.");
+            }
 
-        // Kreiraj token za tog korisnika
-        Profile user = (Profile) authentication.getPrincipal();
-        String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole());
-        int expiresIn = tokenUtils.getExpiredIn();
 
-        // Vrati token kao odgovor na uspesnu autentifikaciju
-        return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole());
+            int expiresIn = tokenUtils.getExpiredIn();
+            return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
+
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid username or password.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred during login: " + e.getMessage());
+        }
     }
+
 
     // Endpoint za registraciju novog korisnika
     @PostMapping("/signup")
@@ -72,7 +88,7 @@ public class AuthenticationController {
         }
 
         Profile user = this.userService.saveProfile(userRequest);
-
+        profileService.sendActivationEmail(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 

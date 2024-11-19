@@ -1,9 +1,9 @@
 <h1>Posts</h1>
-<a href="create-post">
-<button mat-raised-button color="secondary">
-  <mat-icon>add</mat-icon>
-  Create
-</button>
+<a *ngIf="loggedProfile" href="create-post">
+  <button mat-raised-button color="secondary">
+    <mat-icon>add</mat-icon>
+    Create
+  </button>
 </a>
 <div class="post-list">
   <mat-card *ngFor="let post of posts" class="post-card">
@@ -17,18 +17,34 @@
       <mat-card-content class="post-content">
         <mat-card-subtitle>Comments:</mat-card-subtitle>
         <ul>
-          <li *ngFor="let comment of post.comments">{{ comment.text }}</li>
+          <li *ngFor="let comment of post.comments" (click)="showCommentCreatorInfo(comment)">
+            {{ comment.text }}
+          </li>
         </ul>
-      </mat-card-content>
+      </mat-card-content>      
     </div>
     <mat-card-actions class="post-actions">
-      <button mat-button color="primary" *ngIf="!likeIds.includes(post.id)" (click)="likePost(post.id)">Like</button>
-      <button mat-button color="primary" *ngIf="likeIds.includes(post.id)" disabled>Liked</button>
-      <button mat-button color="accent">Comment</button>
+      <button mat-button 
+        [color]="loggedProfile ? 'primary' : 'warn'" 
+        (click)="loggedProfile ? likePost(post.id) : showLoginAlert()"
+        [disabled]="!loggedProfile && likeIds.includes(post.id)">
+        {{ likeIds.includes(post.id) ? 'Liked' : 'Like' }}
+      </button>
+    
+      <button mat-button color="accent" 
+        (click)="loggedProfile ? commentOnPost(post.id) : showLoginAlert()">
+        Comment
+      </button>
+    
+      <!-- Creator Info Button -->
+      <button mat-button color="primary" (click)="showCreatorInfo(post)">
+        Creator Info
+      </button>
+    
       <div *ngIf="profileId === post.profile?.id">
-      <button mat-button style="color: #ba79ba;" (click)="goToUpdate(post.id)">Edit</button>
-      <button mat-button style="color: #ba79ba;" (click)="deletePost(post.id)">Delete</button>
-    </div>
-    </mat-card-actions>
+        <button mat-button style="color: #ba79ba;" (click)="goToUpdate(post.id)">Edit</button>
+        <button mat-button style="color: #ba79ba;" (click)="deletePost(post.id)">Delete</button>
+      </div>
+    </mat-card-actions>    
   </mat-card>
 </div>

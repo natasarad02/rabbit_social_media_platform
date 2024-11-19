@@ -74,12 +74,12 @@ public class PostController {
 
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     public ResponseEntity<List<PostDTO>> getAllPosts() {
 
         List<Post> posts = postService.findAllActive();
 
-        // convert students to DTOs
+        posts.sort((p1, p2) -> p2.getPostedTime().compareTo(p1.getPostedTime()));
+
         List<PostDTO> postDTOs = new ArrayList<>();
         for (Post post : posts) {
             PostDTO postDTO = new PostDTO();
@@ -165,7 +165,6 @@ public class PostController {
     }
 
     @GetMapping("/likes")
-    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
     public ResponseEntity<List<Integer>> getAllLikes(@RequestParam Integer profileId) {
         List<Integer> likes = postService.getPostIdsForProfile(profileId);
         return new ResponseEntity<>(likes, HttpStatus.OK);
