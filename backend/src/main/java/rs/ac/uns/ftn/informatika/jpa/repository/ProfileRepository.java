@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
-import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -37,5 +37,10 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
 
     @Query("SELECT MAX(p.id) FROM Profile p")
     Integer findMaxId();
+
+    @Query("SELECT p FROM Profile p WHERE p.activated = false AND p.registrationTime < :cutoffDate")
+    List<Profile> findUnactivatedProfilesBefore(@Param("cutoffDate") LocalDateTime cutoffDate);
+
+
 
 }

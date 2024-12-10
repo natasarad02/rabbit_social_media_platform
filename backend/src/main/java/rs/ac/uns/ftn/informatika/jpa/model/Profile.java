@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.informatika.jpa.model;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import javax.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -55,6 +56,9 @@ public class Profile implements UserDetails {
     public boolean isActivated() {
         return activated;
     }
+
+    @Column(name = "registration_time")
+    private LocalDateTime registrationTime;
 
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
@@ -247,7 +251,13 @@ public class Profile implements UserDetails {
         post.setProfile(this);
     }
 
+    public LocalDateTime getRegistrationTime() {
+        return registrationTime;
+    }
 
+    public void setRegistrationTime(LocalDateTime registrationTime) {
+        this.registrationTime = registrationTime;
+    }
 
     public Set<Post> getLikedPosts() {
         return likedPosts;

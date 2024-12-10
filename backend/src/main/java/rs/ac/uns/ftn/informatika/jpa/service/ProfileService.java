@@ -7,6 +7,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
@@ -17,6 +18,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -64,18 +66,15 @@ public class ProfileService {
 
         allProfiles.sort(Comparator.comparingInt(profile -> orderedProfileIds.indexOf(profile.getId())));
 
-        // Apply pagination manually
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allProfiles.size());
         List<Profile> pagedProfiles = allProfiles.subList(start, end);
 
-        // Set followers for each profile in the paged list
         for (Profile profile : pagedProfiles) {
             List<Profile> followingProfiles = profileRepository.findFollowingProfiles(profile.getId());
             profile.setFollowers(new HashSet<>(followingProfiles));
         }
-
-        // Return the paged result wrapped in a Page object
+        
         return new PageImpl<>(pagedProfiles, pageable, allProfiles.size());
     }
 
@@ -121,5 +120,17 @@ public class ProfileService {
             return true;
         }
         return false;
+    }
+
+    // za proveru svaki minut @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 L * ?") // Runs at midnight on the last day of every month
+    public void cleanupUnactivatedProfiles() {
+        LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(1);
+        List<Profile> unactivatedProfiles = profileRepository.findUnactivatedProfilesBefore(cutoffDate);
+
+        if (!unactivatedProfiles.isEmpty()) {
+            profileRepository.deleteAll(unactivatedProfiles);
+            System.out.println("Deleted " + unactivatedProfiles.size() + " unactivated profiles.");
+        }
     }
 }
