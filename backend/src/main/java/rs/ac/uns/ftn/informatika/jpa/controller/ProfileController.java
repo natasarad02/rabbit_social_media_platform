@@ -88,7 +88,37 @@ public class ProfileController {
         return new ResponseEntity<>(new PageImpl<>(profileViewDTOs, pageable, profiles.getTotalElements()), HttpStatus.OK);
     }
 
+    //new
+    @GetMapping("/allNew")
+    @PreAuthorize("hasAuthority('Administrator')")
+    public ResponseEntity<Page<ProfileViewDTO>> getProfiles(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String surname,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) Integer minPosts,
+            @RequestParam(required = false) Integer maxPosts,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        Page<Profile> profiles = profileService.getProfiles(name, surname, email, minPosts, maxPosts, sortBy, sortDirection, page, size);
+        List<ProfileViewDTO> profileViewDTOs = new ArrayList<>();
+        for (Profile profile : profiles.getContent()) {
 
+            ProfileViewDTO profileViewDTO = new ProfileViewDTO();
+            profileViewDTO.setId(profile.getId());
+            profileViewDTO.setName(profile.getName());
+            profileViewDTO.setEmail(profile.getEmail());
+            profileViewDTO.setSurname(profile.getSurname());
+            profileViewDTO.setFollowingCount(profile.getFollowers().size());
+            profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
+            profileViewDTOs.add(profileViewDTO);
+
+        }
+
+
+        return new ResponseEntity<>(new PageImpl<>(profileViewDTOs), HttpStatus.OK);
+    }
 
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('User', 'Administrator')")

@@ -2,14 +2,14 @@ package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
@@ -74,7 +74,7 @@ public class ProfileService {
             List<Profile> followingProfiles = profileRepository.findFollowingProfiles(profile.getId());
             profile.setFollowers(new HashSet<>(followingProfiles));
         }
-        
+
         return new PageImpl<>(pagedProfiles, pageable, allProfiles.size());
     }
 
@@ -133,4 +133,31 @@ public class ProfileService {
             System.out.println("Deleted " + unactivatedProfiles.size() + " unactivated profiles.");
         }
     }
+
+    //new
+    public Page<Profile> getProfiles(String name, String surname, String email, Integer minPosts, Integer maxPosts,
+                                            String sortBy, String sortDirection, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+
+        Specification<Profile> specification = Specification.where(null);
+
+        if (name != null && !name.isEmpty()) {
+            specification = specification.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+        }
+        if (surname != null && !surname.isEmpty()) {
+            specification = specification.and((root, query, cb) -> cb.like(cb.lower(root.get("surname")), "%" + surname.toLowerCase() + "%"));
+        }
+        if (email != null && !email.isEmpty()) {
+            specification = specification.and((root, query, cb) -> cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() + "%"));
+        }
+        if (minPosts != null) {
+            specification = specification.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("postCount"), minPosts));
+        }
+        if (maxPosts != null) {
+            specification = specification.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("postCount"), maxPosts));
+        }
+
+        return profileRepository.findAll(specification, pageable);
+    }
+
 }

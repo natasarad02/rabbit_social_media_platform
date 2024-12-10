@@ -3,6 +3,7 @@ package rs.ac.uns.ftn.informatika.jpa.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 
 import java.util.List;
 
-public interface ProfileRepository extends JpaRepository<Profile, Integer> {
+public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaSpecificationExecutor<Profile> {
     @Query("SELECT p FROM Profile p WHERE p.deleted = false")
     List<Profile> findAllActiveProfiles();
 
@@ -40,6 +41,9 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
 
     @Query("SELECT p FROM Profile p WHERE p.activated = false AND p.registrationTime < :cutoffDate")
     List<Profile> findUnactivatedProfilesBefore(@Param("cutoffDate") LocalDateTime cutoffDate);
+
+
+
 
 
 
