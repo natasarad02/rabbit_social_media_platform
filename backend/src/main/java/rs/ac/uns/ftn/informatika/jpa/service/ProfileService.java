@@ -4,11 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
@@ -17,6 +19,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
+
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -162,7 +165,32 @@ public class ProfileService {
 
     public void followProfile(Integer profileId, Integer followedProfileId)
     {
+        Profile profile = profileRepository.findById(profileId).orElse(null);
+        if(profile == null)
+        {
+            return;
+        }
+
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // Proverava da li je poslednji bio pre minut
+        if (profile.getLastFollowTime() == null || profile.getLastFollowTime().isBefore(now.minusMinutes(1))) {
+            profile.setMinute_following(1); // Reset counter
+            profile.setLastFollowTime(now);
+        } else {
+            // Inkeremntira koliko je u minuti
+            if (profile.getMinute_following() >= 50) {
+                throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "You can follow a maximum of 50 profiles per minute.");
+            }
+            profile.setMinute_following(profile.getMinute_following() + 1);
+        }
+
+        profileRepository.save(profile);
+
+        // Proceed with the follow action
         profileRepository.followProfile(profileId, followedProfileId);
+
     }
 
     public void unfollowProfile(Integer profileId, Integer followedProfileId)

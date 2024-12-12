@@ -22,6 +22,7 @@ import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
 
 import javax.crypto.SecretKey;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,6 +154,7 @@ public class ProfileController {
     @PostMapping("/follow")
     @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
     public ResponseEntity<Void> followProfile(@RequestParam Integer profileId, @RequestParam Integer followedProfileId) {
+        LocalDateTime oneMinuteAgo = LocalDateTime.now().minusMinutes(1);
         profileService.followProfile(profileId, followedProfileId);
         return ResponseEntity.ok().build();
     }

@@ -53,6 +53,12 @@ public class Profile implements UserDetails {
     @Column(name = "activated")
     private boolean activated;
 
+    @Column(name = "minute_following")
+    private Integer minute_following;
+
+    @Column(name = "last_follow_time")
+    private LocalDateTime lastFollowTime;
+
     public boolean isActivated() {
         return activated;
     }
@@ -246,6 +252,14 @@ public class Profile implements UserDetails {
         post.setProfile(this);
     }
 
+    public Integer getMinute_following() {
+        return minute_following;
+    }
+
+    public void setMinute_following(Integer minute_following) {
+        this.minute_following = minute_following;
+    }
+
     public void removePost(Post post) {
         posts.remove(post);
         post.setProfile(this);
@@ -269,6 +283,14 @@ public class Profile implements UserDetails {
 
     public boolean isDeleted() {
         return deleted;
+    }
+
+    public LocalDateTime getLastFollowTime() {
+        return lastFollowTime;
+    }
+
+    public void setLastFollowTime(LocalDateTime lastFollowTime) {
+        this.lastFollowTime = lastFollowTime;
     }
 
     public void setDeleted(boolean deleted) {
