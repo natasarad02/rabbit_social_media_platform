@@ -122,6 +122,10 @@ public class PostService {
         postRepository.addLike(profileId, postId);
     }
 
+    public void removeLike(Integer profileId, Integer postId) {
+        postRepository.removeLike(profileId, postId);
+    }
+
     public List<Integer> getPostIdsForProfile(Integer profileId) {
         return postRepository.findLikedPostIdsByProfileId(profileId);
     }

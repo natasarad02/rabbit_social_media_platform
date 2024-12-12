@@ -4,10 +4,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
+
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 import java.util.List;
@@ -41,6 +44,18 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaS
 
     @Query("SELECT p FROM Profile p WHERE p.activated = false AND p.registrationTime < :cutoffDate")
     List<Profile> findUnactivatedProfilesBefore(@Param("cutoffDate") LocalDateTime cutoffDate);
+
+    @Modifying
+    @Transactional //ili prodje sve ili nista
+    @Query(value = "INSERT INTO profile_following (profile_id, followed_profile_id) VALUES (:profileId, :followedProfileId)", nativeQuery = true)
+    void followProfile(@Param("profileId") Integer profileId, @Param("followedProfileId") Integer followedProfileId);
+
+    @Modifying
+    @Transactional // Ensures either the entire operation succeeds or none of it does
+    @Query(value = "DELETE FROM profile_following WHERE profile_id = :profileId AND followed_profile_id = :followedProfileId", nativeQuery = true)
+    void unfollowProfile(@Param("profileId") Integer profileId, @Param("followedProfileId") Integer followedProfileId);
+
+
 
 
 

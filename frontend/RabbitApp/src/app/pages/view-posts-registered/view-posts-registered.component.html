@@ -24,11 +24,18 @@
       </mat-card-content>      
     </div>
     <mat-card-actions class="post-actions">
-      <button mat-button 
+      <button mat-button *ngIf="!likeIds.includes(post.id)"
         [color]="loggedProfile ? 'primary' : 'warn'" 
         (click)="loggedProfile ? likePost(post.id) : showLoginAlert()"
-        [disabled]="!loggedProfile && likeIds.includes(post.id)">
-        {{ likeIds.includes(post.id) ? 'Liked' : 'Like' }}
+        [disabled]="!loggedProfile">
+        Like
+      </button>
+
+      <button mat-button *ngIf="likeIds.includes(post.id)"
+        [color]="loggedProfile ? 'primary' : 'warn'" 
+        (click)="loggedProfile ? dislikePost(post.id) : showLoginAlert()"
+        [disabled]="!loggedProfile">
+        Liked
       </button>
     
       <button mat-button color="accent" 

@@ -150,4 +150,18 @@ public class ProfileController {
         }
     }
 
+    @PostMapping("/follow")
+    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
+    public ResponseEntity<Void> followProfile(@RequestParam Integer profileId, @RequestParam Integer followedProfileId) {
+        profileService.followProfile(profileId, followedProfileId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/unfollow")
+    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
+    public ResponseEntity<Void> unfollowProfile(@RequestParam Integer profileId, @RequestParam Integer followedProfileId) {
+        profileService.unfollowProfile(profileId, followedProfileId);
+        return ResponseEntity.ok().build();
+    }
+
 }

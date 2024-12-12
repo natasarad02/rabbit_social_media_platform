@@ -31,6 +31,14 @@ export class PostService {
         return this.http.post<void>(`${this.apiUrl}/like`, null, { params });
     }
 
+    dislikePost(idProfile: number, idPost: number): Observable<void>
+    {
+        const params = new HttpParams()
+        .set('profileId', idProfile)
+        .set('postId', idPost);
+        return this.http.post<void>(`${this.apiUrl}/dislike`, null, { params });
+    }
+
     getLikedPosts(idProfile: number): Observable<number[]>
     {
         return this.http.get<number[]>(`${this.apiUrl}/likes`, {

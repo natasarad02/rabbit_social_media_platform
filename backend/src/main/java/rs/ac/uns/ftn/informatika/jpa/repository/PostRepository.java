@@ -30,6 +30,12 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query(value = "INSERT INTO likes (profile_id, post_id) VALUES (:profileId, :postId)", nativeQuery = true)
     void addLike(@Param("profileId") Integer profileId, @Param("postId") Integer postId);
 
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM likes WHERE profile_id = :profileId AND post_id = :postId", nativeQuery = true)
+    void removeLike(@Param("profileId") Integer profileId, @Param("postId") Integer postId);
+
+
     @Query(value = "SELECT post_id FROM likes WHERE profile_id = :profileId", nativeQuery = true)
     List<Integer> findLikedPostIdsByProfileId(@Param("profileId") Integer profileId);
 

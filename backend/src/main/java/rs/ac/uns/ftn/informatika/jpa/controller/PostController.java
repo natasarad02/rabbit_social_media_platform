@@ -164,6 +164,13 @@ public class PostController {
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('User')")
+    @PostMapping("/dislike")
+    public ResponseEntity<Void> dislikePost(@RequestParam Integer profileId, @RequestParam Integer postId) {
+        postService.removeLike(profileId, postId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/likes")
     public ResponseEntity<List<Integer>> getAllLikes(@RequestParam Integer profileId) {
         List<Integer> likes = postService.getPostIdsForProfile(profileId);

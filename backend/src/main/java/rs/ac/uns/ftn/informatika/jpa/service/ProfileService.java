@@ -160,4 +160,14 @@ public class ProfileService {
         return profileRepository.findAll(specification, pageable);
     }
 
+    public void followProfile(Integer profileId, Integer followedProfileId)
+    {
+        profileRepository.followProfile(profileId, followedProfileId);
+    }
+
+    public void unfollowProfile(Integer profileId, Integer followedProfileId)
+    {
+        profileRepository.unfollowProfile(profileId, followedProfileId);
+    }
+
 }

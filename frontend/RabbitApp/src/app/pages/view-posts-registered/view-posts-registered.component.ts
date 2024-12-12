@@ -143,6 +143,20 @@ export class ViewPostsRegisteredComponent implements OnInit {
       this.showLoginAlert();  
     }
   }
+
+  dislikePost(postId: number): void {
+    if (this.loggedProfile) {
+      this.postService.dislikePost(this.profileId, postId).subscribe(() => {
+        this.ngOnInit();
+        console.log("success");
+      },
+      (error) => {
+        console.error('Error liking post', error);
+      });
+    } else {
+      this.showLoginAlert();  
+    }
+  }
   
 
   commentOnPost(postId: number): void {
