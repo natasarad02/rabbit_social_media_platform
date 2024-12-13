@@ -1,0 +1,83 @@
+<div class="profile-info-container">
+  <!-- Username and Name -->
+  <div class="username">
+    <strong>{{ user.username }}</strong>
+    <p>{{ user.name }} {{ user.surname }}</p>
+  </div>
+
+  <!-- User Details -->
+  <div class="user-details">
+    <p><strong>Email:</strong> {{ user.email }}</p>
+    <p><strong>Address:</strong> {{ user.address }}</p>
+  </div>
+
+  <!-- Followers and Following -->
+  <div class="follow-stats">
+    <div>
+      <p>Followers</p>
+      <p><strong>{{ 53 }}</strong></p>
+    </div>
+    <div>
+      <p>Following</p>
+      <p><strong>{{ 123 }}</strong></p>
+    </div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="profile-buttons">
+    <button *ngIf="isLoggedInUser" (click)="openEditModal()">Edit Profile</button>
+    <button *ngIf="!isLoggedInUser" (click)="followUser()">Follow</button>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" *ngIf="showModal">
+    <div class="modal-content">
+      <h3>Edit Profile</h3>
+      
+      <div>
+        <label>Username:</label>
+        <input type="text" [(ngModel)]="editedUser.username" disabled />
+      </div>
+      
+      <div>
+        <label>Name:</label>
+        <input type="text" [(ngModel)]="editedUser.name" />
+      </div>
+
+      <div>
+        <label>Surname:</label>
+        <input type="text" [(ngModel)]="editedUser.surname" />
+      </div>
+
+      <div>
+        <label>Email:</label>
+        <input type="email" [(ngModel)]="editedUser.email" />
+      </div>
+
+      <div>
+        <label>Address:</label>
+        <input type="text" [(ngModel)]="editedUser.address" />
+      </div>
+
+      <div>
+        <label>New Password:</label>
+        <input type="password" [(ngModel)]="newPassword" />
+      </div>
+
+      <div>
+        <label>Confirm Password:</label>
+        <input type="password" [(ngModel)]="confirmPassword" />
+      </div>
+
+      <!-- Validation Messages -->
+      <p class="error-message" *ngIf="passwordsDoNotMatch">Passwords do not match!</p>
+      <p class="error-message" *ngIf="!allFieldsFilled">All fields are required!</p>
+
+      <!-- Buttons -->
+      <div class="modal-buttons">
+        <button (click)="saveChanges()">Save</button>
+        <button (click)="closeEditModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
