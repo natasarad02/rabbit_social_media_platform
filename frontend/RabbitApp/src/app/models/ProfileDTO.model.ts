@@ -6,4 +6,5 @@ export interface ProfileDTO{
     password: string;
     role: string; 
     address: string;
+    username: string;
 }
