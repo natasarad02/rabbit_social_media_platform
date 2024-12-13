@@ -23,8 +23,14 @@
 }
 
 .home-page-div {
+    width: auto;
+    margin: 0 auto;
+  }
+  
+  /* Apply when the loggedProfile role is User */
+  .user-role-active {
     width: 20%;
-}
+  }
 
 /*SLEDI PREKOPIRAN CSS ZA POSTOVE*/
 

@@ -9,7 +9,8 @@
       [likeIds]="likeIds"
     ></app-post>
 </div>
-<div class="home-page-div">
+<div class="home-page-div" 
+[ngClass]="{'user-role-active': loggedProfile?.role === 'User'}">
     <div class="logo-container">
         <img class="logo" src="bunny.svg"/>
     </div>

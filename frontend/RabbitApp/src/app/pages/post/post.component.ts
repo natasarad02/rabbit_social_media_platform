@@ -34,6 +34,7 @@ export class PostComponent implements OnInit {
       this.postService.likePost(this.loggedProfile.id, postId).subscribe(
         () => {
           console.log(`Post ${postId} liked successfully`);
+          this.likeIds.push(postId);
           this.refreshPostData(); // Refresh the component state
         },
         (error) => {
@@ -48,6 +49,7 @@ export class PostComponent implements OnInit {
   dislikePost(postId: number): void {
     if (this.loggedProfile) {
       this.postService.dislikePost(this.loggedProfile.id, postId).subscribe(() => {
+        this.likeIds = this.likeIds.filter(id => id !== postId);
         this.refreshPostData();
         console.log("success");
       },
