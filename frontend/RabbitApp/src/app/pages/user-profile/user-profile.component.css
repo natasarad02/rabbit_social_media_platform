@@ -1,0 +1,15 @@
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.top-section {
+  padding: 16px; /* Add some padding for spacing */
+  box-sizing: border-box; /* Ensure padding is included in the height */
+}
+
+.bottom-section {
+  flex: 1; /* Takes up the remaining space */
+  overflow-y: auto;
+}
