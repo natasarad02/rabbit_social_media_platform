@@ -6,7 +6,7 @@ import { ViewPostsRegisteredComponent } from './pages/view-posts-registered/view
 import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
 import { UpdatePostComponent } from './pages/update-post/update-post.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { ProfileComponent } from './pages/user-profile/user-profile.component';
 import { TrendsComponent } from './pages/trends/trends.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
 import { MapPostsComponent } from './pages/map-posts/map-posts.component';
@@ -20,7 +20,7 @@ export const routes: Routes = [
     { path: 'create-post', component: CreatePostComponent},
     { path: '', component: HomePageComponent},
     { path: 'update-post/:id', component: UpdatePostComponent},
-    { path: 'my-profile', component: UserProfileComponent},
+    { path: 'profile/:id', component: ProfileComponent},
     { path: 'trends', component: TrendsComponent},
     { path: 'analytics', component: AnalyticsComponent},
     { path: 'posts-map', component: MapPostsComponent},

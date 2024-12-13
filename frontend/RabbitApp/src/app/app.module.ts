@@ -19,7 +19,10 @@ import { UpdatePostComponent } from './pages/update-post/update-post.component';
 import { MapPostsComponent } from './pages/map-posts/map-posts.component';
 import { TrendsComponent } from './pages/trends/trends.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { ProfileComponent } from './pages/user-profile/user-profile.component';
+import { PostComponent } from './pages/post/post.component';
+import { ProfilePostsComponent } from './pages/user-profile/profile-posts/profile-posts.component';
+import { ProfileInfoComponent } from './pages/user-profile/profile-info/profile-info.component';
 import { ChatComponent } from './pages/chat/chat.component';
 
 import { LoginComponent } from './pages/login/login.component';
@@ -41,7 +44,10 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     MapPostsComponent,
     TrendsComponent,
     AnalyticsComponent,
-    UserProfileComponent,
+    ProfileComponent,
+    ProfileInfoComponent,
+    ProfilePostsComponent,
+    PostComponent,
     ChatComponent
   ],
   imports: [

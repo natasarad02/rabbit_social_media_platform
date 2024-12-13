@@ -43,8 +43,8 @@ export class CreatePostComponent implements OnInit {
     email: '',
     password: '',
     role: '',
-    address: ''
-
+    address: '',
+    username: ''
   }
   location: LocationDTO = {
     id: 0,
