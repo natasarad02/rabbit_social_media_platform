@@ -56,6 +56,12 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaS
     void unfollowProfile(@Param("profileId") Integer profileId, @Param("followedProfileId") Integer followedProfileId);
 
 
+    @Query(value = "SELECT p.* FROM profile p " +
+            "JOIN profile_following pf ON p.id = pf.followed_profile_id " +
+            "WHERE pf.profile_id = :profileId", nativeQuery = true)
+    List<Profile> getFollowers(@Param("profileId") Integer profileId);
+
+
 
 
 

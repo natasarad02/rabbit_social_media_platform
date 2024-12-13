@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
@@ -30,5 +30,25 @@ export class ProfileService {
         
         return this.http.get<PaginatedResponse<ProfileViewDTO>>(`${this.apiUrl}/allPaged`, { params });
     }
+
+    followProfile(profileId: number, followedProfileId: number): Observable<void> {
+        const params = new HttpParams()
+          .set('profileId', profileId.toString())
+          .set('followedProfileId', followedProfileId.toString());
+        return this.http.post<void>(`${this.apiUrl}/follow`, null, { params });
+      }
+    
+      unfollowProfile(profileId: number, followedProfileId: number): Observable<void> {
+        const params = new HttpParams()
+          .set('profileId', profileId.toString())
+          .set('followedProfileId', followedProfileId.toString());
+        return this.http.post<void>(`${this.apiUrl}/unfollow`, null, { params });
+      }
+    
+      getFollowers(id: number): Observable<ProfileDTO[]> {
+        return this.http.get<ProfileDTO[]>(`${this.apiUrl}/followers/${id}`);
+      }
+
+
 
 }

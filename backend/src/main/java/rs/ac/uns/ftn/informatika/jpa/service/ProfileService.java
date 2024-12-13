@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -196,6 +197,11 @@ public class ProfileService {
     public void unfollowProfile(Integer profileId, Integer followedProfileId)
     {
         profileRepository.unfollowProfile(profileId, followedProfileId);
+    }
+
+    public List<Profile> getFollowers(@Param("profileId") Integer profileId)
+    {
+        return profileRepository.getFollowers(profileId);
     }
 
 }

@@ -25,6 +25,7 @@ import javax.crypto.SecretKey;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/profiles")
@@ -165,5 +166,22 @@ public class ProfileController {
         profileService.unfollowProfile(profileId, followedProfileId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/followers/{id}")
+    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
+    public ResponseEntity<List<ProfileDTO>> getFollowers(@PathVariable Integer id) {
+        List<Profile> profiles = profileService.getFollowers(id);
+
+        if (profiles == null || profiles.isEmpty()) {
+            return null;
+        }
+
+        List<ProfileDTO> profileDTOs = profiles.stream()
+                .map(ProfileDTO::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(profileDTOs);
+    }
+
 
 }

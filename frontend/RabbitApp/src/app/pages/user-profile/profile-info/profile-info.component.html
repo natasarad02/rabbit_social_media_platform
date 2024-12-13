@@ -26,7 +26,8 @@
   <!-- Buttons -->
   <div class="profile-buttons">
     <button *ngIf="isLoggedInUser" (click)="openEditModal()">Edit Profile</button>
-    <button *ngIf="!isLoggedInUser" (click)="followUser()">Follow</button>
+    <button *ngIf="!isLoggedInUser && !isFollowed" (click)="followUser()">Follow</button>
+    <button *ngIf="!isLoggedInUser && isFollowed" (click)="unfollowUser()">Unfollow</button>
   </div>
 
   <!-- Modal -->

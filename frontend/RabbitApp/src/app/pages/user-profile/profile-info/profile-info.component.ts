@@ -3,6 +3,7 @@ import { ProfileDTO } from '../../../models/ProfileDTO.model';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
+import { ProfileService } from '../../../services/profile-service.service';
 
 @Component({
   selector: 'app-profile-info',
@@ -22,12 +23,15 @@ export class ProfileInfoComponent implements OnInit{
   allFieldsFilled: boolean = true;
   loggedProfile: ProfileDTO | null = null;
   profileId: number = -1;
+  isFollowed: boolean = false;
+  followers: ProfileDTO[] = []; //sve koje ulogovan korisnik prati
+  requestedProfileId: number = -1;
 
-  constructor(private userService: UserService, private auth: AuthService, private route: ActivatedRoute){}
+  constructor(private userService: UserService, private auth: AuthService, private route: ActivatedRoute, private profileService: ProfileService){}
     
   ngOnInit(): void {
     this.loadUser();
-    this.checkisLoggedInUser();
+   // this.checkisLoggedInUser();
   }
 
   loadUser(): void {
@@ -37,7 +41,7 @@ export class ProfileInfoComponent implements OnInit{
           console.log(data);
           this.loggedProfile = data;
           this.profileId = this.loggedProfile.id;  
-          this.checkisLoggedInUser()
+          this.checkisLoggedInUser();
         } else {
           console.log('No profile found or token expired');
           this.profileId = -1;
@@ -53,8 +57,12 @@ export class ProfileInfoComponent implements OnInit{
 
   checkisLoggedInUser(){
     const idParam = this.route.snapshot.paramMap.get('id');
-    const requestedProfileId = idParam ? parseInt(idParam, 10) : null; 
-    this.isLoggedInUser = requestedProfileId === this.loggedProfile?.id;
+    this.requestedProfileId = idParam ? parseInt(idParam, 10) : -1; 
+    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;
+    if(!this.isLoggedInUser)
+    {
+      this.loadFollowers(this.profileId, this.requestedProfileId);
+    }
   }
 
   openEditModal() {
@@ -89,8 +97,51 @@ export class ProfileInfoComponent implements OnInit{
     this.closeEditModal();
   } 
 
+  //dodato pracenje i otpracivanje
   followUser() {
-    console.log('Follow button clicked!');
-    // Handle follow logic here
+
+    this.profileService.followProfile(this.profileId, this.requestedProfileId).subscribe({
+      next: () => {
+        console.log('User followed successfully!');
+        this.ngOnInit();
+      },
+      error: (err) => {
+        console.error('Error while following user:', err);
+      }
+    });
   }
+
+
+  unfollowUser()
+  {
+    this.profileService.unfollowProfile(this.profileId, this.requestedProfileId).subscribe({
+      next: () => {
+        console.log('User followed successfully!');
+        this.ngOnInit();
+      },
+      error: (err) => {
+        console.error('Error while following user:', err);
+      }
+    });
+
+  }
+
+  //funkcija koja dobavlja sve koje ulogovan korisnik prati 
+  loadFollowers(profileId: number, requestedProfileId: number): void {
+    this.profileService.getFollowers(profileId).subscribe({
+      next: (followers) => {
+        this.followers = followers;
+        this.isFollowed = followers.some(follower => follower.id === requestedProfileId);
+        console.log('Followers loaded:', this.followers);
+      },
+      error: (err) => {
+        console.error('Error fetching followers:', err);
+      }
+    });
+  }
+
+  
+
+
+
 }
