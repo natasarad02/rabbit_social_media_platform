@@ -33,7 +33,7 @@ INSERT INTO profile (
     address, activated, registration_time, minute_following, last_follow_time
 ) VALUES
       ('marko@example.com', 'marko', '$2b$12$Iw1jjOdqw8JZJL/eAFBnXezQ4VUZtSqv0JV11D2U9Zh4EGLO1Fe.W',
-       'Marko', 'Marković', false, 'User', CURRENT_TIMESTAMP, NULL, true, '2024-10-01 10:00:00', 0, NULL), -- password123
+       'Marko', 'Marković', false, 'User', CURRENT_TIMESTAMP, 'Trg Dositeja Obradovica 2, Novi Sad', true, '2024-10-01 10:00:00', 0, NULL), -- password123
       ('milan@example.com', 'milan', '$2b$12$78BjztYb6FrR0kQQikohmu97pAWWtSzpD9c/dGYOE59dTA2rVhy2S',
        'Milan', 'Milanović', false, 'User', CURRENT_TIMESTAMP, NULL, true, '2024-10-05 11:30:00', 0, NULL), -- password456
       ('ivana@example.com', 'ivana', '$2b$12$4bC1fa0JaOEZYG/eceeLDelbCNVJYtcLJrrSD34laTpLRCziNct.S',
@@ -52,6 +52,7 @@ INSERT INTO profile (
        'Anna', 'Taylor', false, 'Administrator', CURRENT_TIMESTAMP, NULL, false, '2024-10-25 08:10:00', 0, NULL), -- password606
       ('james@example.com', 'james', '$2b$12$A7Y4k.ql2AFTO6vRkWivte0FGC5fI/VBZadxHeHEr1nFnug7ti0k.',
        'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL, false, '2024-10-28 20:30:00', 0, NULL); -- password707
+
 
 -- Inserting data into Post
 INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude) VALUES

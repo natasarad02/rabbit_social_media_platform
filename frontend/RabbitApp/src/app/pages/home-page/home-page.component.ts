@@ -34,8 +34,8 @@ export class HomePageComponent implements OnInit {
   navigateToProfile() {
     if (this.loggedProfile && this.loggedProfile.role === 'Administrator') {
       this.router.navigate(['view-profile']);
-    } else {
-      this.router.navigate(['my-profile']);
+    } else if(this.loggedProfile) {
+      this.router.navigate(['profile', this.loggedProfile.id]);
     }
   }
 

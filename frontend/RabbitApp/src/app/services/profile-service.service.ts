@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
+import { ProfileDTO } from "../models/ProfileDTO.model";
 import { PaginatedResponse } from "../models/Pagebale.model";
 
 @Injectable({
@@ -14,6 +15,10 @@ export class ProfileService {
 
     getAllProfiles(): Observable<ProfileViewDTO[]> {
         return this.http.get<ProfileViewDTO[]>(`${this.apiUrl}/all`);
+    }
+
+    getProfile(id: number): Observable<ProfileDTO | null>{
+        return this.http.get<ProfileDTO>(`${this.apiUrl}/`+id);
     }
 
     getPaginatedProfiles(page: number, size: number, idProfile: number[]): Observable<PaginatedResponse<ProfileViewDTO>> {
