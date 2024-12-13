@@ -1,7 +1,17 @@
+<h1 class="app-name">OnlyBuns</h1>
+<div class="all">
+    
+<div class="post-list" *ngIf="loggedProfile?.role === 'User'">
+    <app-post
+      *ngFor="let post of posts"
+      [post]="post"
+      [loggedProfile]="loggedProfile" 
+      [likeIds]="likeIds"
+    ></app-post>
+</div>
 <div class="home-page-div">
     <div class="logo-container">
         <img class="logo" src="bunny.svg"/>
-        <h1 class="app-name">OnlyBuns</h1>
     </div>
     <div class = "home-page-content">
         <button (click)="logIn()" *ngIf="loggedProfile === null" mat-raised-button color="accent">Login</button>
@@ -14,4 +24,5 @@
         <button (click)="navigateToProfile()" mat-raised-button color="accent">Profile</button>
 
     </div>
+</div>
 </div>

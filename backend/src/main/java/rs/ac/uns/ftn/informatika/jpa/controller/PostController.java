@@ -41,13 +41,15 @@ public class PostController {
         this.profileService = profileService;
         this.imageService = imageService;
     }
-    /*
+
     @GetMapping(value = "/forProfile/{id}")
+    @PreAuthorize("hasAnyAuthority('User')")
     public ResponseEntity<List<PostDTO>> getAllPostsForProfile(@PathVariable Integer id) {
 
         List<Post> posts = postService.findByProfileId(id);
 
-        // convert students to DTOs
+        posts.sort((p1, p2) -> p2.getPostedTime().compareTo(p1.getPostedTime()));
+
         List<PostDTO> postDTOs = new ArrayList<>();
         for (Post post : posts) {
             PostDTO postDTO = new PostDTO();
@@ -55,21 +57,22 @@ public class PostController {
             postDTO.setPostedTime(post.getPostedTime());
             postDTO.setPicture(post.getPicture());
             postDTO.setDescription(post.getDescription());
-            postDTO.setAddress(post.getAddress());
-            postDTO.setLongitude(post.getLongitude());
-            postDTO.setLatitude(post.getLatitude());
             postDTO.setLikeCount(postService.countLikesForPost(post.getId()));
             List<CommentDTO> commentDTOs = new ArrayList<>();
             for (Comment comment : commentService.findAllForPost(post.getId())) {
                 commentDTOs.add(new CommentDTO(comment));
             }
             postDTO.setComments(commentDTOs);
+            postDTO.setAddress(post.getAddress());
+            postDTO.setLongitude(post.getLongitude());
+            postDTO.setLatitude(post.getLatitude());
+            postDTO.setProfile(new ProfileDTO(post.getProfile()));
             postDTOs.add(postDTO);
 
         }
 
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
-    }*/
+    }
 
 
 

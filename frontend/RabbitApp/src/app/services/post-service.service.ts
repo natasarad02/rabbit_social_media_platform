@@ -18,6 +18,10 @@ export class PostService {
         return this.http.get<PostViewDTO[]>(this.apiUrl);
     }
 
+    getPostsForProfile(profileId: number): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/forProfile/${profileId}`);
+    }
+
     deletePost(id: number): Observable<void>
     {
         return this.http.put<void>(`${this.apiUrl}/delete/${id}`, {});

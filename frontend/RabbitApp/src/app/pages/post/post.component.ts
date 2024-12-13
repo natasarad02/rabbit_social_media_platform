@@ -45,6 +45,20 @@ export class PostComponent implements OnInit {
     }
   }
 
+  dislikePost(postId: number): void {
+    if (this.loggedProfile) {
+      this.postService.dislikePost(this.loggedProfile.id, postId).subscribe(() => {
+        this.refreshPostData();
+        console.log("success");
+      },
+      (error) => {
+        console.error('Error liking post', error);
+      });
+    } else {
+      this.showLoginAlert();  
+    }
+  }
+
   public showLoginAlert(): void {
     Swal.fire({
       icon: 'warning',
@@ -112,4 +126,8 @@ export class PostComponent implements OnInit {
   goToUpdate(): void {
     this.router.navigate([`/update-post/${this.post.id}`]);
   }
+
+  
+
+  
 }
