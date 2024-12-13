@@ -1,0 +1,21 @@
+<div class="post-card">
+  <img [src]="post.picture" alt="Post Image" class="post-image" />
+
+  <div class="post-content">
+    <p>{{ post.description }}</p>
+    <small>Posted by: {{ post.profile?.name || 'Anonymous' }}</small>
+  </div>
+
+  <div class="post-actions">
+    <button mat-button
+      [color]="loggedProfile ? 'primary' : 'warn'"
+      (click)="loggedProfile ? likePost(post.id) : showLoginAlert()"
+      [disabled]="likeIds.includes(post.id)">
+      {{ likeIds.includes(post.id) ? 'Liked' : 'Like' }}
+    </button>
+    <button (click)="commentOnPost()">Comment</button>
+    <button *ngIf="post.profile?.id === loggedProfile?.id" (click)="deletePost()">Delete</button>
+    <button (click)="goToUpdate()">Edit</button>
+    <button (click)="showCreatorInfo()">Creator Info</button>
+  </div>
+</div>
