@@ -22,6 +22,6 @@
     <button  mat-button (click)="commentOnPost()">Comment</button>
     <button  mat-button *ngIf="post.profile?.id === loggedProfile?.id" (click)="deletePost()">Delete</button>
     <button  mat-button (click)="goToUpdate()" *ngIf="loggedProfile?.id === post.profile?.id">Edit</button>
-    <button  mat-button (click)="showCreatorInfo()">Creator Info</button>
+    <button  mat-button (click)="navigateToUser(post.profile?.id || -1)">Creator Info</button>
   </div>
 </div>

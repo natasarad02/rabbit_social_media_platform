@@ -129,6 +129,12 @@ export class PostComponent implements OnInit {
     this.router.navigate([`/update-post/${this.post.id}`]);
   }
 
+  navigateToUser(userId: number) : void {
+    this.router.navigate([`/profile/${userId}`]).then(() => {
+    });
+    
+  }
+
   
 
   
