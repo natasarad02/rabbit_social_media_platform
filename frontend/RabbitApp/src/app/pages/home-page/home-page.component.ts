@@ -30,7 +30,7 @@ export class HomePageComponent implements OnInit {
           console.log(data);
           this.loggedProfile = data;
           this.loadLikedPosts();
-          this.loadFollowers(data.id);
+          this.loadFollowing(data.id);
         } else {
           console.log('No profile found or token expired');
         }
@@ -80,8 +80,8 @@ export class HomePageComponent implements OnInit {
   }
 
   //dobavlja sve koje prati
-  loadFollowers(profileId: number): void {
-    this.profileService.getFollowers(profileId).subscribe({
+  loadFollowing(profileId: number): void {
+    this.profileService.getFollowing(profileId).subscribe({
       next: (followers) => {
         this.followers = followers;
         console.log(followers);
@@ -97,6 +97,7 @@ export class HomePageComponent implements OnInit {
 
   //dobavi sve postove za profile koje treba
   getPosts(profileId: number): void {
+    this.posts = [];
     this.postService.getPostsForProfile(profileId).subscribe(
       (response) => {
         // Add posts for the follower to the posts array

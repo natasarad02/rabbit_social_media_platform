@@ -10,18 +10,18 @@
     <button mat-button
       [color]="loggedProfile ? 'primary' : 'warn'"
       (click)="loggedProfile ? likePost(post.id) : showLoginAlert()"
-      *ngIf="likeIds.includes(post.id)">
+      *ngIf="!likeIds.includes(post.id)">
       Like
     </button>
     <button mat-button
       [color]="loggedProfile ? 'primary' : 'warn'"
       (click)="loggedProfile ? dislikePost(post.id) : showLoginAlert()"
-      *ngIf="!likeIds.includes(post.id)">
+      *ngIf="likeIds.includes(post.id)">
       Liked
     </button>
-    <button (click)="commentOnPost()">Comment</button>
-    <button *ngIf="post.profile?.id === loggedProfile?.id" (click)="deletePost()">Delete</button>
-    <button (click)="goToUpdate()">Edit</button>
-    <button (click)="showCreatorInfo()">Creator Info</button>
+    <button  mat-button (click)="commentOnPost()">Comment</button>
+    <button  mat-button *ngIf="post.profile?.id === loggedProfile?.id" (click)="deletePost()">Delete</button>
+    <button  mat-button (click)="goToUpdate()" *ngIf="loggedProfile?.id === post.profile?.id">Edit</button>
+    <button  mat-button (click)="showCreatorInfo()">Creator Info</button>
   </div>
 </div>

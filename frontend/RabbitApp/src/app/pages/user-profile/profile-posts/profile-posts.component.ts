@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { PostViewDTO } from '../../../models/PostViewDTO.model';
 import { ProfileDTO } from '../../../models/ProfileDTO.model';
 import { PostService } from '../../../services/post-service.service';
@@ -11,11 +11,12 @@ import { AuthService } from '../../../services/auth.service';
   templateUrl: './profile-posts.component.html',
   styleUrls: ['./profile-posts.component.css']
 })
-export class ProfilePostsComponent implements OnInit {
+export class ProfilePostsComponent implements OnInit, OnChanges {
   @Input() userId!: number; 
   posts: PostViewDTO[] = [];
   loggedProfile: ProfileDTO | null = null; 
   imageStartPath: string = 'http://localhost:8080';
+  likeIds: number[] = [];
   
   constructor(
     private postService: PostService, 
@@ -24,7 +25,14 @@ export class ProfilePostsComponent implements OnInit {
     private auth: AuthService
   ) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['userId']) {
+      this.ngOnInit();  // Reload posts when userId changes
+    }
+  }
+
   ngOnInit() {
+    this.getLoggedUser();
     this.postService.getAllPosts().subscribe(
       (response) => {
         this.posts = response;
@@ -66,5 +74,38 @@ export class ProfilePostsComponent implements OnInit {
       }
     );
     
+  }
+
+  getLoggedUser()
+  {
+    this.userService.getUserProfile().subscribe(
+      (data) => {
+        if (data) {
+          console.log(data);
+          this.loggedProfile = data;
+          this.loadLikedPosts();
+        } else {
+          console.log('No profile found or token expired');
+        }
+      },
+      (error) => {
+        console.error('Error loading profile:', error);
+      }
+    );
+  
+  }
+
+  loadLikedPosts(): void {
+    if (this.loggedProfile) {
+      this.postService.getLikedPosts(this.loggedProfile.id).subscribe(
+        (response) => {
+          this.likeIds = response;
+          console.log(this.likeIds);
+        },
+        (error) => {
+          console.error('Error loading liked posts', error);
+        }
+      );
+    }
   }
 }

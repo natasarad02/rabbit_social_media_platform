@@ -234,7 +234,7 @@ public class ProfileController {
         profileService.unfollowProfile(profileId, followedProfileId);
         return ResponseEntity.ok().build();
     }
-
+/*
     @GetMapping("/followers/{id}")
     @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
     public ResponseEntity<List<ProfileDTO>> getFollowers(@PathVariable Integer id) {
@@ -249,7 +249,7 @@ public class ProfileController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(profileDTOs);
-    }
+    }*/
 
 
 }

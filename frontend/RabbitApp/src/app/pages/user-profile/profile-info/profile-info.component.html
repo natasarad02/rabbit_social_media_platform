@@ -14,11 +14,11 @@
   <!-- Followers and Following -->
   <div class="follow-stats">
     <div>
-      <p>Followers</p>
+      <p (click)="showModalFollow('followers')">Followers</p>
       <p><strong>{{ followersNum }}</strong></p>
     </div>
     <div>
-      <p>Following</p>
+      <p (click)="showModalFollow('following')">Following</p>
       <p><strong>{{ followingNum }}</strong></p>
     </div>
   </div>
@@ -29,6 +29,22 @@
     <button *ngIf="!isLoggedInUser && !isFollowed" (click)="followUser()">Follow</button>
     <button *ngIf="!isLoggedInUser && isFollowed" (click)="unfollowUser()">Unfollow</button>
   </div>
+
+  <!-- Modal for Followers/Following -->
+<div *ngIf="isModalOpen" class="modal">
+  <div class="modal-content">
+    <h3>{{ modalTitle }}</h3>
+    <div class="user-details" *ngFor="let user of displayedList">
+      <p class="usernameNew" (click)="navigateToUser(user.id)">
+        <span class="full-name">{{ user.name }} {{ user.surname }}</span> 
+        <span class="username-tag"> ({{ user.username }})</span>
+      </p>
+    </div>
+    <div class="modal-buttons">
+      <button (click)="closeModalFollow()">Close</button>
+    </div>
+  </div>
+</div>
 
   <!-- Modal -->
   <div class="modal" *ngIf="showModal">

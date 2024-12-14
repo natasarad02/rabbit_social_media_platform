@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ProfileDTO } from '../../../models/ProfileDTO.model';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileService } from '../../../services/profile-service.service';
 
 @Component({
@@ -23,30 +23,25 @@ export class ProfileInfoComponent implements OnInit{
   allFieldsFilled: boolean = true;
   loggedProfile: ProfileDTO | null = null;
   profileId: number = -1;
-<<<<<<< HEAD
   isFollowed: boolean = false;
-  followers: ProfileDTO[] = []; //sve koje ulogovan korisnik prati
-  requestedProfileId: number = -1;
-
-  constructor(private userService: UserService, private auth: AuthService, private route: ActivatedRoute, private profileService: ProfileService){}
-    
-  ngOnInit(): void {
-    this.loadUser();
-   // this.checkisLoggedInUser();
-=======
   following: ProfileDTO[] = []; 
   followers: ProfileDTO[] = []; 
+  loggedUserFollowing: ProfileDTO[] = [];
   followingNum: number = 0;
   followersNum: number = 0;
-  requestedProfileId: number | null= -1;
+  requestedProfileId: number = -1;
+  //modal sa followers and following
+  isModalOpen: boolean = false;
+  modalTitle: string = '';
+  displayedList: ProfileDTO[] = [];
+  @Output() updated: EventEmitter<void> = new EventEmitter<void>();
 
   constructor(private userService: UserService, private auth: AuthService, private route: ActivatedRoute,
-    private profileService: ProfileService
-  ){}
+     private profileService: ProfileService, private router: Router){}
+    
     
   ngOnInit(): void {
     this.loadUser();
->>>>>>> a0c085fb7e67284e16bbb91a3b5d412ae06832c7
   }
 
   getFollowers() {
@@ -54,7 +49,9 @@ export class ProfileInfoComponent implements OnInit{
       this.profileService.getFollowers(this.requestedProfileId).subscribe(
         (data: ProfileDTO[]) => {
             this.followers = data; 
-            this.followersNum = data.length; 
+            this.followersNum = data.length;
+            console.log(this.followers);
+            
         },
         (error) => {
             console.error('Error fetching followers:', error);
@@ -69,6 +66,10 @@ export class ProfileInfoComponent implements OnInit{
           (data: ProfileDTO[]) => {
               this.following = data; // Populate the following array
               this.followingNum = data.length; // Update the count
+              console.log(this.following);
+              
+               
+              
           },
           (error) => {
               console.error('Error fetching following:', error);
@@ -100,19 +101,14 @@ export class ProfileInfoComponent implements OnInit{
 
   checkisLoggedInUser(){
     const idParam = this.route.snapshot.paramMap.get('id');
-<<<<<<< HEAD
     this.requestedProfileId = idParam ? parseInt(idParam, 10) : -1; 
-    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;
+    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;    
+    this.getFollowers();
+    this.getFollowing();
     if(!this.isLoggedInUser)
     {
       this.loadFollowers(this.profileId, this.requestedProfileId);
     }
-=======
-    this.requestedProfileId = idParam ? parseInt(idParam, 10) : null; 
-    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;    
-    this.getFollowers();
-    this.getFollowing();
->>>>>>> a0c085fb7e67284e16bbb91a3b5d412ae06832c7
   }
 
   openEditModal() {
@@ -178,16 +174,46 @@ export class ProfileInfoComponent implements OnInit{
 
   //funkcija koja dobavlja sve koje ulogovan korisnik prati 
   loadFollowers(profileId: number, requestedProfileId: number): void {
-    this.profileService.getFollowers(profileId).subscribe({
+    this.profileService.getFollowing(profileId).subscribe({
       next: (followers) => {
-        this.followers = followers;
-        this.isFollowed = followers.some(follower => follower.id === requestedProfileId);
-        console.log('Followers loaded:', this.followers);
+        this.loggedUserFollowing = followers;
+        this.isFollowed = this.loggedUserFollowing.some(follower => follower.id === requestedProfileId);
+        console.log('Following loaded:', this.loggedUserFollowing);
       },
       error: (err) => {
         console.error('Error fetching followers:', err);
       }
     });
+  }
+
+  //ovo je za followers and following modal
+  showModalFollow(type: 'followers' | 'following'): void {
+    this.isModalOpen = true;
+    if (type === 'followers') {
+      this.modalTitle = 'Followers';
+      this.displayedList = this.followers;
+    } else {
+      this.modalTitle = 'Following';
+      this.displayedList = this.following;
+    }
+  }
+
+  closeModalFollow(): void {
+    this.isModalOpen = false;
+    this.displayedList = [];
+  }
+
+  navigateToUser(userId: number) : void {
+    this.closeModalFollow();
+    this.router.navigate([`/profile/${userId}`]).then(() => {
+      this.ngOnInit(); 
+      this.refreshPostData();
+    });
+    
+  }
+
+  private refreshPostData(): void {
+    this.updated.emit();
   }
 
   

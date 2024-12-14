@@ -53,9 +53,7 @@ export class ProfileService {
         return this.http.post<void>(`${this.apiUrl}/unfollow`, null, { params });
       }
     
-      getFollowers(id: number): Observable<ProfileDTO[]> {
-        return this.http.get<ProfileDTO[]>(`${this.apiUrl}/followers/${id}`);
-      }
+      
 
 
 

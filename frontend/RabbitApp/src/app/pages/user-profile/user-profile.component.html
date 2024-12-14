@@ -3,6 +3,7 @@
       <app-profile-info
         [user]="requestedProfile"
         (edit)="handleEdit()"
+        (updated)="loadProfile()"
       ></app-profile-info>
     </div>
     <div class="bottom-section">
