@@ -3,6 +3,7 @@ import { ProfileDTO } from '../../../models/ProfileDTO.model';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
+import { ProfileService } from '../../../services/profile-service.service';
 
 @Component({
   selector: 'app-profile-info',
@@ -22,13 +23,47 @@ export class ProfileInfoComponent implements OnInit{
   allFieldsFilled: boolean = true;
   loggedProfile: ProfileDTO | null = null;
   profileId: number = -1;
+  following: ProfileDTO[] = []; 
+  followers: ProfileDTO[] = []; 
+  followingNum: number = 0;
+  followersNum: number = 0;
+  requestedProfileId: number | null= -1;
 
-  constructor(private userService: UserService, private auth: AuthService, private route: ActivatedRoute){}
+  constructor(private userService: UserService, private auth: AuthService, private route: ActivatedRoute,
+    private profileService: ProfileService
+  ){}
     
   ngOnInit(): void {
     this.loadUser();
-    this.checkisLoggedInUser();
   }
+
+  getFollowers() {
+    if(this.requestedProfileId){
+      this.profileService.getFollowers(this.requestedProfileId).subscribe(
+        (data: ProfileDTO[]) => {
+            this.followers = data; 
+            this.followersNum = data.length; 
+        },
+        (error) => {
+            console.error('Error fetching followers:', error);
+        }
+    );
+   }    
+  }
+
+  getFollowing() {
+    if(this.requestedProfileId)
+      this.profileService.getFollowing(this.requestedProfileId).subscribe(
+          (data: ProfileDTO[]) => {
+              this.following = data; // Populate the following array
+              this.followingNum = data.length; // Update the count
+          },
+          (error) => {
+              console.error('Error fetching following:', error);
+          }
+      );
+  }
+
 
   loadUser(): void {
     this.userService.getUserProfile().subscribe(
@@ -53,8 +88,10 @@ export class ProfileInfoComponent implements OnInit{
 
   checkisLoggedInUser(){
     const idParam = this.route.snapshot.paramMap.get('id');
-    const requestedProfileId = idParam ? parseInt(idParam, 10) : null; 
-    this.isLoggedInUser = requestedProfileId === this.loggedProfile?.id;
+    this.requestedProfileId = idParam ? parseInt(idParam, 10) : null; 
+    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;    
+    this.getFollowers();
+    this.getFollowing();
   }
 
   openEditModal() {

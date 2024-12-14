@@ -59,7 +59,7 @@ public class Profile implements UserDetails {
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(
             name = "profile_following",
             joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
@@ -67,7 +67,7 @@ public class Profile implements UserDetails {
     )
     private Set<Profile> following = new HashSet<>();
 
-    @ManyToMany(mappedBy = "following")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "following")
     private Set<Profile> followers = new HashSet<>();
 
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -20,10 +20,13 @@ import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.service.PostService;
 import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "api/profiles")
@@ -32,6 +35,7 @@ public class ProfileController {
     private ProfileService profileService;
     private PostService postService;
     private final TokenUtils tokenUtils;
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     public ProfileController(@Autowired ProfileService profileService, @Autowired PostService postService) {
         this.profileService = profileService;
@@ -87,6 +91,67 @@ public class ProfileController {
 
         return new ResponseEntity<>(new PageImpl<>(profileViewDTOs, pageable, profiles.getTotalElements()), HttpStatus.OK);
     }
+
+    @GetMapping(value = "/followers/{id}")
+    @PreAuthorize("hasAuthority('User')")
+    public ResponseEntity<List<ProfileDTO>> getFollowersForProfile(@PathVariable Integer id) {
+        logger.info("Fetching followers for profile ID: {}", id);
+
+        Profile profile = profileService.findOne(id);
+        if (profile == null) {
+            logger.warn("Profile not found for ID: {}", id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        logger.info("Profile found: {}", profile.getName()); // Example if Profile has a `getName` method
+        List<ProfileDTO> followerDTOs = new ArrayList<>();
+        Set<Profile> followers = profile.getFollowers();
+
+        if (followers == null || followers.isEmpty()) {
+            logger.info("No followers found for profile ID: {}", id);
+        } else {
+            logger.info("Found {} followers for profile ID: {}", followers.size(), id);
+        }
+
+        for (Profile p : followers) {
+            logger.debug("Adding follower to list: {}", p.getName()); // Example if Profile has a `getName` method
+            followerDTOs.add(new ProfileDTO(p));
+        }
+
+        return new ResponseEntity<>(followerDTOs, HttpStatus.OK);
+    }
+
+
+
+    @GetMapping(value = "/following/{id}")
+    @PreAuthorize("hasAuthority('User')")
+    public ResponseEntity<List<ProfileDTO>> getFollowingsForProfile(@PathVariable Integer id) {
+        logger.info("Fetching followings for profile ID: {}", id);
+
+        Profile profile = profileService.findOne(id);
+        if (profile == null) {
+            logger.warn("Profile not found for ID: {}", id);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        logger.info("Profile found: {}", profile.getName()); // Example if Profile has a `getName` method
+        List<ProfileDTO> followingDTOs = new ArrayList<>();
+        Set<Profile> followings = profile.getFollowing(); // Note: Fixed the incorrect `getFollowers()` call
+
+        if (followings == null || followings.isEmpty()) {
+            logger.info("No followings found for profile ID: {}", id);
+        } else {
+            logger.info("Found {} followings for profile ID: {}", followings.size(), id);
+        }
+
+        for (Profile p : followings) {
+            logger.debug("Adding following to list: {}", p.getName()); // Example if Profile has a `getName` method
+            followingDTOs.add(new ProfileDTO(p));
+        }
+
+        return new ResponseEntity<>(followingDTOs, HttpStatus.OK);
+    }
+
 
 
 
