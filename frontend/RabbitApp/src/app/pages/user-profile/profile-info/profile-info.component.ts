@@ -23,6 +23,7 @@ export class ProfileInfoComponent implements OnInit{
   allFieldsFilled: boolean = true;
   loggedProfile: ProfileDTO | null = null;
   profileId: number = -1;
+<<<<<<< HEAD
   isFollowed: boolean = false;
   followers: ProfileDTO[] = []; //sve koje ulogovan korisnik prati
   requestedProfileId: number = -1;
@@ -32,7 +33,49 @@ export class ProfileInfoComponent implements OnInit{
   ngOnInit(): void {
     this.loadUser();
    // this.checkisLoggedInUser();
+=======
+  following: ProfileDTO[] = []; 
+  followers: ProfileDTO[] = []; 
+  followingNum: number = 0;
+  followersNum: number = 0;
+  requestedProfileId: number | null= -1;
+
+  constructor(private userService: UserService, private auth: AuthService, private route: ActivatedRoute,
+    private profileService: ProfileService
+  ){}
+    
+  ngOnInit(): void {
+    this.loadUser();
+>>>>>>> a0c085fb7e67284e16bbb91a3b5d412ae06832c7
   }
+
+  getFollowers() {
+    if(this.requestedProfileId){
+      this.profileService.getFollowers(this.requestedProfileId).subscribe(
+        (data: ProfileDTO[]) => {
+            this.followers = data; 
+            this.followersNum = data.length; 
+        },
+        (error) => {
+            console.error('Error fetching followers:', error);
+        }
+    );
+   }    
+  }
+
+  getFollowing() {
+    if(this.requestedProfileId)
+      this.profileService.getFollowing(this.requestedProfileId).subscribe(
+          (data: ProfileDTO[]) => {
+              this.following = data; // Populate the following array
+              this.followingNum = data.length; // Update the count
+          },
+          (error) => {
+              console.error('Error fetching following:', error);
+          }
+      );
+  }
+
 
   loadUser(): void {
     this.userService.getUserProfile().subscribe(
@@ -57,12 +100,19 @@ export class ProfileInfoComponent implements OnInit{
 
   checkisLoggedInUser(){
     const idParam = this.route.snapshot.paramMap.get('id');
+<<<<<<< HEAD
     this.requestedProfileId = idParam ? parseInt(idParam, 10) : -1; 
     this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;
     if(!this.isLoggedInUser)
     {
       this.loadFollowers(this.profileId, this.requestedProfileId);
     }
+=======
+    this.requestedProfileId = idParam ? parseInt(idParam, 10) : null; 
+    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;    
+    this.getFollowers();
+    this.getFollowing();
+>>>>>>> a0c085fb7e67284e16bbb91a3b5d412ae06832c7
   }
 
   openEditModal() {

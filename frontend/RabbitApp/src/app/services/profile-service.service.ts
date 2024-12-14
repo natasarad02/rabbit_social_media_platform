@@ -21,6 +21,14 @@ export class ProfileService {
         return this.http.get<ProfileDTO>(`${this.apiUrl}/`+id);
     }
 
+    getFollowers(id: number): Observable<ProfileDTO[]>{
+        return this.http.get<ProfileDTO[]>(`${this.apiUrl}/followers/`+id);
+    }
+
+    getFollowing(id: number): Observable<ProfileDTO[]>{
+        return this.http.get<ProfileDTO[]>(`${this.apiUrl}/following/`+id);
+    }
+
     getPaginatedProfiles(page: number, size: number, idProfile: number[]): Observable<PaginatedResponse<ProfileViewDTO>> {
         const params = {
             page: page.toString(),
