@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { ProfileDTO } from '../../models/ProfileDTO.model';
@@ -6,18 +6,22 @@ import { Router } from '@angular/router';
 import { PostService } from '../../services/post-service.service';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
 import { ProfileService } from '../../services/profile-service.service';
+import { ProfileViewDTO } from '../../models/ProfileViewDTO.model';
 
 @Component({
   selector: 'app-home-page',
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'
 })
-export class HomePageComponent implements OnInit {
+export class HomePageComponent implements OnInit, OnChanges {
 
   likeIds: number[] = [];
   posts: PostViewDTO[] = [];
   followers: ProfileDTO[] = []; //sve koje ulogovan korisnik prati
   imageStartPath: string = 'http://localhost:8080';
+  filteredProfiles: ProfileViewDTO[] = [];
+  allProfiles: ProfileViewDTO[] = [];
+  searchQuery: string = '';
 
   constructor(private userService: UserService, private authService: AuthService,
      private router: Router, private postService: PostService, private profileService: ProfileService){}
@@ -29,6 +33,7 @@ export class HomePageComponent implements OnInit {
         if (data) {
           console.log(data);
           this.loggedProfile = data;
+          this.loadProfiles();
           this.loadLikedPosts();
           this.loadFollowing(data.id);
         } else {
@@ -40,6 +45,10 @@ export class HomePageComponent implements OnInit {
       }
     );
   
+  }
+
+  ngOnChanges(): void {
+    this.filterOptions();
   }
 
   navigateToProfile() {
@@ -116,5 +125,37 @@ export class HomePageComponent implements OnInit {
       }
     );
   }
+
+  //dobavlja sve profile za pretragu
+  loadProfiles(): void {
+    this.profileService.getAllProfiles().subscribe({
+      next: (followers) => {
+        followers.forEach(follower => {
+          if (follower.role === 'User' && follower.id !== this.loggedProfile?.id) {
+            this.allProfiles.push(follower);
+          }
+        });
+        this.filteredProfiles = this.allProfiles;
+      },
+      error: (err) => {
+        console.error('Error fetching profiles:', err);
+      }
+    });
+  }
+
+  filterOptions(): void {
+    console.log(this.searchQuery);
+    this.filteredProfiles = this.allProfiles.filter(option =>
+      option.username.toLowerCase().includes(this.searchQuery.toLowerCase()) || this.searchQuery === ''
+    );
+  }
+
+ goToProfile(userId: number) : void {
+    this.router.navigate([`/profile/${userId}`]).then(() => {
+      this.ngOnInit(); 
+    });
+    
+  }
+  
 
 }

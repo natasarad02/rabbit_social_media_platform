@@ -1,7 +1,34 @@
 <h1 class="app-name">OnlyBuns</h1>
+<div class="search-container" *ngIf="loggedProfile?.role === 'User'" style="width: 100%; max-width: 500px; margin: 0 auto;">
+    <mat-form-field style="width: 100%;">
+      <mat-label>Find profiles to follow</mat-label>
+      <mat-select [(value)]="followers" style="width: 100%;">
+        <!-- Custom header content -->
+        <div class="custom-header" style="width: 100%;">
+          <mat-form-field style="width: 100%; margin: 8px 0;" >
+            <mat-label >Search...</mat-label>
+            <input matInput [(ngModel)]="searchQuery" (ngModelChange)="filterOptions()" placeholder="Type to search" style="width: 100%;" />
+          </mat-form-field>
+        </div>
+        <!-- Filtered options -->
+        <mat-option *ngFor="let user of filteredProfiles" [value]="user">
+            <div (click)="goToProfile(user.id)">
+          <span class="full-name">{{ user.name }} {{ user.surname }}</span> 
+          <span class="username-tag"> ({{ user.username }})</span>
+        </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
+  
+  
+  
 <div class="all">
     
 <div class="post-list" *ngIf="loggedProfile?.role === 'User'">
+    
+    
     <app-post
       *ngFor="let post of posts"
       [post]="post"

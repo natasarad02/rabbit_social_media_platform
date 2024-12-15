@@ -47,7 +47,7 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/all")
-    @PreAuthorize("hasAuthority('Administrator')")
+    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
     public ResponseEntity<List<ProfileViewDTO>> getAllProfiles() {
 
         List<Profile> profiles = profileService.getAllProfilesWithFollowersAndPosts();
@@ -58,9 +58,11 @@ public class ProfileController {
             if (profile.getRole() == Role.User) {
                 ProfileViewDTO profileViewDTO = new ProfileViewDTO();
                 profileViewDTO.setId(profile.getId());
+                profileViewDTO.setUsername(profile.getUsername());
                 profileViewDTO.setName(profile.getName());
                 profileViewDTO.setEmail(profile.getEmail());
                 profileViewDTO.setSurname(profile.getSurname());
+                profileViewDTO.setRole(profile.getRole());
                 profileViewDTO.setFollowingCount(profile.getFollowers().size());
                 profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
                 profileViewDTOs.add(profileViewDTO);
@@ -83,7 +85,9 @@ public class ProfileController {
             profileViewDTO.setId(profile.getId());
             profileViewDTO.setName(profile.getName());
             profileViewDTO.setEmail(profile.getEmail());
+            profileViewDTO.setUsername(profile.getUsername());
             profileViewDTO.setSurname(profile.getSurname());
+            profileViewDTO.setRole(profile.getRole());
             profileViewDTO.setFollowingCount(profile.getFollowers().size());
             profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
             profileViewDTOs.add(profileViewDTO);
@@ -115,7 +119,9 @@ public class ProfileController {
             profileViewDTO.setId(profile.getId());
             profileViewDTO.setName(profile.getName());
             profileViewDTO.setEmail(profile.getEmail());
+            profileViewDTO.setUsername(profile.getUsername());
             profileViewDTO.setSurname(profile.getSurname());
+            profileViewDTO.setRole(profile.getRole());
             profileViewDTO.setFollowingCount(profile.getFollowers().size());
             profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
             profileViewDTOs.add(profileViewDTO);
