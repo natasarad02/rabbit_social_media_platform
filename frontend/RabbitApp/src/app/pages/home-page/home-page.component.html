@@ -46,10 +46,10 @@
         <button (click)="logIn()" *ngIf="loggedProfile === null" mat-raised-button color="accent">Login</button>
         <button (click)="logOut()"  *ngIf="loggedProfile !== null" mat-raised-button color="accent">Logout</button>
         <button (click)="navigateToPost()" mat-raised-button color="accent">Posts</button>
-        <a href="posts-map"><button mat-raised-button color="accent">Map</button></a>
-        <a href="trends"><button mat-raised-button color="accent">Trends</button></a>
-        <a href="analytics"><button mat-raised-button color="accent">Analytics</button></a>
-        <a href="chat"><button mat-raised-button color="accent">Chat</button></a>
+        <a href="posts-map" *ngIf="loggedProfile?.role === 'User'"><button mat-raised-button color="accent">Map</button></a>
+        <a href="trends" *ngIf="loggedProfile?.role === 'Administrator'"><button mat-raised-button color="accent">Trends</button></a>
+        <a href="analytics" *ngIf="loggedProfile?.role === 'Administrator'"><button mat-raised-button color="accent">Analytics</button></a>
+        <a href="chat" *ngIf="loggedProfile?.role === 'User'"><button mat-raised-button color="accent">Chat</button></a>
         <button (click)="navigateToProfile()" mat-raised-button color="accent">Profile</button>
 
     </div>

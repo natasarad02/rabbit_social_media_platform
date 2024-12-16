@@ -52,7 +52,7 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
-    @Transactional(readOnly = true)
+
     public Profile findOne(Integer id) {
         return profileRepository.findById(id).orElseGet(null);
     }
