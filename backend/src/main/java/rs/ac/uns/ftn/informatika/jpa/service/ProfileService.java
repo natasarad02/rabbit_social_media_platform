@@ -11,6 +11,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.web.server.ResponseStatusException;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,8 @@ import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.time.LocalDateTime;
@@ -42,6 +45,8 @@ public class ProfileService {
 
     @Value("${spring.mail.username}")
     private String fromEmail;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public ProfileService(@Autowired ProfileRepository profileRepository) {
         this.profileRepository = profileRepository;
@@ -166,6 +171,7 @@ public class ProfileService {
         return profileRepository.findAll(specification, pageable);
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void followProfile(Integer profileId, Integer followedProfileId)
     {
         Profile profile = profileRepository.findById(profileId).orElse(null);
@@ -192,18 +198,28 @@ public class ProfileService {
         profileRepository.save(profile);
 
         // Proceed with the follow action
+        logger.info("> follow");
         profileRepository.followProfile(profileId, followedProfileId);
+        logger.info("< follow");
 
     }
 
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void unfollowProfile(Integer profileId, Integer followedProfileId)
     {
+        logger.info("> unfollow");
         profileRepository.unfollowProfile(profileId, followedProfileId);
+        logger.info("< unfollow");
     }
 
     public List<Profile> getFollowers(@Param("profileId") Integer profileId)
     {
         return profileRepository.getFollowers(profileId);
+    }
+
+    public void save(Profile profile)
+    {
+        profileRepository.save(profile);
     }
 
 }

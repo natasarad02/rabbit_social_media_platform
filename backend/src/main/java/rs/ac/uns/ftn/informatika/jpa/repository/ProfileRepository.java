@@ -45,13 +45,11 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaS
     @Query("SELECT p FROM Profile p WHERE p.activated = false AND p.registrationTime < :cutoffDate")
     List<Profile> findUnactivatedProfilesBefore(@Param("cutoffDate") LocalDateTime cutoffDate);
 
-    @Modifying
-    @Transactional //ili prodje sve ili nista
+    @Modifying//ili prodje sve ili nista
     @Query(value = "INSERT INTO profile_following (profile_id, followed_profile_id) VALUES (:profileId, :followedProfileId)", nativeQuery = true)
     void followProfile(@Param("profileId") Integer profileId, @Param("followedProfileId") Integer followedProfileId);
 
-    @Modifying
-    @Transactional // Ensures either the entire operation succeeds or none of it does
+    @Modifying// Ensures either the entire operation succeeds or none of it does
     @Query(value = "DELETE FROM profile_following WHERE profile_id = :profileId AND followed_profile_id = :followedProfileId", nativeQuery = true)
     void unfollowProfile(@Param("profileId") Integer profileId, @Param("followedProfileId") Integer followedProfileId);
 

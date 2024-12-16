@@ -1,9 +1,11 @@
 package rs.ac.uns.ftn.informatika.jpa.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.*;
 import javax.persistence.*;
+import javax.persistence.Version;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -15,7 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @SQLDelete(sql = "UPDATE profile SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 @Entity
-public class Profile implements UserDetails {
+public class Profile implements UserDetails, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -59,6 +61,9 @@ public class Profile implements UserDetails {
     @Column(name = "last_follow_time")
     private LocalDateTime lastFollowTime;
 
+    @Version
+    private Integer version;
+
     public boolean isActivated() {
         return activated;
     }
@@ -75,6 +80,9 @@ public class Profile implements UserDetails {
             joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "followed_profile_id", referencedColumnName = "id")
     )
+
+
+
     private Set<Profile> following = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "following")
@@ -125,6 +133,26 @@ public class Profile implements UserDetails {
         this.deleted = deleted;
         this.address = address;
 
+    }
+
+    public Profile(Integer id, String email, String username, String password, String firstName,
+                   String lastName, boolean deleted, Role role, Timestamp lastDate,
+                   LocalDateTime registartion_time, boolean active, String address, int minute_following,
+                   LocalDateTime last_follow_time) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.name = firstName;
+        this.surname = lastName;
+        this.deleted = deleted;
+        this.role = role;
+        this.lastPasswordResetDate = lastDate;
+        this.address = address;
+        this.activated = active;
+        this.registrationTime = registartion_time;
+        this.minute_following = minute_following;
+        this.lastFollowTime = last_follow_time;
     }
 
     @JsonIgnore
@@ -295,6 +323,14 @@ public class Profile implements UserDetails {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override
