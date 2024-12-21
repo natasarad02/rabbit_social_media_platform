@@ -38,10 +38,6 @@ public class PostDTO {
         this.latitude = post.getLatitude();
         this.profile = new ProfileDTO(post.getProfile());
        // this.location = new LocationDTO(post.getLocation());
-
-
-
-
     }
 
     public PostDTO(Integer id, String description, String picture, LocalDateTime postedTime, int likeCount, List<CommentDTO> comments, String address, double longitude, double latitude, ProfileDTO profile, String imageBase64) {

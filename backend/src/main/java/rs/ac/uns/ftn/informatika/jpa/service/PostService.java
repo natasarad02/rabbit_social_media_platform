@@ -2,9 +2,11 @@ package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.ProfileTrendDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
@@ -15,6 +17,9 @@ import rs.ac.uns.ftn.informatika.jpa.repository.primer.StudentRepository;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,8 +135,43 @@ public class PostService {
         return postRepository.findById(id).orElse(null);
     }
 
+    public int getNumberOfPosts(){
+        return postRepository.getTotalNumberOfPosts();
+    }
 
+    public int getNumberOfPostsInLastMonth(){
+        LocalDateTime lastMonth = LocalDateTime.now().minusDays(30);
+        int postsInLastMonth = postRepository.getNumberOfPostsInLastMonth(lastMonth);
+        return postsInLastMonth;
+    }
 
+    public List<Post> findTop5MostLikedPostsInLast7Days() {
+        LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
+        Pageable topFive = PageRequest.of(0, 5);
+        List<Post> topPostsLast7Days = postRepository.findTop5MostLikedPostsInLast7Days(lastWeek, topFive);
+        return topPostsLast7Days;
+    }
 
+    public  List<Post> getTop10MostLikedPosts(){
+        Pageable topTen = PageRequest.of(0, 10);
+        List<Post> topLikedPosts = postRepository.getTop10MostLikedPosts(topTen);
+        return topLikedPosts;
+    }
 
+    public List<ProfileTrendDTO> findProfilesWithMostLikesGivenInLast7Days(){
+        LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
+        List<Object[]> topProfilesData = postRepository.findTopProfileIdsByLikesGivenInLast7Days(lastWeek);
+
+        List<ProfileTrendDTO> profileTrendDTOs = new ArrayList<>();
+        for (Object[] data : topProfilesData) {
+            Integer profileId = (Integer) data[0];
+            Profile profile = profileRepository.findById(profileId)
+                    .orElseThrow(() -> new RuntimeException("Profile not found: " + profileId));
+
+            Long likeCount = ((BigInteger) data[1]).longValue();
+            // System.out.println("Profile ID: " + profileId + ", Like Count: " + likeCount);
+            profileTrendDTOs.add(new ProfileTrendDTO(profile, likeCount));
+        }
+        return profileTrendDTOs;
+    }
 }

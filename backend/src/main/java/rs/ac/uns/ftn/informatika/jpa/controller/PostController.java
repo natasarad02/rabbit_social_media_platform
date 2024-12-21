@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import rs.ac.uns.ftn.informatika.jpa.dto.CommentDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.ProfileTrendDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
 import rs.ac.uns.ftn.informatika.jpa.mapper.CommentDTOMapper;
 import rs.ac.uns.ftn.informatika.jpa.mapper.PostDTOMapper;
@@ -168,6 +169,47 @@ public class PostController {
     public ResponseEntity<List<Integer>> getAllLikes(@RequestParam Integer profileId) {
         List<Integer> likes = postService.getPostIdsForProfile(profileId);
         return new ResponseEntity<>(likes, HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getNumberOfPosts() {
+        int count = postService.getNumberOfPosts();
+        return ResponseEntity.ok(count);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
+    @GetMapping("/count/last-month")
+    public ResponseEntity<Integer> getNumberOfPostsInLastMonth() {
+        int count = postService.getNumberOfPostsInLastMonth();
+        return ResponseEntity.ok(count);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
+    @GetMapping("/top-liked/last-7-days")
+    public ResponseEntity<List<PostDTO>> findTop5MostLikedPostsInLast7Days() {
+        List<Post> posts = postService.findTop5MostLikedPostsInLast7Days();
+        List<PostDTO> postDTOs = posts.stream()
+                .map(PostDTO::new)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(postDTOs);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
+    @GetMapping("/top-liked")
+    public ResponseEntity<List<PostDTO>> getTop10MostLikedPosts() {
+        List<Post> posts = postService.getTop10MostLikedPosts();
+        List<PostDTO> postDTOs = posts.stream()
+                .map(PostDTO::new) // Convert each Post to PostDTO
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(postDTOs);
+    }
+
+    @PreAuthorize("hasAnyAuthority('Administrator', 'User')")
+    @GetMapping("/profiles-trending")
+    public ResponseEntity<List<ProfileTrendDTO>> findProfilesWithMostLikesGivenInLast7Days() {
+        List<ProfileTrendDTO> trendingProfiles = postService.findProfilesWithMostLikesGivenInLast7Days();
+        return ResponseEntity.ok(trendingProfiles);
     }
 
 
