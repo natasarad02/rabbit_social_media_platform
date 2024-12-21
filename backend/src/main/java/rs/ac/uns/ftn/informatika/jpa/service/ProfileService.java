@@ -18,10 +18,8 @@ import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+
 @Service
 public class ProfileService {
     private final ProfileRepository profileRepository;
@@ -84,7 +82,6 @@ public class ProfileService {
 
     public Profile saveProfile(UserRequest profile)
     {
-        // proveriti da li su sva polja namestena
         Profile profileToSave = new Profile();
         profileToSave.setUsername(profile.getUsername());
         profileToSave.setPassword(passwordEncoder.encode(profile.getPassword()));
@@ -96,6 +93,50 @@ public class ProfileService {
         profileToSave.setSurname(profile.getLastname());
         profileToSave.setAddress(profile.getAddress());
         return profileRepository.save(profileToSave);
+    }
+
+    public boolean updateProfile(ProfileDTO profileDTO) {
+        Optional<Profile> optionalProfile = profileRepository.findById(profileDTO.getId());
+
+        if (optionalProfile.isPresent()) {
+            Profile profile = optionalProfile.get();
+
+            // Update only allowed fields
+            profile.setName(profileDTO.getName());
+            profile.setSurname(profileDTO.getSurname());
+            profile.setAddress(profileDTO.getAddress());
+
+            // Save the updated profile
+            profileRepository.save(profile);
+
+            return true; // Indicates success
+        }
+
+        return false; // Indicates profile not found
+    }
+
+    public boolean updatePassword(int profileId, String newPassword) {
+        Optional<Profile> optionalProfile = profileRepository.findById(profileId);
+
+        if (optionalProfile.isPresent()) {
+            Profile profile = optionalProfile.get();
+
+            // Validate the new password (e.g., length, strength)
+            if (newPassword.length() < 8) {
+                return false; // Password must be at least 8 characters (for example)
+            }
+
+            // Encrypt the new password
+            String encodedPassword = passwordEncoder.encode(newPassword);
+
+            // Update the profile with the new password
+            profile.setPassword(encodedPassword);
+            profileRepository.save(profile);
+
+            return true;
+        }
+
+        return false; // Profile not found
     }
 
     public void sendActivationEmail(Profile user) {

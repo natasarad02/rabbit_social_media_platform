@@ -121,8 +121,6 @@ public class ProfileController {
         return new ResponseEntity<>(followerDTOs, HttpStatus.OK);
     }
 
-
-
     @GetMapping(value = "/following/{id}")
     @PreAuthorize("hasAuthority('User')")
     public ResponseEntity<List<ProfileDTO>> getFollowingsForProfile(@PathVariable Integer id) {
@@ -153,8 +151,6 @@ public class ProfileController {
     }
 
 
-
-
     @GetMapping("/{id}")
     @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
     public ResponseEntity<ProfileDTO> getProfile(@PathVariable Integer id) {
@@ -167,7 +163,31 @@ public class ProfileController {
         return ResponseEntity.ok(profileDTO);
     }
 
+    @PutMapping("/updateprofile")
+    @PreAuthorize("hasAuthority('User')")
+    public ResponseEntity<String> updateProfile(@RequestBody ProfileDTO profileDTO) {
+        boolean updated = profileService.updateProfile(profileDTO);
 
+        if (updated) {
+            // If the profile was found and updated successfully
+            return ResponseEntity.ok("Profile updated successfully.");
+        } else {
+            // If the profile was not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Profile not found.");
+        }
+    }
+
+    @PutMapping("/updatepassword")
+    @PreAuthorize("hasAuthority('User')")
+    public ResponseEntity<String> updatePassword(@RequestParam int profileId, @RequestParam String newPassword) {
+        boolean passwordUpdated = profileService.updatePassword(profileId, newPassword);
+
+        if (passwordUpdated) {
+            return ResponseEntity.ok("Password updated successfully.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password update failed. Please check the provided details.");
+        }
+    }
 
     @GetMapping("/activate")
     public ResponseEntity<String> activateUser(@RequestParam("token") String token) {
