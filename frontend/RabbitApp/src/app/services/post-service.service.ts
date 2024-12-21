@@ -5,6 +5,8 @@ import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
 import { PaginatedResponse } from "../models/Pagebale.model";
 import { PostViewDTO } from "../models/PostViewDTO.model";
 import { PostDTO } from "../models/PostDTO.mode";
+import { ProfileTrendDTO } from "../models/ProfileTrendDTO.model";
+
 
 @Injectable({
     providedIn: 'root'
@@ -47,9 +49,24 @@ export class PostService {
         return this.http.put<PostViewDTO>(this.apiUrl, postDTO);
     }
 
+    getNumberOfPosts(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/count`);
+    }
     
+    getNumberOfPostsInLastMonth(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/count/last-month`);
+    }
     
-
+    findTop5MostLikedPostsInLast7Days(): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/top-liked/last-7-days`);
+    }
     
-
+    getTop10MostLikedPosts(): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/top-liked`);
+    }  
+    
+    findProfilesWithMostLikesGivenInLast7Days(): Observable<ProfileTrendDTO[]> {
+        return this.http.get<ProfileTrendDTO[]>(`${this.apiUrl}/profiles-trending`);
+    }
+    
 }

@@ -24,7 +24,7 @@ import { PostComponent } from './pages/post/post.component';
 import { ProfilePostsComponent } from './pages/user-profile/profile-posts/profile-posts.component';
 import { ProfileInfoComponent } from './pages/user-profile/profile-info/profile-info.component';
 import { ChatComponent } from './pages/chat/chat.component';
-
+import { MatRadioModule } from '@angular/material/radio';
 import { LoginComponent } from './pages/login/login.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -51,6 +51,7 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     ChatComponent
   ],
   imports: [
+    MatRadioModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
