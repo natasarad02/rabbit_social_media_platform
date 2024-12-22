@@ -10,9 +10,13 @@ import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
+
+    Integer countAllByPostedTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
+
     @Query("SELECT p FROM Post p WHERE p.profile.id = :profileId AND p.deleted = false")
     List<Post> findAllByProfileId(@Param("profileId") Integer profileId);
 

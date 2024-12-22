@@ -6,9 +6,12 @@ import org.springframework.data.repository.query.Param;
 import rs.ac.uns.ftn.informatika.jpa.model.Comment;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Integer> {
+
+    Integer countAllByCommentedTimeBetween(LocalDateTime startDate, LocalDateTime endDate);
 
     @Query("SELECT c from Comment c where c.deleted = false ")
     List<Comment> findAllComments();

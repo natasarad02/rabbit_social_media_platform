@@ -16,6 +16,19 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaSpecificationExecutor<Profile> {
+
+    Integer countAllByDeleted(boolean deleted);
+
+
+    @Query("SELECT COUNT(p) FROM Profile p WHERE EXISTS (SELECT 1 FROM Post post WHERE post.profile = p)")
+    Integer countProfilesWithPosts();
+
+    @Query("SELECT COUNT(p) FROM Profile p " +
+            "WHERE EXISTS (SELECT 1 FROM Comment c WHERE c.profile = p) " +  // Profile has a comment
+            "AND NOT EXISTS (SELECT 1 FROM Post post WHERE post.profile = p)")  // Profile has no post
+    long countProfilesWithCommentWithoutPosts();
+
+
     @Query("SELECT p FROM Profile p WHERE p.deleted = false")
     List<Profile> findAllActiveProfiles();
 
