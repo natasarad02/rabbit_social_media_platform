@@ -31,7 +31,8 @@ import { CommonModule } from '@angular/common';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
 import { MatOption, MatOptionSelectionChange } from '@angular/material/core';
 import { MatSelectChange, MatSelectModule, MatSelectTrigger } from '@angular/material/select';
-
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 
 
 @NgModule({
@@ -50,7 +51,7 @@ import { MatSelectChange, MatSelectModule, MatSelectTrigger } from '@angular/mat
     ProfileInfoComponent,
     ProfilePostsComponent,
     PostComponent,
-    ChatComponent
+    ChatComponent,
   ],
   imports: [
     BrowserModule,
@@ -69,10 +70,13 @@ import { MatSelectChange, MatSelectModule, MatSelectTrigger } from '@angular/mat
     MatSelectionList,
     MatOption,
     MatSelectModule,
+    BaseChartDirective,
+    
   ],
   providers: [
     provideAnimationsAsync(),
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    provideCharts(withDefaultRegisterables())
   ],
   bootstrap: [AppComponent] 
 })

@@ -8,6 +8,8 @@ import rs.ac.uns.ftn.informatika.jpa.repository.PostRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 
 import java.time.LocalDate;
+import java.time.Month;
+import java.time.temporal.TemporalAdjusters;
 
 @Service
 public class AnalyticsService {
@@ -21,15 +23,19 @@ public class AnalyticsService {
         this.commentRepository = commentRepository;
         this.profileRepository = profileRepository;
     }
+    LocalDate today = LocalDate.now();
+    LocalDate startOfWeek = today.with(TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY));
+    LocalDate startOfMonth = today.withDayOfMonth(1);
+    LocalDate startOfYear = today.withMonth(Month.JANUARY.getValue()).withDayOfMonth(1);
 
     public AnalyticsDTO getAnalyticsData() {
-        long weeklyPosts = postRepository.countAllByPostedTimeBetween(LocalDate.now().minusWeeks(1).atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
-        long monthlyPosts = postRepository.countAllByPostedTimeBetween(LocalDate.now().minusMonths(1).atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
-        long yearlyPosts = postRepository.countAllByPostedTimeBetween(LocalDate.now().minusYears(1).atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
+        long weeklyPosts = postRepository.countAllByPostedTimeBetween(startOfWeek.atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
+        long monthlyPosts = postRepository.countAllByPostedTimeBetween(startOfMonth.atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
+        long yearlyPosts = postRepository.countAllByPostedTimeBetween(startOfYear.atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
 
-        long weeklyComments = commentRepository.countAllByCommentedTimeBetween(LocalDate.now().minusWeeks(1).atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
-        long monthlyComments = commentRepository.countAllByCommentedTimeBetween(LocalDate.now().minusMonths(1).atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
-        long yearlyComments = commentRepository.countAllByCommentedTimeBetween(LocalDate.now().minusYears(1).atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
+        long weeklyComments = commentRepository.countAllByCommentedTimeBetween(startOfWeek.atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
+        long monthlyComments = commentRepository.countAllByCommentedTimeBetween(startOfMonth.atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
+        long yearlyComments = commentRepository.countAllByCommentedTimeBetween(startOfYear.atStartOfDay(), LocalDate.now().atTime(23, 59, 59, 999999999));
 
         long totalProfiles = profileRepository.countAllByDeleted(false);
         long profilesWithPosts = profileRepository.countProfilesWithPosts();
