@@ -6,6 +6,7 @@ import Swal from 'sweetalert2';
 import { ProfileDTO } from '../../models/ProfileDTO.model';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
 import { UserService } from '../../services/user.service';
+import { ImageCacheService } from '../../services/image-cache.service';
 
 @Component({
   selector: 'app-post',
@@ -18,17 +19,30 @@ export class PostComponent implements OnInit {
   @Input() likeIds: number[] = []; // IDs of liked posts
   imageStartPath: string = 'http://localhost:8080';
   @Output() postUpdated: EventEmitter<void> = new EventEmitter<void>();
+  cachedImage: string = '';
 
   constructor(
     private postService: PostService,
     private router: Router,
     private auth: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private imageCacheService: ImageCacheService
   ) {}
 
   ngOnInit(): void {
     console.log(this.post);
     console.log(this.loggedProfile);
+    this.cacheImage();
+  }
+
+  private async cacheImage(): Promise<void> {
+    try {
+
+      this.cachedImage = await this.imageCacheService.fetchImage(this.post.picture);
+      console.log(`Image cached for post ${this.post.id}:`, this.cachedImage);
+    } catch (error) {
+      console.error(`Error caching image for post ${this.post.id}:`, error);
+    }
   }
 
   likePost(postId: number): void {
