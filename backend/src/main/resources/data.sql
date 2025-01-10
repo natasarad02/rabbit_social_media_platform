@@ -30,19 +30,7 @@ insert into exam (student_id, course_id, date, grade) values (2, 2, '2016-04-19'
 
 
 
--- Inserting data into Post
-INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude) VALUES
-                                                                                                            ('This is my first post!', 'pic1.jpg', false, NOW(), 1, 'Nemanjina 12, Beograd', 20.457273, 44.817611),
-                                                                                                            ('Beautiful day at the park!', 'pic2.jpg', false, NOW(), 1, 'Bulevar kralja Aleksandra 54, Beograd', 20.476521, 44.805850),
-                                                                                                            ('Loving the city lights.', 'pic3.jpg', false, NOW(), 2, 'Karađorđeva 65, Novi Sad', 19.842545, 45.255325),
-                                                                                                            ('Foodie adventures!', 'pic4.jpg', false, NOW(), 3, 'Vojvode Stepe 130, Niš', 21.895758, 43.321206),
-                                                                                                            ('Just finished a run, feeling great!', 'pic5.jpg', false, NOW(), 4, 'Trg slobode 1, Subotica', 19.668652, 46.097435),
-                                                                                                            ('Sunset at the beach.', 'pic6.jpg', false, NOW(), 5, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Exploring the countryside.', 'pic7.jpg', false, NOW(), 6, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Weekend getaway in the mountains.', 'pic8.jpg', false, NOW(), 7, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Cozy evening by the fire.', 'pic9.jpg', false, NOW(), 8, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Delicious homemade dinner.', 'pic10.jpg', false, NOW(), 9, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Delicious homemade dinner.', 'pic10.jpg', false, '2024-12-06 13:30:00', 9, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167);
+
 
 -- Inserting data into Profile with version column
 INSERT INTO profile (
@@ -68,8 +56,8 @@ INSERT INTO profile (
       ('anna@example.com', 'anna', '$2b$12$Ils5FtBFBZgyXrRao.YkPe3wprDnZ50wt4/qzqrz4J1dT4vx8.rSq',
        'Anna', 'Taylor', false, 'Administrator', CURRENT_TIMESTAMP, NULL, false, '2024-10-25 08:10:00', 0, NULL, 0), -- password606
       ('james@example.com', 'james', '$2b$12$A7Y4k.ql2AFTO6vRkWivte0FGC5fI/VBZadxHeHEr1nFnug7ti0k.',
-       'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL, false, '2024-10-28 20:30:00', 0, NULL, 0), -- password707
-      ('nata.radmilovic@gmail.com', 'james', '$2b$12$A7Y4k.ql2AFTO6vRkWivte0FGC5fI/VBZadxHeHEr1nFnug7ti0k.', 'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL, true, '2024-12-06 13:30:00');
+       'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL, false, '2024-10-28 20:30:00', 0, NULL, 0); -- password707
+
 
 -- Inserting data into Post
 INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude) VALUES
