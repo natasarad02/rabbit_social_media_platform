@@ -118,8 +118,15 @@ public class PostService {
         }
     }
 
+    @Transactional
     public void addLike(Integer profileId, Integer postId) {
+
         postRepository.addLike(profileId, postId);
+        try {
+            Thread.sleep(500); // 500ms kašnjenja
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     public List<Integer> getPostIdsForProfile(Integer profileId) {

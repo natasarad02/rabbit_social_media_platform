@@ -3,12 +3,14 @@ package rs.ac.uns.ftn.informatika.jpa.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 
+import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,6 +35,7 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Transactional
     @Query(value = "INSERT INTO likes (profile_id, post_id) VALUES (:profileId, :postId)", nativeQuery = true)
     void addLike(@Param("profileId") Integer profileId, @Param("postId") Integer postId);
+
 
     @Query(value = "SELECT post_id FROM likes WHERE profile_id = :profileId", nativeQuery = true)
     List<Integer> findLikedPostIdsByProfileId(@Param("profileId") Integer profileId);
