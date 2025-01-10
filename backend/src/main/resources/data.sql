@@ -41,6 +41,7 @@ INSERT INTO profile (email, username, password, name, surname, deleted, role, la
                                                                                                                                 ('nata.radmilovic@gmail.com', 'james', '$2b$12$A7Y4k.ql2AFTO6vRkWivte0FGC5fI/VBZadxHeHEr1nFnug7ti0k.', 'James', 'Brown', false, 'User', CURRENT_TIMESTAMP, NULL, true, '2024-12-06 13:30:00');
 
 
+
 -- Inserting data into Post
 INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude) VALUES
                                                                                                             ('This is my first post!', 'pic1.jpg', false, NOW(), 1, 'Nemanjina 12, Beograd', 20.457273, 44.817611),

@@ -121,6 +121,9 @@ public class PostService {
     @Transactional
     public void addLike(Integer profileId, Integer postId) {
 
+
+        Post post = postRepository.findByIdForUpdate(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
+
         postRepository.addLike(profileId, postId);
         try {
             Thread.sleep(500); // 500ms kašnjenja

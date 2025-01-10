@@ -14,6 +14,7 @@ import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query("SELECT p FROM Post p WHERE p.profile.id = :profileId AND p.deleted = false")
@@ -36,6 +37,10 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     @Query(value = "INSERT INTO likes (profile_id, post_id) VALUES (:profileId, :postId)", nativeQuery = true)
     void addLike(@Param("profileId") Integer profileId, @Param("postId") Integer postId);
 
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Post p WHERE p.id = :postId")
+    Optional<Post> findByIdForUpdate(@Param("postId") Integer postId);
 
     @Query(value = "SELECT post_id FROM likes WHERE profile_id = :profileId", nativeQuery = true)
     List<Integer> findLikedPostIdsByProfileId(@Param("profileId") Integer profileId);
