@@ -19,6 +19,7 @@ public class ProfileDTO {
     private Role role;
     private boolean deleted;
     private Timestamp lastPasswordResetDate;
+    private Timestamp lastActiveDate;
     private String address;
 
     public ProfileDTO() {}
@@ -33,10 +34,11 @@ public class ProfileDTO {
         this.deleted = profile.isDeleted();
         this.lastPasswordResetDate = profile.getLastPasswordResetDate();
         this.address = profile.getAddress();
+        this.lastActiveDate = profile.getLastActiveDate();
     }
 
     public ProfileDTO(Integer id, String name, String surname, String email, String username, Role role,
-                      boolean deleted, Timestamp lastPasswordResetDate, String address) {
+                      boolean deleted, Timestamp lastPasswordResetDate, String address, Timestamp lastActiveDate) {
         this.id = id;
         this.name = name;
         this.surname = surname;
@@ -46,6 +48,7 @@ public class ProfileDTO {
         this.deleted = deleted;
         this.lastPasswordResetDate = lastPasswordResetDate;
         this.address = address;
+        this.lastActiveDate = lastActiveDate;
     }
 
     public Integer getId() {
@@ -62,6 +65,14 @@ public class ProfileDTO {
 
     public String getEmail() {
         return email;
+    }
+
+    public Timestamp getLastActiveDate() {
+        return lastActiveDate;
+    }
+
+    public void setLastActiveDate(Timestamp lastActiveDate) {
+        this.lastActiveDate = lastActiveDate;
     }
 
     public String getUsername() {

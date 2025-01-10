@@ -109,6 +109,8 @@ public class ProfileService {
         mailSender.send(mailMessage);
     }
 
+
+
     public boolean activateUser(String token) {
         if (tokenUtils.isTokenExpired(token)) {
             return false;

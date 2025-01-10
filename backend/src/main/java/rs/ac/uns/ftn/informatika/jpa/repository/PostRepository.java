@@ -10,6 +10,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Integer> {
@@ -24,6 +25,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
 
     @Query("SELECT COUNT(l) FROM Post p JOIN p.likedPosts l WHERE p.id = :postId")
     Integer countLikesForPost(@Param("postId") Integer postId);
+
+    @Query("SELECT COUNT(p) FROM Post p WHERE p.profile.id != :profileId AND p.postedTime >= :sevenDaysAgo AND p.deleted = false")
+    int countPostsInLastSevenDays(@Param("profileId") Integer profileId, @Param("sevenDaysAgo") LocalDateTime sevenDaysAgo);
 
     @Modifying
     @Transactional

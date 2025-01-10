@@ -59,6 +59,9 @@ public class Profile implements UserDetails {
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
 
+    @Column(name = "last_active_date")
+    private Timestamp lastActiveDate;
+
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(
             name = "profile_following",
@@ -105,7 +108,7 @@ public class Profile implements UserDetails {
         return address;
     }
 
-    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, String address) {
+    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, String address, Timestamp lastActiveDate) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -114,6 +117,7 @@ public class Profile implements UserDetails {
         this.role = role;
         this.deleted = deleted;
         this.address = address;
+        this.lastActiveDate = lastActiveDate;
 
     }
 
@@ -165,6 +169,14 @@ public class Profile implements UserDetails {
 
     public String getPassword() {
         return password;
+    }
+
+    public Timestamp getLastActiveDate() {
+        return lastActiveDate;
+    }
+
+    public void setLastActiveDate(Timestamp lastActiveDate) {
+        this.lastActiveDate = lastActiveDate;
     }
 
     public void setPassword(String password) {
