@@ -19,14 +19,20 @@ import { UpdatePostComponent } from './pages/update-post/update-post.component';
 import { MapPostsComponent } from './pages/map-posts/map-posts.component';
 import { TrendsComponent } from './pages/trends/trends.component';
 import { AnalyticsComponent } from './pages/analytics/analytics.component';
-import { UserProfileComponent } from './pages/user-profile/user-profile.component';
+import { ProfileComponent } from './pages/user-profile/user-profile.component';
+import { PostComponent } from './pages/post/post.component';
+import { ProfilePostsComponent } from './pages/user-profile/profile-posts/profile-posts.component';
+import { ProfileInfoComponent } from './pages/user-profile/profile-info/profile-info.component';
 import { ChatComponent } from './pages/chat/chat.component';
-
+import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { LoginComponent } from './pages/login/login.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
-
+import { MatOption, MatOptionSelectionChange } from '@angular/material/core';
+import { MatSelectChange, MatSelectModule, MatSelectTrigger } from '@angular/material/select';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { BaseChartDirective } from 'ng2-charts';
 
 
 @NgModule({
@@ -41,8 +47,11 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     MapPostsComponent,
     TrendsComponent,
     AnalyticsComponent,
-    UserProfileComponent,
-    ChatComponent
+    ProfileComponent,
+    ProfileInfoComponent,
+    ProfilePostsComponent,
+    PostComponent,
+    ChatComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,11 +65,18 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     MatCardModule,    
     ReactiveFormsModule,
     RouterModule,
-    CommonModule
+    CommonModule,
+    MatListModule,
+    MatSelectionList,
+    MatOption,
+    MatSelectModule,
+    BaseChartDirective,
+    
   ],
   providers: [
     provideAnimationsAsync(),
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    provideCharts(withDefaultRegisterables())
   ],
   bootstrap: [AppComponent] 
 })

@@ -18,6 +18,10 @@ export class PostService {
         return this.http.get<PostViewDTO[]>(this.apiUrl);
     }
 
+    getPostsForProfile(profileId: number): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/forProfile/${profileId}`);
+    }
+
     deletePost(id: number): Observable<void>
     {
         return this.http.put<void>(`${this.apiUrl}/delete/${id}`, {});
@@ -29,6 +33,14 @@ export class PostService {
         .set('profileId', idProfile)
         .set('postId', idPost);
         return this.http.post<void>(`${this.apiUrl}/like`, null, { params });
+    }
+
+    dislikePost(idProfile: number, idPost: number): Observable<void>
+    {
+        const params = new HttpParams()
+        .set('profileId', idProfile)
+        .set('postId', idPost);
+        return this.http.post<void>(`${this.apiUrl}/dislike`, null, { params });
     }
 
     getLikedPosts(idProfile: number): Observable<number[]>
