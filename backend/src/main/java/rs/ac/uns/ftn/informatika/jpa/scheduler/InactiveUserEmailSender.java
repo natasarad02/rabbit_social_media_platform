@@ -6,7 +6,9 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
+import rs.ac.uns.ftn.informatika.jpa.repository.CommentRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.PostRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 
@@ -27,13 +29,16 @@ public class InactiveUserEmailSender {
 
     @Value("${spring.mail.username}")
     private String fromEmail;
+    @Autowired
+    private CommentRepository commentRepository;
 
-    public InactiveUserEmailSender(@Autowired ProfileRepository profileRepository, @Autowired PostRepository postRepository) {
+    public InactiveUserEmailSender(@Autowired ProfileRepository profileRepository, @Autowired PostRepository postRepository, @Autowired CommentRepository commentRepository) {
         this.profileRepository = profileRepository;
         this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
     }
 
-    @Scheduled(cron = "0 52 10 * * ?")
+    @Scheduled(cron = "0 19 12 * * ?")
     public void sendEmailToInactiveUser()
     {
         List<Profile> users = profileRepository.findAllActiveProfiles();
@@ -44,11 +49,25 @@ public class InactiveUserEmailSender {
             if(isInactiveForSevenDays(user.getLastActiveDate()))
             {
                 int newPostsCount = postRepository.countPostsInLastSevenDays(user.getId(), sevenDaysAgo);
+                List<Post> postsByUser = postRepository.findAllByProfileId(user.getId());
+                int newCommentCount = 0;
+                for(Post post : postsByUser)
+                {
+                    newCommentCount += commentRepository.countCommentsInLastSevenDays(post.getId(), sevenDaysAgo);
+                }
                 String emailContent = "You haven't been active in the past 7 days. Here is what you have missed:\n\n";
                 if (newPostsCount > 0) {
-                    emailContent += "You have missed " + newPostsCount + " new posts in the last 7 days.\n";
-                } else {
+                    emailContent += "You have missed " + newPostsCount + " new posts and " + newCommentCount + " comments on your posts in the last 7 days.\n";
+                }
+                else {
                     emailContent += "You haven't missed any new posts in the last 7 days.\n";
+                }
+
+                if (newCommentCount > 0) {
+                    emailContent += "You have missed " + newCommentCount + " new comments on your posts in the last 7 days.\n";
+                }
+                else {
+                    emailContent += "You haven't missed any new comments in the last 7 days.\n";
                 }
                 emailContent += "\nStay active to keep engaging with your followers!";
                 SimpleMailMessage mailMessage = new SimpleMailMessage();

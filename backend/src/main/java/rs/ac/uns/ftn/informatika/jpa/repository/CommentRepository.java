@@ -21,4 +21,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     @Query("SELECT c FROM Comment c WHERE c.deleted = false AND c.profile.id = :profileId")
     List<Comment> findAllCommentsByProfileId(@Param("profileId") Integer postId);
+
+    @Query("SELECT COUNT(c) FROM Comment c WHERE c.post.id = :postId AND c.commentedTime >= :sevenDaysAgo AND c.deleted = false")
+    int countCommentsInLastSevenDays(@Param("postId") Integer postId, @Param("sevenDaysAgo") LocalDateTime sevenDaysAgo);
 }
