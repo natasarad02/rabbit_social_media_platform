@@ -18,4 +18,7 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
     @Query("SELECT c FROM Comment c WHERE c.deleted = false AND c.post.id = :postId")
     List<Comment> findAllCommentsByPostId(@Param("postId") Integer postId);
+
+    @Query("SELECT c FROM Comment c WHERE c.deleted = false AND c.profile.id = :profileId")
+    List<Comment> findAllCommentsByProfileId(@Param("profileId") Integer postId);
 }

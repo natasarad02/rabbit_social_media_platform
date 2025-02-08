@@ -7,6 +7,8 @@ import { ProfileDTO } from '../../models/ProfileDTO.model';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
 import { UserService } from '../../services/user.service';
 import { ImageCacheService } from '../../services/image-cache.service';
+import { CommentDTO } from '../../models/CommentDTO.model';
+import { CommentService } from '../../services/comment.service';
 
 @Component({
   selector: 'app-post',
@@ -21,13 +23,19 @@ export class PostComponent implements OnInit {
   @Output() postUpdated: EventEmitter<void> = new EventEmitter<void>();
   cachedImage: string = '';
 
+  commentClicked: boolean = false;
+  commentText: string = '';
+  newComment: CommentDTO = {} as CommentDTO;
   constructor(
     private postService: PostService,
     private router: Router,
     private auth: AuthService,
     private userService: UserService,
-    private imageCacheService: ImageCacheService
-  ) {}
+    private imageCacheService: ImageCacheService,
+    private commentService: CommentService
+  ) {
+    
+  }
 
   ngOnInit(): void {
     console.log(this.post);
@@ -91,8 +99,30 @@ export class PostComponent implements OnInit {
   commentOnPost(): void {
     if (this.loggedProfile) {
       console.log(`Commenting on post with ID: ${this.post.id}`);
+      this.commentClicked = true;
     } else {
       this.showLoginAlert();
+    }
+  }
+
+  postComment(): void{
+
+    this.newComment.text = this.commentText;
+    if(this.loggedProfile)
+    {
+
+    
+      this.commentService.createComment(this.post.id, this.loggedProfile.id, this.newComment).subscribe(
+        () => {
+          //console.log(`Post ${this.post.id} deleted successfully`);
+          this.refreshPostData();
+        },
+        (error) => {
+          console.error('Error posting comment:', error);
+          alert("You posted too many comments in the past hour");
+        }
+      );
+
     }
   }
 

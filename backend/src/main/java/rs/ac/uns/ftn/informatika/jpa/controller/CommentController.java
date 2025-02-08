@@ -49,6 +49,11 @@ public class CommentController {
         comment.setProfile(profile);
 
         Comment savedComment = commentService.addComment(comment);
+
+        if(savedComment == null)
+        {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(commentDTO);
+        }
         CommentDTO c = new CommentDTO(savedComment);
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
     }

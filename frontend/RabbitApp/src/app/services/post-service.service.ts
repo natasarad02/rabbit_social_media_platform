@@ -5,6 +5,7 @@ import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
 import { PaginatedResponse } from "../models/Pagebale.model";
 import { PostViewDTO } from "../models/PostViewDTO.model";
 import { PostDTO } from "../models/PostDTO.mode";
+import { CommentDTO } from "../models/CommentDTO.model";
 
 @Injectable({
     providedIn: 'root'
