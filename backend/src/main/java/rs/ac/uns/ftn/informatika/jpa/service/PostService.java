@@ -1,6 +1,8 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -100,8 +102,20 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
+    @CacheEvict(value = "address", key = "#postId + '_address'")
+    public void evictAddress(Integer postId) {
+
+        System.out.println("Evicting cache for address of postId: " + postId);
+    }
 
 
+    @CacheEvict(value = "locations", key = "#postId + '_longitude'")
+    public void evictLongitudeLatitude(Integer postId) {
+
+        System.out.println("Evicting cache for longitude of postId: " + postId);
+    }
+
+    @CacheEvict(value = "locations", key = "#postId")
     public Post updatePost(Integer id, Post updatedPost) {
         Optional<Post> existingPostOpt = postRepository.findById(id);
 
@@ -110,10 +124,11 @@ public class PostService {
             existingPost.setPicture(updatedPost.getPicture());
             existingPost.setDeleted(updatedPost.isDeleted());
             existingPost.setDescription(updatedPost.getDescription());
-            existingPost.setAddress(updatedPost.getAddress());
-            existingPost.setLongitude(updatedPost.getLongitude());
-            existingPost.setLatitude(updatedPost.getLatitude());
-
+            existingPost.setAddress(getAddress(id));
+            existingPost.setLongitude(getLocation(id)[1]);
+            existingPost.setLatitude(getLocation(id)[0]);
+            evictAddress(id);
+            evictLongitudeLatitude(id);
             return postRepository.save(existingPost);
         } else {
             throw new EntityNotFoundException("Post with id " + id + " not found.");
@@ -145,6 +160,19 @@ public class PostService {
         return postRepository.findById(id).orElse(null);
     }
 
+    @Cacheable(value = "locations", key = "#postId")
+    public double[] getLocation(Integer postId) {
+        Post post = postRepository. findByIdForUpdate(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        return new double[]{post.getLatitude(), post.getLongitude()};
+    }
+
+    @Cacheable(value = "address", key = "#postId")
+    public String getAddress(Integer postId) {
+        Post post = postRepository.findByIdForUpdate(postId)
+                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        return post.getAddress();
+    }
 
 
 
