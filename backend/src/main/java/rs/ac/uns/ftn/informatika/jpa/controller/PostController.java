@@ -149,6 +149,7 @@ public class PostController {
         String imagePath = imageService.saveImage(postDTO.getImageBase64());
         post.setPicture(imagePath);
         post.setProfile(profile);
+        post.setLikeCount(0);
         if(post == null)
         {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

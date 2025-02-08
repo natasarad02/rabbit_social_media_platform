@@ -36,13 +36,9 @@ public interface PostRepository extends JpaRepository<Post, Integer> {
     int countPostsInLastSevenDays(@Param("profileId") Integer profileId, @Param("sevenDaysAgo") LocalDateTime sevenDaysAgo);
 
     @Modifying
-    @Transactional
     @Query(value = "INSERT INTO likes (profile_id, post_id) VALUES (:profileId, :postId)", nativeQuery = true)
     void addLike(@Param("profileId") Integer profileId, @Param("postId") Integer postId);
 
-
-
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Post p WHERE p.id = :postId")
     Optional<Post> findByIdForUpdate(@Param("postId") Integer postId);
 

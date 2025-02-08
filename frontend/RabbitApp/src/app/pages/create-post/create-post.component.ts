@@ -24,7 +24,8 @@ export class CreatePostComponent implements OnInit {
     address: '',
     longitude: 0,
     latitude: 0,
-    imageBase64: ''
+    imageBase64: '',
+  
    
 
   }

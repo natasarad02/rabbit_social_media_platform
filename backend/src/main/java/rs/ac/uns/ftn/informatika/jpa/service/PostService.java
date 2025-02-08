@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+
 public class PostService {
 
     private PostRepository postRepository;
@@ -118,18 +120,17 @@ public class PostService {
         }
     }
 
-    @Transactional
+    @org.springframework.transaction.annotation.Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void addLike(Integer profileId, Integer postId) {
 
 
         Post post = postRepository.findByIdForUpdate(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
 
         postRepository.addLike(profileId, postId);
-        try {
-            Thread.sleep(500); // 500ms kašnjenja
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+
+        post.setLikeCount(post.getLikeCount() + 1);
+        postRepository.save(post);
+
     }
 
     public void removeLike(Integer profileId, Integer postId) {

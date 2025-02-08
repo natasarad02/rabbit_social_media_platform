@@ -5,7 +5,9 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
+import rs.ac.uns.ftn.informatika.jpa.service.PostService;
 import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;import org.junit.Before;import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import java.sql.Timestamp;
@@ -24,6 +26,8 @@ public class JpaExampleApplicationTests {
 	@Autowired
 	private ProfileService profileService;
 
+    @Autowired
+	private PostService postService;
 
 	@Test(expected = ObjectOptimisticLockingFailureException.class)
 	public void testOptimisticLockingFollowingScenario() throws Throwable {
@@ -67,6 +71,47 @@ public class JpaExampleApplicationTests {
 
 	@Test
 	public void contextLoads() {
+	}
+
+	@Test(expected = ObjectOptimisticLockingFailureException.class)
+	public void testOptimisticLockingLikingScenario() throws Throwable {
+
+		ExecutorService executor = Executors.newFixedThreadPool(2);
+		Future<?> future1 = executor.submit(new Runnable() {
+
+
+
+			@Override
+			public void run() {
+				System.out.println("Startovan Thread 1");
+				Post postToLike = postService.findOne(1); // Post koji će oba korisnika pokušati da lajkuju
+				postService.addLike(4, 1);
+				try { Thread.sleep(3000); } catch (InterruptedException e) {}
+				postService.save(postToLike);// Pauza od 3 sekunde pre nego što se završi transakcija
+			}
+		});
+		executor.submit(new Runnable() {
+
+			@Override
+			public void run() {
+				System.out.println("Startovan Thread 2");
+				Post postToLike = postService.findOne(1); // Isti post kao i u prvom threadu
+				postService.addLike(7, 1);
+				postService.save(postToLike);
+			}
+		});
+
+		try {
+			future1.get(); // Hvata Exception iz prvog threada
+		} catch (ExecutionException e) {
+			System.out.println("Exception from thread: " + e.getCause().getClass()); // ObjectOptimisticLockingFailureException
+			throw e.getCause();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		executor.shutdown();
+
+
 	}
 
 }

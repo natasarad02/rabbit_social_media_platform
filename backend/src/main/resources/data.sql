@@ -60,17 +60,17 @@ INSERT INTO profile (
 
 
 -- Inserting data into Post
-INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude) VALUES
-                                                                                                            ('This is my first post!', 'pic1.jpg', false, '2023-12-15 08:15:00', 1, 'Nemanjina 12, Beograd', 20.457273, 44.817611),
-                                                                                                            ('Beautiful day at the park!', 'pic2.jpg', false, '2024-11-05 09:00:00', 1, 'Bulevar kralja Aleksandra 54, Beograd', 20.476521, 44.805850),
-                                                                                                            ('Loving the city lights.', 'pic3.jpg', false, '2024-11-20 20:30:00', 2, 'Karađorđeva 65, Novi Sad', 19.842545, 45.255325),
-                                                                                                            ('Foodie adventures!', 'pic4.jpg', false, '2024-11-10 14:45:00', 3, 'Vojvode Stepe 130, Niš', 21.895758, 43.321206),
-                                                                                                            ('Just finished a run, feeling great!', 'pic5.jpg', false, '2024-12-05 07:30:00', 4, 'Trg slobode 1, Subotica', 19.668652, 46.097435),
-                                                                                                            ('Sunset at the beach.', 'pic6.jpg', false, '2024-12-01 18:00:00', 5, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Exploring the countryside.', 'pic7.jpg', false, '2024-12-10 11:00:00', 4, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Weekend getaway in the mountains.', 'pic8.jpg', false, '2024-12-12 09:15:00', 7, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Cozy evening by the fire.', 'pic9.jpg', false, '2024-12-17 20:30:00', 8, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167),
-                                                                                                            ('Delicious homemade dinner.', 'pic10.jpg', false, '2024-12-18 19:45:00', 4, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167);
+INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude, like_count, version) VALUES
+                                                                                                            ('This is my first post!', 'pic1.jpg', false, '2023-12-15 08:15:00', 1, 'Nemanjina 12, Beograd', 20.457273, 44.817611, 1, 0),
+                                                                                                            ('Beautiful day at the park!', 'pic2.jpg', false, '2024-11-05 09:00:00', 1, 'Bulevar kralja Aleksandra 54, Beograd', 20.476521, 44.805850, 1, 0),
+                                                                                                            ('Loving the city lights.', 'pic3.jpg', false, '2024-11-20 20:30:00', 2, 'Karađorđeva 65, Novi Sad', 19.842545, 45.255325, 1, 0),
+                                                                                                            ('Foodie adventures!', 'pic4.jpg', false, '2024-11-10 14:45:00', 3, 'Vojvode Stepe 130, Niš', 21.895758, 43.321206, 1, 0),
+                                                                                                            ('Just finished a run, feeling great!', 'pic5.jpg', false, '2024-12-05 07:30:00', 4, 'Trg slobode 1, Subotica', 19.668652, 46.097435, 1, 0),
+                                                                                                            ('Sunset at the beach.', 'pic6.jpg', false, '2024-12-01 18:00:00', 5, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
+                                                                                                            ('Exploring the countryside.', 'pic7.jpg', false, '2024-12-10 11:00:00', 4, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
+                                                                                                            ('Weekend getaway in the mountains.', 'pic8.jpg', false, '2024-12-12 09:15:00', 7, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
+                                                                                                            ('Cozy evening by the fire.', 'pic9.jpg', false, '2024-12-17 20:30:00', 8, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
+                                                                                                            ('Delicious homemade dinner.', 'pic10.jpg', false, '2024-12-18 19:45:00', 4, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0);
 
 
 -- Inserting data into Comment
