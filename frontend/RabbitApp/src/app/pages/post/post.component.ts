@@ -26,6 +26,7 @@ export class PostComponent implements OnInit {
   commentClicked: boolean = false;
   commentText: string = '';
   newComment: CommentDTO = {} as CommentDTO;
+  sortedComments: CommentDTO[] = [];
   constructor(
     private postService: PostService,
     private router: Router,
@@ -41,6 +42,8 @@ export class PostComponent implements OnInit {
     console.log(this.post);
     console.log(this.loggedProfile);
     this.cacheImage();
+   
+    this.sortedComments = this.post.comments.slice().reverse();
   }
 
   private async cacheImage(): Promise<void> {
@@ -94,6 +97,7 @@ export class PostComponent implements OnInit {
 
   private refreshPostData(): void {
     this.postUpdated.emit();
+  
   }
 
   commentOnPost(): void {

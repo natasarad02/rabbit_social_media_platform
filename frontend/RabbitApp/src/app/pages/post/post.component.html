@@ -7,7 +7,7 @@
     <p style="font-weight: bold;">Likes: {{ post.likeCount }}</p>
     <p style="font-weight: bold;">Comments:</p>
     <ul>
-      <li *ngFor="let comment of post.comments" (click)="showCommentCreatorInfo(comment)">
+      <li *ngFor="let comment of sortedComments" (click)="showCommentCreatorInfo(comment)">
         {{ comment.text }}
       </li>
     </ul>
