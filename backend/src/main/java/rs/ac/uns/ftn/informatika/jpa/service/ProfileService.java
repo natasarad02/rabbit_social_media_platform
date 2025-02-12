@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 @Service
 public class ProfileService {
+    private final ActiveUsersMetricService activeUsersMetricService;
     private final ProfileRepository profileRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,10 +49,16 @@ public class ProfileService {
 
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public ProfileService(@Autowired ProfileRepository profileRepository) {
+    public ProfileService(@Autowired ProfileRepository profileRepository, @Autowired ActiveUsersMetricService activeUsersMetricService) {
         this.profileRepository = profileRepository;
+        this.activeUsersMetricService = activeUsersMetricService;
     }
 
+    @Scheduled(fixedRate = 5000) // Update every 1 minute
+    public void updateActiveUserCount() {
+        int activeUsers = profileRepository.countByIsActive(true);
+        activeUsersMetricService.setActiveUserCount(activeUsers);
+    }
 
     public Profile findOne(Integer id) {
         return profileRepository.findById(id).orElseGet(null);

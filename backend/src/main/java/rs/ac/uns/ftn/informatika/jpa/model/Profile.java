@@ -78,6 +78,16 @@ public class Profile implements UserDetails, Serializable {
     @Column(name = "last_active_date")
     private Timestamp lastActiveDate;
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean currentlyActive) {
+        isActive = currentlyActive;
+    }
+
+    @Column(name = "currently_active")
+    private boolean isActive;
    // @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})

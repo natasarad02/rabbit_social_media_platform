@@ -19,7 +19,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaS
 
     Integer countAllByDeleted(boolean deleted);
 
-
+    Integer countByIsActive(boolean isActive);
     @Query("SELECT COUNT(p) FROM Profile p WHERE EXISTS (SELECT 1 FROM Post post WHERE post.profile = p)")
     Integer countProfilesWithPosts();
 

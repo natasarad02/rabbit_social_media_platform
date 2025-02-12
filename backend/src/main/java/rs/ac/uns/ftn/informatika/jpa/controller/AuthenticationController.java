@@ -66,6 +66,8 @@ public class AuthenticationController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole());
             int expiresIn = tokenUtils.getExpiredIn();
+            user.setActive(true);
+            userService.save(user);
             return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
 
         } catch (BadCredentialsException e) {
