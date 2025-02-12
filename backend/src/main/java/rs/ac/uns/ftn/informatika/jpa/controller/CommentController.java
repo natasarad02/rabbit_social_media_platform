@@ -60,7 +60,7 @@ public class CommentController {
 
         if(savedComment == null)
         {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(commentDTO);
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(commentDTO);
         }
         CommentDTO c = new CommentDTO(savedComment);
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
