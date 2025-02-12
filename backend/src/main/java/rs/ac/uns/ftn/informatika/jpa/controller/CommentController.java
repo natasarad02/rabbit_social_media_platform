@@ -8,10 +8,7 @@ import rs.ac.uns.ftn.informatika.jpa.dto.CommentDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.Comment;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
-import rs.ac.uns.ftn.informatika.jpa.service.CommentService;
-import rs.ac.uns.ftn.informatika.jpa.service.PostService;
-import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
-import rs.ac.uns.ftn.informatika.jpa.service.RateLimiterService;
+import rs.ac.uns.ftn.informatika.jpa.service.*;
 
 import java.time.LocalDateTime;
 
@@ -21,9 +18,9 @@ public class CommentController {
     private CommentService commentService;
     private ProfileService profileService;
     private PostService postService;
-    private final RateLimiterService rateLimiterService;
+    private final TokenBucketRateLimiterService rateLimiterService;
 
-    public CommentController(@Autowired CommentService commentService , @Autowired ProfileService profileService , @Autowired PostService postService, @Autowired RateLimiterService rateLimiterService) {
+    public CommentController(@Autowired CommentService commentService , @Autowired ProfileService profileService , @Autowired PostService postService, @Autowired TokenBucketRateLimiterService rateLimiterService) {
         this.commentService = commentService;
         this.profileService = profileService;
         this.postService = postService;
