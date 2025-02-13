@@ -88,7 +88,8 @@ public class WebSecurityConfig {
         http.authorizeRequests().antMatchers("/auth/**").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/metrics/**").permitAll()
-                .antMatchers("/images/**").permitAll()// /auth/**
+                .antMatchers("/images/**").permitAll()
+                .antMatchers("/api/post_ads/**").permitAll()// /auth/**
                 .antMatchers("/h2-console/**").permitAll()	// /h2-console/** ako se koristi H2 baza)
                 .antMatchers("/api/foo").permitAll()		// /api/foo
                 .antMatchers("/api/posts/likes").permitAll()
