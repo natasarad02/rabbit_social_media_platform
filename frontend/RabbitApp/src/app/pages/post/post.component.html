@@ -32,7 +32,7 @@
     <button  mat-button *ngIf="post.profile?.id === loggedProfile?.id" (click)="deletePost()">Delete</button>
     <button  mat-button (click)="goToUpdate()" *ngIf="loggedProfile?.id === post.profile?.id">Edit</button>
     <button  mat-button (click)="navigateToUser(post.profile?.id || -1)">Creator Info</button>
-   
+    
   </div>
   <div *ngIf="commentClicked == true" class="comment-container">
   <input type="text" [(ngModel)] = "commentText"/>

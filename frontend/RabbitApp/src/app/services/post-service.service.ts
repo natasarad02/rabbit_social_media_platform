@@ -6,6 +6,7 @@ import { PaginatedResponse } from "../models/Pagebale.model";
 import { PostViewDTO } from "../models/PostViewDTO.model";
 import { PostDTO } from "../models/PostDTO.mode";
 import { CommentDTO } from "../models/CommentDTO.model";
+import { PostAdDTO } from "../models/PostAdDTO.model";
 
 @Injectable({
     providedIn: 'root'
@@ -58,6 +59,12 @@ export class PostService {
 
       updatePost(postDTO: PostViewDTO): Observable<PostViewDTO> {
         return this.http.put<PostViewDTO>(this.apiUrl, postDTO);
+    }
+
+
+    sendForAds(post: PostAdDTO): Observable<PostAdDTO>{
+        const url = "http://localhost:8080/api/post_ads/send_ad";
+        return this.http.post<PostAdDTO>(url, post);
     }
 
     

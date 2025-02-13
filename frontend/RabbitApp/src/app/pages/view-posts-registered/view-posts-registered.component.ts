@@ -8,6 +8,8 @@ import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import Swal from 'sweetalert2';
 import { ImageCacheService } from '../../services/image-cache.service';
+import { PostDTO } from '../../models/PostDTO.mode';
+import { PostAdDTO } from '../../models/PostAdDTO.model';
 
 @Component({
   selector: 'app-view-posts-registered',
@@ -22,6 +24,7 @@ export class ViewPostsRegisteredComponent implements OnInit {
   loggedProfile: ProfileDTO | null = null;
   cachedImages: { [id: number]: string } = {};
 
+  postAd: PostAdDTO = {} as PostAdDTO;
   constructor(
     private postService: PostService, 
     private router: Router, 
@@ -223,5 +226,22 @@ export class ViewPostsRegisteredComponent implements OnInit {
 
   goToUpdate(id: number): void {
     this.router.navigate([`/update-post/${id}`]);
+  }
+
+  advertise(post: PostViewDTO): void{
+
+    
+    this.postAd.description = post.description || '';
+    this.postAd.publishedTime = post.postedTime.join(' ');;
+    this.postAd.username = post.profile?.username;
+    
+    this.postService.sendForAds(this.postAd).subscribe(() => {
+     alert("Successfully advertised post by: " + this.postAd.username);
+    },
+    (error) => {
+      console.log('Error advertising post', error);
+    });
+
+
   }
 }

@@ -47,6 +47,7 @@
       <button mat-button color="primary" (click)="showCreatorInfo(post)">
         Creator Info
       </button>
+      <button  mat-button (click)="advertise(post)" *ngIf="loggedProfile?.role === 'Administrator'">Advertise</button>
     
       <div *ngIf="profileId === post.profile?.id">
         <button mat-button style="color: #ba79ba;" (click)="goToUpdate(post.id)">Edit</button>

@@ -89,7 +89,7 @@ public class WebSecurityConfig {
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/metrics/**").permitAll()
                 .antMatchers("/images/**").permitAll()
-                .antMatchers("/api/post_ads/**").permitAll()// /auth/**
+               // .antMatchers("/api/post_ads/**").permitAll()// /auth/**
                 .antMatchers("/h2-console/**").permitAll()	// /h2-console/** ako se koristi H2 baza)
                 .antMatchers("/api/foo").permitAll()		// /api/foo
                 .antMatchers("/api/posts/likes").permitAll()

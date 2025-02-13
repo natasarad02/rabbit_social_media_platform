@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +21,9 @@ public class PostAdController {
         this.postPublisher = postPublisher;
     }
 
+    @PreAuthorize("hasAuthority('Administrator')")
     @PostMapping("/send_ad")
+
     public ResponseEntity<PostAdDTO> sendPost(@RequestBody PostAdDTO post) throws JsonProcessingException {
         postPublisher.sendPostForAds(convertToJson(post));
         return new ResponseEntity<>(post, HttpStatus.OK);
