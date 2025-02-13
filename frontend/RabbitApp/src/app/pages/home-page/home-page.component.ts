@@ -65,8 +65,20 @@ export class HomePageComponent implements OnInit, OnChanges {
 
   logOut()
   {
-    this.authService.logout();
-    this.ngOnInit();
+    if(this.loggedProfile)
+    {
+      this.loggedProfile.isActive = false;
+      this.profileService.updateProfileCurrentlyActiveStatus(this.loggedProfile.id).subscribe(()=>{
+        this.authService.logout();
+        this.ngOnInit();
+      },
+      (error) => {
+        alert('Error logging out');
+       
+      }
+    );
+  }
+   
   }
 
   logIn()

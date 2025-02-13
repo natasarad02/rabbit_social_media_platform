@@ -17,6 +17,7 @@ import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
+import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
@@ -231,4 +232,14 @@ public class ProfileService {
         profileRepository.save(profile);
     }
 
+    public Profile updateProfileCurrentlyActiveStatus(Integer id) {
+        Profile profile = findOne(id);
+
+        if (profile == null) {
+            return null;
+        }
+
+        profile.setActive(false);
+        return profileRepository.save(profile);
+    }
 }

@@ -45,7 +45,8 @@ export class CreatePostComponent implements OnInit {
     password: '',
     role: '',
     address: '',
-    username: ''
+    username: '',
+    isActive: true
   }
   location: LocationDTO = {
     id: 0,

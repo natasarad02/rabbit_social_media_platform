@@ -7,4 +7,5 @@ export interface ProfileDTO{
     role: string; 
     address: string;
     username: string;
+    isActive: boolean;
 }

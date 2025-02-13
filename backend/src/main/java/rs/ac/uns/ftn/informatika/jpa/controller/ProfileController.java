@@ -11,9 +11,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
+import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
@@ -24,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -233,6 +236,20 @@ public class ProfileController {
         profileService.followProfile(profileId, followedProfileId);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/currently_active/{id}")
+    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
+    public ResponseEntity<Void> updateProfileCurrentlyActiveStatus(@PathVariable Integer id) throws IOException {
+
+       Profile updatedProfile = profileService.updateProfileCurrentlyActiveStatus(id);
+
+        if (updatedProfile == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
 
     @PostMapping("/unfollow")
     @PreAuthorize("hasAnyAuthority('User', 'Administrator')")

@@ -54,6 +54,9 @@ export class ProfileService {
       }
     
       
+      updateProfileCurrentlyActiveStatus(profileId: number): Observable<void> {
+              return this.http.get<void>(this.apiUrl + "/currently_active/" + profileId);
+          }
 
 
 
