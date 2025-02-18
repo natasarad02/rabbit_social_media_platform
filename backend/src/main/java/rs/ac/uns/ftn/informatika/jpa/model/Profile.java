@@ -119,9 +119,13 @@ public class Profile implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "chat_group_id")
-    private ChatGroup chatGroup;
+    @ManyToMany
+    @JoinTable(
+            name = "chat_group_members",
+            joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "chat_group_id" , referencedColumnName = "id")
+    )
+    private Set<ChatGroup> chatGroups = new HashSet<>();
 
     public Profile() {
     }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @SQLDelete(sql
-        = "UPDATE post "
+        = "UPDATE chat_group "
         + "SET deleted = true "
         + "WHERE id = ?")
 @Where(clause = "deleted = false")
@@ -28,22 +28,28 @@ public class ChatGroup {
     @JoinColumn(name = "admin_id", nullable = false)
     private Profile admin;
 
-    @OneToMany(mappedBy = "chatGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(
+            name = "chat_group_members",
+            joinColumns = @JoinColumn(name = "chat_group_id" , referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "profile_id" , referencedColumnName = "id")
+    )
     private Set<Profile> members = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "chat_group_messages", joinColumns = @JoinColumn(name = "chat_group_id"))
-    @Column(name = "message")
-    private List<String> messages = new ArrayList<>();
+    @Column(name = "deleted")
+    private boolean deleted;
 
+
+    @OneToMany(mappedBy = "chatGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<ChatMessage> messages = new ArrayList<>();
     public ChatGroup() {}
 
-    public ChatGroup(Integer id, String name, Profile admin, Set<Profile> members, List<String> messages) {
+    public ChatGroup(Integer id, String name, Profile admin, Set<Profile> members) {
         this.id = id;
         this.name = name;
         this.admin = admin;
         this.members = members;
-        this.messages = messages;
+
     }
 
     public Integer getId() {
@@ -78,11 +84,19 @@ public class ChatGroup {
         this.members = members;
     }
 
-    public List<String> getMessages() {
+    public List<ChatMessage> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<String> messages) {
+    public void setMessages(List<ChatMessage> messages) {
         this.messages = messages;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

@@ -114,3 +114,22 @@ INSERT INTO profile_following (profile_id, followed_profile_id) VALUES
                                                                     (10, 3), -- James is following Ivana
                                                                     (3, 2),  -- Ivana is following Milan
                                                                     (5, 4);  -- Jane is following Bojan
+
+INSERT INTO chat_group (name, admin_id, deleted)
+VALUES
+    ('Group A', 1, false),
+    ('Group B', 2, false);
+
+INSERT INTO chat_message (message, sender_id, receiver_id, chat_group_id, timestamp, deleted)
+VALUES
+    ('Hello, how are you?',1, 2, NULL, '2025-02-18 10:00:00', false),
+    ('I am good, thank you!',2, 1, NULL, '2025-02-18 10:05:00', false),
+    ('Hello, how can I help you?',1, NULL, 1, '2025-02-18 10:10:00', false);
+
+INSERT INTO chat_group_members (chat_group_id, profile_id)
+VALUES
+    (1, 1),
+    (1, 2),
+    (2, 5);
+
+
