@@ -31,7 +31,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/socket-subscriber") // Prefiks koji koji se koristi za mapiranje svih poruka.
                 // Klijenti moraju da ga navedu kada salju poruku serveru.
                 // Svaki URL bi pocinjao ovako: http://localhost:8080/socket-subscriber/…/…
-                .enableSimpleBroker("/socket-publisher" , "/queue"); // Definisanje topic-a (ruta) na koje klijenti mogu da se pretplate.
+                .enableSimpleBroker("/socket-publisher", "/queue"); // Definisanje topic-a (ruta) na koje klijenti mogu da se pretplate.
         //grupne i privatne poruke pa zato ima 2
         // SimpleBroker cuva poruke u memoriji i salje ih klijentima na definisane topic-e.
         // Server kada salje poruke, salje ih na rute koje su ovde definisane, a klijenti cekaju na poruke.
