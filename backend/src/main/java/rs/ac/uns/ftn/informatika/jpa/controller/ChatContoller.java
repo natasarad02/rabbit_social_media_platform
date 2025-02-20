@@ -29,11 +29,7 @@ public class ChatContoller {
     }
 
     @MessageMapping("/send") // Klijent šalje poruke na /socket-subscriber/send
-    public ChatMessageDTO sendMessage(ChatMessageDTO chatMessageDto, Principal principal) {
-
-        if (principal == null) {
-         //   throw new AccessDeniedException("Unauthorized user!");
-        }
+    public ChatMessageDTO sendMessage(ChatMessageDTO chatMessageDto) {
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(chatMessageDto.getMessage());
