@@ -9,3 +9,7 @@ console.log(ng2Charts);
 
 platformBrowserDynamic().bootstrapModule(AppModule)
   .catch((err: any) => console.error(err));
+
+  
+
+

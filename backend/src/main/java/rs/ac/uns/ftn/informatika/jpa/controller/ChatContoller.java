@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
+@RequestMapping(value = "api/chat")
 public class ChatContoller {
     private SimpMessagingTemplate template;
     private ChatService chatService;

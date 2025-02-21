@@ -1,39 +1,55 @@
 import { Injectable } from '@angular/core';
-import { Client, Message } from '@stomp/stompjs';
+import { Client, IMessage, Message, Stomp } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { ChatMessageDTO } from '../models/ChatMessageDTO.model';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
   private stompClient!: Client;
+  private messageSubject = new BehaviorSubject<ChatMessageDTO | null>(null);
+  private connected = false;
 
   constructor() {}
 
   connect() {
-    const socket = new SockJS('http://localhost:8080/socket');
-    this.stompClient = new Client({
-      webSocketFactory: () => socket,
-      debug: (msg) => console.log(msg), // Optional: Debugging logs
-      reconnectDelay: 5000, // Auto-reconnect after 5 seconds
-    });
 
-    this.stompClient.onConnect = (frame) => {
-      console.log('Connected: ', frame);
-      
-      // Subscribe to messages
-      this.stompClient.subscribe('/socket-publisher/messages', (message: Message) => {
-        console.log('Received:', message.body);
-      });
-    };
+     if (this.connected) return;
 
-    this.stompClient.activate(); 
+    //const socket = new SockJS('http://localhost:8080/socket');
+    // console.log('Socket created:', socket);
+    // this.stompClient = Stomp.over(socket);
+
+    // this.stompClient.onConnect = (frame) => {
+    //   console.log('Connected: ', frame);
+    //   this.connected = true;
+
+    //   // Pretplata na privatne poruke
+    //   this.stompClient.subscribe('/queue/messages', (message: IMessage) => {
+    //     const chatMessage: ChatMessageDTO = JSON.parse(message.body);
+    //     this.messageSubject.next(chatMessage);
+    //   });
+
+    //   // Pretplata na grupne poruke
+    //   this.stompClient.subscribe('/socket-publisher/messages', (message: IMessage) => {
+    //     const chatMessage: ChatMessageDTO = JSON.parse(message.body);
+    //     this.messageSubject.next(chatMessage);
+    //   });
+    // };
+
+    // this.stompClient.onWebSocketError = (error) => {
+    //   console.error('WebSocket Error:', error);
+    // };
+
+    // this.stompClient.activate();
   }
 
-  sendMessage(destination: string, message: any) {
+  sendMessage(destination: string, message: ChatMessageDTO) {
     if (this.stompClient && this.stompClient.connected) {
       this.stompClient.publish({
-        destination: `/socket-subscriber${destination}`,
+        destination: destination,
         body: JSON.stringify(message),
       });
     } else {
@@ -41,10 +57,10 @@ export class WebSocketService {
     }
   }
 
-  disconnect() {
-    if (this.stompClient) {
-      this.stompClient.deactivate();
-      console.log('Disconnected');
-    }
+  getMessages(): Observable<ChatMessageDTO | null> {
+    return this.messageSubject.asObservable();
   }
+
+  
+  
 }
