@@ -1,27 +1,23 @@
 package rs.ac.uns.ftn.informatika.jpa.dto;
 
-import rs.ac.uns.ftn.informatika.jpa.model.ChatGroup;
-import rs.ac.uns.ftn.informatika.jpa.model.Profile;
-
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 public class ChatMessageDTO {
     private Integer id;
     private String message;
-    private ProfileDTO sender;
-    private ProfileDTO receiver;
-    private ChatGroupDTO chatGroup;
+    private Integer senderId;
+    private Integer receiverId;
+    private Integer chatGroupId;
     private LocalDateTime timestamp;
 
     public ChatMessageDTO() {}
 
-    public ChatMessageDTO(Integer id, String message, ProfileDTO sender, ProfileDTO receiver, ChatGroupDTO chatGroup, LocalDateTime timestamp) {
+    public ChatMessageDTO(Integer id, String message, Integer sender, Integer receiver, Integer chatGroup, LocalDateTime timestamp) {
         this.id = id;
         this.message = message;
-        this.sender = sender;
-        this.receiver = receiver;
-        this.chatGroup = chatGroup;
+        this.senderId = sender;
+        this.receiverId = receiver;
+        this.chatGroupId = chatGroup;
         this.timestamp = timestamp;
     }
 
@@ -41,28 +37,28 @@ public class ChatMessageDTO {
         this.message = message;
     }
 
-    public ProfileDTO getSender() {
-        return sender;
+    public Integer getSender() {
+        return senderId;
     }
 
-    public void setSender(ProfileDTO sender) {
-        this.sender = sender;
+    public void setSender(Integer sender) {
+        this.senderId = sender;
     }
 
-    public ProfileDTO getReceiver() {
-        return receiver;
+    public Integer getReceiver() {
+        return receiverId;
     }
 
-    public void setReceiver(ProfileDTO receiver) {
-        this.receiver = receiver;
+    public void setReceiver(Integer receiver) {
+        this.receiverId = receiver;
     }
 
-    public ChatGroupDTO getChatGroup() {
-        return chatGroup;
+    public Integer getChatGroup() {
+        return chatGroupId;
     }
 
-    public void setChatGroup(ChatGroupDTO chatGroup) {
-        this.chatGroup = chatGroup;
+    public void setChatGroup(Integer chatGroup) {
+        this.chatGroupId = chatGroup;
     }
 
     public LocalDateTime getTimestamp() {

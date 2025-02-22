@@ -15,6 +15,7 @@ import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "api/chat")
@@ -34,16 +35,16 @@ public class ChatContoller {
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(chatMessageDto.getMessage());
-        chatMessage.setSender(profileService.findOne(chatMessageDto.getSender().getId()));
+        chatMessage.setSender(profileService.findOne(chatMessageDto.getSender()));
         chatMessage.setTimestamp(LocalDateTime.now());
 
         if (chatMessageDto.getReceiver() != null) {
-            chatMessage.setReceiver(profileService.findOne(chatMessageDto.getReceiver().getId()));
+            chatMessage.setReceiver(profileService.findOne(chatMessageDto.getReceiver()));
         }
         else chatMessage.setReceiver(null);
 
         if (chatMessageDto.getChatGroup() != null) {
-            chatMessage.setChatGroup(chatService.findGroup(chatMessageDto.getChatGroup().getId()));
+            chatMessage.setChatGroup(chatService.findGroup(chatMessageDto.getChatGroup()));
             }
         else chatMessage.setChatGroup(null);
 
@@ -66,12 +67,22 @@ public class ChatContoller {
 
     }
 
+    @PreAuthorize("hasAuthority('User')")
+    @GetMapping
+    public List<ChatMessageDTO> getMessages(@RequestParam Integer senderId, @RequestParam Integer receiverId) {
 
-//    @GetMapping("/group/{groupId}/last10")
-//    public List<ChatMessageDTO> getLast10Messages(@PathVariable Integer groupId) {
-//        return chatService.getLastMessagesFromGroup(groupId)
-//                .stream()
-//                .map(ChatMessageDto::new)
-//                .collect(Collectors.toList());
-//    }
+        List<ChatMessage> messages = chatService.findAllMessagesFromSenderAndReceiver(senderId, receiverId);
+        return messages.stream()
+                .map(msg -> new ChatMessageDTO(
+                        msg.getId(),
+                        msg.getMessage(),
+                        msg.getSender().getId(),
+                        msg.getReceiver() != null ? msg.getReceiver().getId() : -1, // Set receiver ID to -1 if null
+                        msg.getChatGroup() != null ? msg.getChatGroup().getId() : -1, // Set chatGroup ID to -1 if null
+                        msg.getTimestamp() // Assuming timestamp is `LocalDateTime`
+                ))
+                .collect(Collectors.toList());
+    }
+
+
 }

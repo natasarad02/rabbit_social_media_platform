@@ -34,6 +34,7 @@ import { MatSelectChange, MatSelectModule, MatSelectTrigger } from '@angular/mat
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { BaseChartDirective } from 'ng2-charts';
 import { WebSocketService } from './services/web-socket.service';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -72,6 +73,7 @@ import { WebSocketService } from './services/web-socket.service';
     MatOption,
     MatSelectModule,
     BaseChartDirective,
+    MatRadioModule
     
   ],
   providers: [

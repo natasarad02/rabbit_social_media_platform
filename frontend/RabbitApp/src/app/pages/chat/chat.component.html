@@ -1,7 +1,17 @@
-<div class="chat-container">
+<div class="header">
+  <button mat-raised-button color="secondary">
+    <mat-icon>add</mat-icon>
+    Create group
+  </button>
+  <h1>Chat</h1>
+</div>
+
+<div class="all">
+  <!-- Chat Container -->
+  <div class="chat-container">
     <div class="messages">
       <div *ngFor="let msg of messages" class="message">
-        <strong>{{ msg.sender.name }}</strong>: {{ msg.message }}
+        <strong>{{ profileUsername[msg.sender] || 'Loading...' }}</strong>: {{ msg.message }}
       </div>
     </div>
   
@@ -10,3 +20,32 @@
       <button (click)="sendMessage()">Pošalji</button>
     </div>
   </div>
+
+  <!-- Profile List -->
+  <mat-radio-group [(ngModel)]="selectedUserId">
+    <div class="profiles">
+      <h2>Private chats</h2>
+      <mat-radio-button *ngFor="let user of allProfiles" [value]="user.id" (click)="openProfileChat(user.id)">
+        <div>
+          <span class="full-name">{{ user.name }} {{ user.surname }}</span> 
+          <span class="username-tag"> ({{ user.username }})</span>
+        </div>
+      </mat-radio-button>
+    </div>
+  </mat-radio-group>
+
+
+  <mat-radio-group [(ngModel)]="selectedUserId">
+    <div class="profiles">
+      <h2>Group chats</h2>
+      <mat-radio-button *ngFor="let user of allProfiles" [value]="user.id" (click)="openProfileChat(user.id)">
+        <div>
+          <span class="full-name">{{ user.name }} {{ user.surname }}</span> 
+          <span class="username-tag"> ({{ user.username }})</span>
+        </div>
+      </mat-radio-button>
+    </div>
+  </mat-radio-group>
+
+  </div>
+  

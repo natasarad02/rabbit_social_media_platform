@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ChatMessageDTO } from '../models/ChatMessageDTO.model';
 
@@ -11,7 +11,11 @@ export class ChatService {
 
   constructor(private http: HttpClient) {}
 
-  getChatMessages(chatId: number): Observable<ChatMessageDTO[]> {
-    return this.http.get<ChatMessageDTO[]>(`${this.baseUrl}/messages/${chatId}`);
+  getMessages(senderId: number, receiverId: number): Observable<ChatMessageDTO[]> {
+    const params = new HttpParams()
+      .set('senderId', senderId.toString())
+      .set('receiverId', receiverId.toString());
+
+    return this.http.get<ChatMessageDTO[]>(this.baseUrl, { params });
   }
 }

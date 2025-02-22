@@ -28,13 +28,8 @@ public class ChatGroup {
     @JoinColumn(name = "admin_id", nullable = false)
     private Profile admin;
 
-    @ManyToMany
-    @JoinTable(
-            name = "chat_group_members",
-            joinColumns = @JoinColumn(name = "chat_group_id" , referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "profile_id" , referencedColumnName = "id")
-    )
-    private Set<Profile> members = new HashSet<>();
+    @OneToMany(mappedBy = "chatGroup")
+    private Set<ChatGroupMember> members;
 
     @Column(name = "deleted")
     private boolean deleted;
@@ -44,7 +39,7 @@ public class ChatGroup {
     private List<ChatMessage> messages = new ArrayList<>();
     public ChatGroup() {}
 
-    public ChatGroup(Integer id, String name, Profile admin, Set<Profile> members) {
+    public ChatGroup(Integer id, String name, Profile admin, Set<ChatGroupMember> members) {
         this.id = id;
         this.name = name;
         this.admin = admin;
@@ -76,11 +71,11 @@ public class ChatGroup {
         this.admin = admin;
     }
 
-    public Set<Profile> getMembers() {
+    public Set<ChatGroupMember> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<Profile> members) {
+    public void setMembers(Set<ChatGroupMember> members) {
         this.members = members;
     }
 

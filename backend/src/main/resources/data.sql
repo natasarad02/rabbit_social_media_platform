@@ -126,10 +126,11 @@ VALUES
     ('I am good, thank you!',2, 1, NULL, '2025-02-18 10:05:00', false),
     ('Hello, how can I help you?',1, NULL, 1, '2025-02-18 10:10:00', false);
 
-INSERT INTO chat_group_members (chat_group_id, profile_id)
+INSERT INTO chat_group_member (chat_group_id, profile_id, join_date)
 VALUES
-    (1, 1),
-    (1, 2),
-    (2, 5);
+    (1, 1, NOW()),
+    (1, 2, NOW()),
+    (2, 5, NOW());
+
 
 

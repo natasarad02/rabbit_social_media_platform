@@ -13,12 +13,12 @@ public class ChatGroupDTO {
     private Integer id;
     private String name;
     private ProfileDTO admin;
-    private Set<ProfileDTO> members;
+    private Set<ChatGroupMemberDTO> members;
     private List<ChatMessageDTO> messages;
 
     public ChatGroupDTO() {}
 
-    public ChatGroupDTO(Integer id, String name, ProfileDTO admin, Set<ProfileDTO> members, List<ChatMessageDTO> messages) {
+    public ChatGroupDTO(Integer id, String name, ProfileDTO admin, Set<ChatGroupMemberDTO> members, List<ChatMessageDTO> messages) {
         this.id = id;
         this.name = name;
         this.admin = admin;
@@ -50,11 +50,11 @@ public class ChatGroupDTO {
         this.admin = admin;
     }
 
-    public Set<ProfileDTO> getMembers() {
+    public Set<ChatGroupMemberDTO> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<ProfileDTO> members) {
+    public void setMembers(Set<ChatGroupMemberDTO> members) {
         this.members = members;
     }
 

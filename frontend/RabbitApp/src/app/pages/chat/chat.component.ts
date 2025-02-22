@@ -4,6 +4,8 @@ import { ChatService } from '../../services/chat.service';
 import { ChatMessageDTO } from '../../models/ChatMessageDTO.model';
 import { ProfileDTO } from '../../models/ProfileDTO.model';
 import { UserService } from '../../services/user.service';
+import { ProfileViewDTO } from '../../models/ProfileViewDTO.model';
+import { ProfileService } from '../../services/profile-service.service';
 
 @Component({
   selector: 'app-chat',
@@ -16,8 +18,11 @@ export class ChatComponent implements OnInit{
   newMessage: string = '';
   currentUser!: ProfileDTO;
   receiver!: ProfileDTO;
+  allProfiles: ProfileViewDTO[] = [];
+  selectedUserId: number = -1;
+  profileUsername: { [key: number]: string } = {}; // Create an object to store usernames by senderId
 
-  constructor(private webSocketService: WebSocketService, private chatService: ChatService, private userService: UserService) {}
+  constructor(private webSocketService: WebSocketService, private chatService: ChatService, private userService: UserService, private profileService: ProfileService) {}
 
   ngOnInit() {
     this.loadUser();
@@ -38,6 +43,7 @@ export class ChatComponent implements OnInit{
         if (data) {
           console.log(data);
           this.currentUser = data;
+          this.loadProfiles();
         } else {
           console.log('No profile found or token expired');
 
@@ -54,14 +60,62 @@ export class ChatComponent implements OnInit{
       const message: ChatMessageDTO = {
         id: 0,
         message: this.newMessage,
-        sender: this.currentUser,
-        receiver: this.receiver,
-        chatGroup: null,
-        timeStamp: new Date()
+        sender: -1,
+        receiver: -1,
+        chatGroup: -1,
+        timeStamp: ''
       };
 
       this.webSocketService.sendMessage('/socket-subscriber/send', message);
       this.newMessage = '';
+    }
+  }
+
+  //dobavlja sve profile za pretragu
+  loadProfiles(): void {
+    this.profileService.getAllProfiles().subscribe({
+      next: (followers) => {
+        followers.forEach(follower => {
+          if (follower.role === 'User' && follower.id !== this.currentUser?.id) {
+            this.allProfiles.push(follower);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error fetching profiles:', err);
+      }
+    });
+  }
+
+  openProfileChat(receiverId: number): void {
+    this.chatService.getMessages(this.currentUser.id, receiverId).subscribe(
+      (data) => {
+        this.messages = data;
+        console.log(data);
+        this.selectedUserId = receiverId;
+        this.messages.forEach(message => {
+            this.openProfileFromId(message.sender);
+          
+        });
+      },
+      (error) => {
+        console.error('Error fetching messages:', error);
+      }
+    );
+  }
+
+  openProfileFromId(senderId: number): void {
+    // Check if the username for the senderId is already fetched
+    if (!this.profileUsername[senderId]) {
+      this.profileService.getProfile(senderId).subscribe(
+        (data) => {
+          this.profileUsername[senderId] = data?.username || 'No username available';
+          
+        },
+        (error) => {
+          console.error('Error fetching profile:', error);
+        }
+      );
     }
   }
 
