@@ -9,6 +9,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.repository.ChatGroupMemberRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.ChatGroupRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.ChatMessageRepository;
+import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,11 +21,13 @@ public class ChatService {
     private ChatMessageRepository chatMessageRepository;
     private ChatGroupRepository chatGroupRepository;
     private ChatGroupMemberRepository chatGroupMemberRepository;
+    private ProfileRepository profileRepository;
 
-    public ChatService(@Autowired ChatMessageRepository chatMessageRepository, @Autowired ChatGroupRepository chatGroupRepository, @Autowired ChatGroupMemberRepository chatGroupMemberRepository) {
+    public ChatService(@Autowired ChatMessageRepository chatMessageRepository, @Autowired ChatGroupRepository chatGroupRepository, @Autowired ChatGroupMemberRepository chatGroupMemberRepository, @Autowired ProfileRepository profileRepository) {
         this.chatMessageRepository = chatMessageRepository;
         this.chatGroupRepository = chatGroupRepository;
         this.chatGroupMemberRepository = chatGroupMemberRepository;
+        this.profileRepository = profileRepository;
     }
 
     public ChatMessage saveMessage(ChatMessage message) {
@@ -78,12 +81,60 @@ public class ChatService {
         }
 
         return messages;
-
-
-
     }
 
     public List<ChatGroup> findAllGroupsFromAdminOrMember(Integer userId) {
         return chatGroupRepository.findAllGroupsFromAdminOrMember(userId);
+    }
+
+    public String addMemberToGroup(Integer groupId, Integer userId) {
+        ChatGroup chatGroup = chatGroupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+        Profile profile = profileRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Check if user is already a member
+        ChatGroupMember existingMember = chatGroupMemberRepository.findByChatGroupIdAndProfileId(groupId, userId);
+        if (existingMember != null) {
+            return "User is already a member of this group.";
+        }
+
+        // Add new member to group
+        ChatGroupMember newMember = new ChatGroupMember();
+        newMember.setChatGroup(chatGroup);
+        newMember.setProfile(profile);
+        newMember.setJoinDate(LocalDateTime.now()); // Set current date and time as join date
+
+        chatGroupMemberRepository.save(newMember);
+        return "User added to group successfully.";
+    }
+
+    public String removeMemberFromGroup(Integer groupId, Integer userId) {
+        ChatGroup chatGroup = chatGroupRepository.findById(groupId)
+                .orElseThrow(() -> new RuntimeException("Group not found"));
+
+        // Check if the user is a member of the group
+        ChatGroupMember member = chatGroupMemberRepository.findByChatGroupIdAndProfileId(groupId, userId);
+        if (member == null) {
+            return "User is not a member of this group.";
+        }
+
+        // Remove member from group
+        chatGroupMemberRepository.delete(member);
+        return "User removed from group successfully.";
+    }
+
+    // Create a new group where the creator is the admin
+    public ChatGroup createGroup(Integer creatorId, String groupName) {
+        Profile creator = profileRepository.findById(creatorId)
+                .orElseThrow(() -> new RuntimeException("Creator not found"));
+
+        // Create new group
+        ChatGroup newGroup = new ChatGroup();
+        newGroup.setName(groupName);
+        newGroup.setAdmin(creator);  // Set creator as admin
+        newGroup = chatGroupRepository.save(newGroup);
+
+        return newGroup;
     }
 }
