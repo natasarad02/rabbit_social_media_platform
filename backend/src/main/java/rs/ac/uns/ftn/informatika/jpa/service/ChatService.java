@@ -11,10 +11,13 @@ import rs.ac.uns.ftn.informatika.jpa.repository.ChatGroupRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.ChatMessageRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 
+import javax.transaction.Transactional;
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatService {
@@ -84,7 +87,26 @@ public class ChatService {
     }
 
     public List<ChatGroup> findAllGroupsFromAdminOrMember(Integer userId) {
-        return chatGroupRepository.findAllGroupsFromAdminOrMember(userId);
+        // Fetch all groups, either where the user is an admin or a member
+        List<ChatGroup> allGroups = chatGroupRepository.findAll();
+
+        // Filter the groups in memory (in service layer)
+        List<ChatGroup> groupsForUser = allGroups.stream()
+                .filter(grp -> isUserAdminOrMember(grp, userId))// Convert to DTO after filtering
+                .collect(Collectors.toList());
+
+        return groupsForUser;
+    }
+
+    private boolean isUserAdminOrMember(ChatGroup group, Integer userId) {
+        // Check if user is the admin
+        if (group.getAdmin() != null && group.getAdmin().getId().equals(userId)) {
+            return true;
+        }
+
+        // Check if user is a member
+        return group.getMembers().stream()
+                .anyMatch(member -> member.getProfile().getId().equals(userId));
     }
 
     public String addMemberToGroup(Integer groupId, Integer userId) {
@@ -136,5 +158,10 @@ public class ChatService {
         newGroup = chatGroupRepository.save(newGroup);
 
         return newGroup;
+    }
+
+
+    public List<ChatGroupMember> getMembersFromGroup(Integer groupId) {
+        return chatGroupMemberRepository.findByChatGroupIdWithProfile(groupId);
     }
 }

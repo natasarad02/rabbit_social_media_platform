@@ -8,15 +8,15 @@ import java.time.LocalDateTime;
 public class ChatGroupMemberDTO {
     private Integer id;
     private Integer chatGroupId;
-    private Profile profile;
+    private Integer profileId;
     private LocalDateTime joinDate;
 
     public ChatGroupMemberDTO() {}
 
-    public ChatGroupMemberDTO(Integer id, Integer chatGroupId, Profile profile, LocalDateTime joinDate) {
+    public ChatGroupMemberDTO(Integer id, Integer chatGroupId, Integer profile, LocalDateTime joinDate) {
         this.id = id;
         this.chatGroupId = chatGroupId;
-        this.profile = profile;
+        this.profileId = profile;
         this.joinDate = joinDate;
     }
 
@@ -36,12 +36,12 @@ public class ChatGroupMemberDTO {
         this.chatGroupId = chatGroupId;
     }
 
-    public Profile getProfile() {
-        return profile;
+    public Integer getProfile() {
+        return profileId;
     }
 
-    public void setProfile(Profile profile) {
-        this.profile = profile;
+    public void setProfile(Integer profile) {
+        this.profileId = profile;
     }
 
     public LocalDateTime getJoinDate() {

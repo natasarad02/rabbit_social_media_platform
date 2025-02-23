@@ -119,6 +119,9 @@ public class Profile implements UserDetails, Serializable {
             inverseJoinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChatGroupMember> members;
+
     public Profile() {
     }
 

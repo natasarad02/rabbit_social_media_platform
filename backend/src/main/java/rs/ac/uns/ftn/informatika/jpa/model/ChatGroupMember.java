@@ -36,6 +36,14 @@ public class ChatGroupMember {
         this.joinDate = joinDate;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public ChatGroup getChatGroup() {
         return chatGroup;
     }

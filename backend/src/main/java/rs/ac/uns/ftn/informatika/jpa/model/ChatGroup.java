@@ -24,22 +24,22 @@ public class ChatGroup {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "admin_id", nullable = false)
     private Profile admin;
 
-    @OneToMany(mappedBy = "chatGroup")
-    private Set<ChatGroupMember> members;
+    @OneToMany(mappedBy = "chatGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatGroupMember> members;
 
     @Column(name = "deleted")
     private boolean deleted;
 
 
     @OneToMany(mappedBy = "chatGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<ChatMessage> messages = new ArrayList<>();
+    private List<ChatMessage> messages;
     public ChatGroup() {}
 
-    public ChatGroup(Integer id, String name, Profile admin, Set<ChatGroupMember> members) {
+    public ChatGroup(Integer id, String name, Profile admin, List<ChatGroupMember> members) {
         this.id = id;
         this.name = name;
         this.admin = admin;
@@ -71,11 +71,11 @@ public class ChatGroup {
         this.admin = admin;
     }
 
-    public Set<ChatGroupMember> getMembers() {
+    public List<ChatGroupMember> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<ChatGroupMember> members) {
+    public void setMembers(List<ChatGroupMember> members) {
         this.members = members;
     }
 

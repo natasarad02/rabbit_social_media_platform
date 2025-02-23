@@ -9,6 +9,9 @@ import rs.ac.uns.ftn.informatika.jpa.model.ChatMessage;
 import java.util.List;
 
 public interface ChatGroupRepository extends JpaRepository<ChatGroup, Integer> {
-    @Query("SELECT cg FROM ChatGroup cg WHERE cg.admin.id = :userId OR :userId MEMBER OF cg.members")
-    List<ChatGroup> findAllGroupsFromAdminOrMember(Integer userId);
+
+    @Query("SELECT cg FROM ChatGroup cg LEFT JOIN FETCH cg.members WHERE cg.deleted = false")
+    List<ChatGroup> findAllWithMembers();
+
+
 }

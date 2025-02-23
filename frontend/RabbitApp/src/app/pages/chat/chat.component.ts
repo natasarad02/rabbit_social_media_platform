@@ -6,6 +6,7 @@ import { ProfileDTO } from '../../models/ProfileDTO.model';
 import { UserService } from '../../services/user.service';
 import { ProfileViewDTO } from '../../models/ProfileViewDTO.model';
 import { ProfileService } from '../../services/profile-service.service';
+import { ChatGroupDTO } from '../../models/ChatGroupDTO.model';
 
 @Component({
   selector: 'app-chat',
@@ -21,6 +22,7 @@ export class ChatComponent implements OnInit{
   allProfiles: ProfileViewDTO[] = [];
   selectedUserId: number = -1;
   profileUsername: { [key: number]: string } = {}; // Create an object to store usernames by senderId
+  chatGroups: ChatGroupDTO[] = [];
 
   constructor(private webSocketService: WebSocketService, private chatService: ChatService, private userService: UserService, private profileService: ProfileService) {}
 
@@ -44,6 +46,7 @@ export class ChatComponent implements OnInit{
           console.log(data);
           this.currentUser = data;
           this.loadProfiles();
+          this.loadChatGroups();
         } else {
           console.log('No profile found or token expired');
 
@@ -55,7 +58,20 @@ export class ChatComponent implements OnInit{
     );
   }
 
-  sendMessage() {
+  loadChatGroups(): void {
+    this.chatService.getUserChatGroups(this.currentUser.id).subscribe({
+      next: (groups) => {
+        this.chatGroups = groups;
+        console.log('Chat Groups:', this.chatGroups);
+      },
+      error: (error) => {
+        console.error('Error fetching chat groups:', error);
+      }
+    });
+  }
+
+
+  sendMessage() : void {
     if (this.newMessage.trim()) {
       const message: ChatMessageDTO = {
         id: 0,

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ChatMessageDTO } from '../models/ChatMessageDTO.model';
+import { ChatGroupDTO } from '../models/ChatGroupDTO.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,5 +18,13 @@ export class ChatService {
       .set('receiverId', receiverId.toString());
 
     return this.http.get<ChatMessageDTO[]>(this.baseUrl, { params });
+  }
+
+  getUserChatGroups(userId: number): Observable<ChatGroupDTO[]> {
+    return this.http.get<ChatGroupDTO[]>(`${this.baseUrl}/user/${userId}`);
+  }
+
+  getGroupMessages(userId: number, groupId: number): Observable<ChatMessageDTO[]> {
+    return this.http.get<ChatMessageDTO[]>(`${this.baseUrl}/${groupId}/messages/${userId}`);
   }
 }

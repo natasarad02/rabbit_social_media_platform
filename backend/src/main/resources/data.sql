@@ -128,7 +128,7 @@ VALUES
 
 INSERT INTO chat_group_member (chat_group_id, profile_id, join_date)
 VALUES
-    (1, 1, NOW()),
+    (1, 5, NOW()),
     (1, 2, NOW()),
     (2, 5, NOW());
 

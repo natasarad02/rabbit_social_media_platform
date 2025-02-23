@@ -12,18 +12,16 @@ import java.util.Set;
 public class ChatGroupDTO {
     private Integer id;
     private String name;
-    private ProfileDTO admin;
-    private Set<ChatGroupMemberDTO> members;
-    private List<ChatMessageDTO> messages;
+    private Integer admin;
+    private List<Integer> members;
 
     public ChatGroupDTO() {}
 
-    public ChatGroupDTO(Integer id, String name, ProfileDTO admin, Set<ChatGroupMemberDTO> members, List<ChatMessageDTO> messages) {
+    public ChatGroupDTO(Integer id, String name, Integer admin, List<Integer> members) {
         this.id = id;
         this.name = name;
         this.admin = admin;
         this.members = members;
-        this.messages = messages;
     }
 
     public Integer getId() {
@@ -42,27 +40,21 @@ public class ChatGroupDTO {
         this.name = name;
     }
 
-    public ProfileDTO getAdmin() {
+    public Integer getAdmin() {
         return admin;
     }
 
-    public void setAdmin(ProfileDTO admin) {
+    public void setAdmin(Integer admin) {
         this.admin = admin;
     }
 
-    public Set<ChatGroupMemberDTO> getMembers() {
+    public List<Integer> getMembers() {
         return members;
     }
 
-    public void setMembers(Set<ChatGroupMemberDTO> members) {
+    public void setMembers(List<Integer> members) {
         this.members = members;
     }
 
-    public List<ChatMessageDTO> getMessages() {
-        return messages;
-    }
 
-    public void setMessages(List<ChatMessageDTO> messages) {
-        this.messages = messages;
-    }
 }
