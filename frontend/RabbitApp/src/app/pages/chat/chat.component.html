@@ -1,5 +1,5 @@
 <div class="header">
-  <button mat-raised-button color="secondary">
+  <button mat-raised-button color="secondary" (click)="createGroup()">
     <mat-icon>add</mat-icon>
     Create group
   </button>
@@ -38,10 +38,10 @@
   <mat-radio-group [(ngModel)]="selectedUserId">
     <div class="profiles">
       <h2>Group chats</h2>
-      <mat-radio-button *ngFor="let user of allProfiles" [value]="user.id" (click)="openProfileChat(user.id)">
+      <mat-radio-button *ngFor="let chat of chatGroups" [value]="chat.id" (click)="openGroupChat(chat.id)">
         <div>
-          <span class="full-name">{{ user.name }} {{ user.surname }}</span> 
-          <span class="username-tag"> ({{ user.username }})</span>
+          <span class="full-name">{{ chat.name }}</span> 
+          <span class="username-tag"> ({{ profileUsername[chat.admin] }})</span>
         </div>
       </mat-radio-button>
     </div>

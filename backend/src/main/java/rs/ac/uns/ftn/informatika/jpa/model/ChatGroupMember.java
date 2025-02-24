@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Where(clause = "deleted = false")
 @Entity
 public class ChatGroupMember {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,6 +28,9 @@ public class ChatGroupMember {
 
     @Column(name = "join_date")
     private LocalDateTime joinDate;
+
+    @Column(name = "deleted")
+    private boolean deleted;
 
     public  ChatGroupMember() {};
 
@@ -66,5 +70,12 @@ public class ChatGroupMember {
 
     public void setJoinDate(LocalDateTime joinDate) {
         this.joinDate = joinDate;
+    }
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }

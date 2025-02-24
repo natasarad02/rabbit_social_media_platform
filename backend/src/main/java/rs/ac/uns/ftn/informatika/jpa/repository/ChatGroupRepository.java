@@ -10,8 +10,7 @@ import java.util.List;
 
 public interface ChatGroupRepository extends JpaRepository<ChatGroup, Integer> {
 
-    @Query("SELECT cg FROM ChatGroup cg LEFT JOIN FETCH cg.members WHERE cg.deleted = false")
-    List<ChatGroup> findAllWithMembers();
+    List<ChatGroup> findAllByAdminId(int adminId);
 
 
 }

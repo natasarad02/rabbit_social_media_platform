@@ -7,6 +7,7 @@ import { UserService } from '../../services/user.service';
 import { ProfileViewDTO } from '../../models/ProfileViewDTO.model';
 import { ProfileService } from '../../services/profile-service.service';
 import { ChatGroupDTO } from '../../models/ChatGroupDTO.model';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-chat',
@@ -62,7 +63,9 @@ export class ChatComponent implements OnInit{
     this.chatService.getUserChatGroups(this.currentUser.id).subscribe({
       next: (groups) => {
         this.chatGroups = groups;
-        console.log('Chat Groups:', this.chatGroups);
+        this.chatGroups.forEach(grp => {
+          this.openProfileFromId(grp.admin);
+        });
       },
       error: (error) => {
         console.error('Error fetching chat groups:', error);
@@ -93,7 +96,12 @@ export class ChatComponent implements OnInit{
       next: (followers) => {
         followers.forEach(follower => {
           if (follower.role === 'User' && follower.id !== this.currentUser?.id) {
+            const exists = this.allProfiles.some(profile => profile.id === follower.id);
+          
+          // If the profile doesn't exist, add it to the allProfiles list
+          if (!exists) {
             this.allProfiles.push(follower);
+          }
           }
         });
       },
@@ -120,6 +128,19 @@ export class ChatComponent implements OnInit{
     );
   }
 
+  openGroupChat(groupId: number): void {
+    this.chatService.getGroupMessages(this.currentUser.id, groupId).subscribe(
+      (data) => {
+        this.messages = data;
+        console.log(data);
+        this.selectedUserId = groupId+100;
+      },
+      (error) => {
+        console.error('Error fetching messages:', error);
+      }
+    );
+  }
+
   openProfileFromId(senderId: number): void {
     // Check if the username for the senderId is already fetched
     if (!this.profileUsername[senderId]) {
@@ -134,5 +155,40 @@ export class ChatComponent implements OnInit{
       );
     }
   }
+
+  createGroup() {
+    // Launch SweetAlert2 with an input field for the group name
+    Swal.fire({
+      title: 'Enter Group Name',
+      input: 'text',
+      inputPlaceholder: 'Group Name',
+      showCancelButton: true,
+      confirmButtonText: 'Create Group',
+      cancelButtonText: 'Cancel',
+      preConfirm: (groupName) => {
+        // Validate if the user has entered a group name
+        if (!groupName) {
+          Swal.showValidationMessage('Please enter a group name');
+          return false;
+        }
+  
+        // Call the service to create the group
+        return this.chatService.createGroup(this.currentUser.id, groupName).subscribe({
+          next: () => {
+            // Notify user of success
+            Swal.fire('Success', 'Group created successfully', 'success');
+            this.ngOnInit();
+          },
+          error: (error) => {
+            // Notify user of error
+            Swal.fire('Error', 'Failed to create group', 'error');
+          }
+        });
+      }
+    });
+  }
+  
+
+  
 
 }

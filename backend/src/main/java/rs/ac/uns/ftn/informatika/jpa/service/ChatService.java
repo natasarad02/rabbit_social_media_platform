@@ -87,27 +87,30 @@ public class ChatService {
     }
 
     public List<ChatGroup> findAllGroupsFromAdminOrMember(Integer userId) {
-        // Fetch all groups, either where the user is an admin or a member
-        List<ChatGroup> allGroups = chatGroupRepository.findAll();
+        // Get groups where user is an admin
+        List<ChatGroup> chatGroups = new ArrayList<>(chatGroupRepository.findAllByAdminId(userId));
 
-        // Filter the groups in memory (in service layer)
-        List<ChatGroup> groupsForUser = allGroups.stream()
-                .filter(grp -> isUserAdminOrMember(grp, userId))// Convert to DTO after filtering
-                .collect(Collectors.toList());
+        // Fetch only relevant group members instead of all members
+        List<ChatGroupMember> chatGroupMembers = chatGroupMemberRepository.findAllByProfileId(userId);
+        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA: " + chatGroupMembers.size());
 
-        return groupsForUser;
-    }
-
-    private boolean isUserAdminOrMember(ChatGroup group, Integer userId) {
-        // Check if user is the admin
-        if (group.getAdmin() != null && group.getAdmin().getId().equals(userId)) {
-            return true;
+        for (ChatGroupMember chatGroupMember : chatGroupMembers) {
+            ChatGroup chatGroup = chatGroupMember.getChatGroup();
+            if (chatGroup != null && !chatGroups.contains(chatGroup)) {
+                chatGroups.add(chatGroup);
+            }
         }
 
-        // Check if user is a member
-        return group.getMembers().stream()
-                .anyMatch(member -> member.getProfile().getId().equals(userId));
+        return chatGroups;
     }
+
+
+    public List<ChatGroupMember> findAllMembers()
+    {
+        return chatGroupMemberRepository.findAll();
+    }
+
+
 
     public String addMemberToGroup(Integer groupId, Integer userId) {
         ChatGroup chatGroup = chatGroupRepository.findById(groupId)
@@ -155,6 +158,9 @@ public class ChatService {
         ChatGroup newGroup = new ChatGroup();
         newGroup.setName(groupName);
         newGroup.setAdmin(creator);  // Set creator as admin
+        newGroup.setDeleted(false);
+        newGroup.setMembers(new ArrayList<>());
+        newGroup.setMessages(new ArrayList<>());
         newGroup = chatGroupRepository.save(newGroup);
 
         return newGroup;

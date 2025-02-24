@@ -18,5 +18,7 @@ public interface ChatGroupMemberRepository extends JpaRepository<ChatGroupMember
     @Query("SELECT cgm FROM ChatGroupMember cgm JOIN FETCH cgm.profile WHERE cgm.chatGroup.id = :groupId")
     List<ChatGroupMember> findByChatGroupIdWithProfile(@Param("groupId") Integer groupId);
 
+    List<ChatGroupMember> findAllByProfileId(Integer profileId);
+
 
 }

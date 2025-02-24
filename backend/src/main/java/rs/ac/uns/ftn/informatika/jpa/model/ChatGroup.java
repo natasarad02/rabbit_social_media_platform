@@ -28,7 +28,7 @@ public class ChatGroup {
     @JoinColumn(name = "admin_id", nullable = false)
     private Profile admin;
 
-    @OneToMany(mappedBy = "chatGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chatGroup", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ChatGroupMember> members;
 
     @Column(name = "deleted")

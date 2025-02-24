@@ -118,19 +118,61 @@ INSERT INTO profile_following (profile_id, followed_profile_id) VALUES
 INSERT INTO chat_group (name, admin_id, deleted)
 VALUES
     ('Group A', 1, false),
-    ('Group B', 2, false);
+    ('Group B', 2, false),
+    ('Tech Talk', 5, false),
+    ('Gaming Squad', 6, false),
+    ('Travel Buddies', 7, false),
+    ('Movie Lovers', 9, false),
+    ('Fitness Freaks', 1, false);
+
+INSERT INTO chat_group_member (chat_group_id, profile_id, join_date, deleted)
+VALUES
+    (1, 5, NOW(), false),
+    (1, 2, NOW(), false),
+    (2, 1, NOW(), false),
+    (2, 6, NOW(), false),
+    (3, 2, NOW(), false),
+    (3, 7, NOW(), false),
+    (4, 9, NOW(), false),
+    (5, 1, NOW(), false),
+    (5, 2, NOW(), false),
+    (5, 5, NOW(), false),
+    (6, 6, NOW(), false),
+    (6, 7, NOW(), false),
+    (7, 5, NOW(), false),
+    (7, 9, NOW(), false);
 
 INSERT INTO chat_message (message, sender_id, receiver_id, chat_group_id, timestamp, deleted)
 VALUES
-    ('Hello, how are you?',1, 2, NULL, '2025-02-18 10:00:00', false),
-    ('I am good, thank you!',2, 1, NULL, '2025-02-18 10:05:00', false),
-    ('Hello, how can I help you?',1, NULL, 1, '2025-02-18 10:10:00', false);
+    ('Hello everyone!', 1, NULL, 1, '2025-02-18 10:00:00', false),
+    ('Welcome to the group!', 2, NULL, 1, '2025-02-18 10:05:00', false),
+    ('Who is up for a game tonight?', 6, NULL, 4, '2025-02-18 10:15:00', false),
+    ('Good morning!', 5, NULL, 3, '2025-02-18 10:20:00', false),
+    ('Where should we travel next?', 7, NULL, 5, '2025-02-18 10:30:00', false),
+    ('Check out this new fitness challenge!', 1, NULL, 7, '2025-02-18 10:40:00', false),
+    ('Hey, let’s plan a movie night!', 9, NULL, 6, '2025-02-18 10:50:00', false),
+    ('What’s the latest tech news?', 2, NULL, 3, '2025-02-18 11:00:00', false),
+    ('Anyone tried the new update?', 5, NULL, 3, '2025-02-18 11:10:00', false),
+    ('Let’s meet for a workout session!', 7, NULL, 7, '2025-02-18 11:20:00', false),
+    ('The new game patch is out!', 6, NULL, 4, '2025-02-18 11:30:00', false),
+    ('What are your thoughts on this movie?', 9, NULL, 6, '2025-02-18 11:40:00', false),
+    ('Let’s organize a weekend trip!', 5, NULL, 5, '2025-02-18 11:50:00', false),
+    ('Hey, can you send me the notes?', 1, 5, NULL, '2025-02-18 12:00:00', false),
+    ('Sure! Here they are.', 5, 1, NULL, '2025-02-18 12:05:00', false),
+    ('Hey! Long time no see!', 2, 7, NULL, '2025-02-18 12:10:00', false),
+    ('Yeah! We should catch up soon.', 7, 2, NULL, '2025-02-18 12:15:00', false),
+    ('Check out this article on AI!', 5, NULL, 3, '2025-02-18 12:20:00', false),
+    ('Who wants to go hiking this weekend?', 7, NULL, 5, '2025-02-18 12:30:00', false),
+    ('Just watched the latest Marvel movie!', 9, NULL, 6, '2025-02-18 12:40:00', false),
+    ('Join us for a gym session today.', 1, NULL, 7, '2025-02-18 12:50:00', false),
 
-INSERT INTO chat_group_member (chat_group_id, profile_id, join_date)
-VALUES
-    (1, 5, NOW()),
-    (1, 2, NOW()),
-    (2, 5, NOW());
-
-
-
+    -- Dodatne poruke za "Travel Buddies" (chat_group_id = 5)
+    ('Let’s plan a road trip!', 5, NULL, 5, '2025-02-18 13:00:00', false),
+    ('Has anyone been to Japan?', 7, NULL, 5, '2025-02-18 13:10:00', false),
+    ('We should visit Greece this summer!', 1, NULL, 5, '2025-02-18 13:20:00', false),
+    ('Who has recommendations for cheap flights?', 2, NULL, 5, '2025-02-18 13:30:00', false),
+    ('Check out these travel hacks!', 9, NULL, 5, '2025-02-18 13:40:00', false),
+    ('Let’s book our tickets soon!', 7, NULL, 5, '2025-02-18 13:50:00', false),
+    ('What’s the best time to visit Italy?', 6, NULL, 5, '2025-02-18 14:00:00', false),
+    ('Packing tips for long trips?', 5, NULL, 5, '2025-02-18 14:10:00', false),
+    ('We should try backpacking next time!', 1, NULL, 5, '2025-02-18 14:20:00', false);

@@ -20,6 +20,7 @@ import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -93,6 +94,7 @@ public class ChatContoller {
 
     // Endpoint to get all groups where the user is an admin or a member
 
+    @PreAuthorize("hasAuthority('User')")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ChatGroupDTO>> getGroupsForUser(@PathVariable Integer userId) {
         List<ChatGroup> groups = chatService.findAllGroupsFromAdminOrMember(userId);
@@ -106,11 +108,29 @@ public class ChatContoller {
                         grp.getId(),
                         grp.getName(),
                         grp.getAdmin() != null ? grp.getAdmin().getId() : -1,
-                        grp.getMembers().stream()
-                                .map(cgm -> cgm.getProfile().getId()) // Correct method call for getting Profile's ID
-                                .collect(Collectors.toList()) // Collecting IDs
+                        new ArrayList<>() // Collecting IDs
                 ))
                 .collect(Collectors.toList());
+
+        List<ChatGroupMember> chatGroupMembers = chatService.findAllMembers();
+
+        List<ChatGroupMemberDTO> chatGroupMemberDTOs = chatGroupMembers.stream()
+                .map(m -> new ChatGroupMemberDTO(
+                        m.getId(),
+                        m.getChatGroup().getId(),
+                        m.getProfile().getId(),
+                        m.getJoinDate()
+                )).collect(Collectors.toList());
+
+        for (ChatGroupDTO cgDTO : groupDTOs) {
+            List<Integer> pom = new ArrayList<>();
+            for (ChatGroupMemberDTO cgmDTO : chatGroupMemberDTOs) {
+                if(cgmDTO.getChatGroupId().equals(cgDTO.getId())) {
+                    pom.add(cgmDTO.getProfile());
+                }
+            }
+            cgDTO.setMembers(pom);
+        }
 
         return new ResponseEntity<>(groupDTOs, HttpStatus.OK);
     }
@@ -136,6 +156,20 @@ public class ChatContoller {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(messageDTOS, HttpStatus.OK);
     }
+
+    @PreAuthorize("hasAuthority('User')")
+    @PostMapping("/createGroup")
+    public ResponseEntity<Void> createGroup(
+            @RequestParam Integer userId,
+            @RequestParam String groupName) {
+        try {
+            ChatGroup newGroup = chatService.createGroup(userId, groupName);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
 
 }
