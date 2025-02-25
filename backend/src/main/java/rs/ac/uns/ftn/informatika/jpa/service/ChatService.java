@@ -118,17 +118,23 @@ public class ChatService {
         Profile profile = profileRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Check if user is already a member
         ChatGroupMember existingMember = chatGroupMemberRepository.findByChatGroupIdAndProfileId(groupId, userId);
         if (existingMember != null) {
-            return "User is already a member of this group.";
+            if (!existingMember.isDeleted()) {
+                return "User is already a member of this group.";
+            } else {
+                existingMember.setDeleted(false);
+                existingMember.setJoinDate(LocalDateTime.now());
+                chatGroupMemberRepository.save(existingMember);
+                return "User re-added to group successfully.";
+            }
         }
 
-        // Add new member to group
         ChatGroupMember newMember = new ChatGroupMember();
         newMember.setChatGroup(chatGroup);
         newMember.setProfile(profile);
-        newMember.setJoinDate(LocalDateTime.now()); // Set current date and time as join date
+        newMember.setJoinDate(LocalDateTime.now());
+        newMember.setDeleted(false);
 
         chatGroupMemberRepository.save(newMember);
         return "User added to group successfully.";
@@ -138,14 +144,13 @@ public class ChatService {
         ChatGroup chatGroup = chatGroupRepository.findById(groupId)
                 .orElseThrow(() -> new RuntimeException("Group not found"));
 
-        // Check if the user is a member of the group
         ChatGroupMember member = chatGroupMemberRepository.findByChatGroupIdAndProfileId(groupId, userId);
-        if (member == null) {
-            return "User is not a member of this group.";
+        if (member == null || member.isDeleted()) {
+            return "User is not an active member of this group.";
         }
 
-        // Remove member from group
-        chatGroupMemberRepository.delete(member);
+        member.setDeleted(true);
+        chatGroupMemberRepository.save(member);
         return "User removed from group successfully.";
     }
 
@@ -166,8 +171,4 @@ public class ChatService {
         return newGroup;
     }
 
-
-    public List<ChatGroupMember> getMembersFromGroup(Integer groupId) {
-        return chatGroupMemberRepository.findByChatGroupIdWithProfile(groupId);
-    }
 }

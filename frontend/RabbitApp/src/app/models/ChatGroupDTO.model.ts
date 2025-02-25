@@ -6,6 +6,6 @@ export interface ChatGroupDTO{
     id: number;
     name: string;
     admin: number;
-    members: ChatGroupMemberDTO[];
+    members: number[];
    
 }

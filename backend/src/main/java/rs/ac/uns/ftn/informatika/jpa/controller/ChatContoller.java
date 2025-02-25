@@ -170,6 +170,28 @@ public class ChatContoller {
         }
     }
 
+    @PreAuthorize("hasAuthority('User')")
+    @PostMapping("/{groupId}/add-member/{userId}")
+    public ResponseEntity<Void> addMemberToGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
+        try {
+            String response = chatService.addMemberToGroup(groupId, userId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
+
+    @PreAuthorize("hasAuthority('User')")
+    @DeleteMapping("/{groupId}/remove-member/{userId}")
+    public ResponseEntity<Void> removeMemberFromGroup(@PathVariable Integer groupId, @PathVariable Integer userId) {
+        try {
+        String response = chatService.removeMemberFromGroup(groupId, userId);
+        return ResponseEntity.ok().build();} catch (RuntimeException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 
 
 }

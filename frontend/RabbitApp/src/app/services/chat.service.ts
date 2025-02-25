@@ -28,13 +28,16 @@ export class ChatService {
     return this.http.get<ChatMessageDTO[]>(`${this.baseUrl}/${groupId}/messages/${userId}`);
   }
   createGroup(userId: number, groupName: string): Observable<void> {
-    // Define the URL endpoint for creating a group
     const url = `${this.baseUrl}/createGroup`;
-
-    // Prepare parameters as HttpParams
     const params = { userId: userId.toString(), groupName: groupName };
-
-    // Send POST request to the backend
     return this.http.post<void>(url, null, { params: params });
+  }
+
+  addMemberToGroup(groupId: number, userId: number): Observable<string> {
+    return this.http.post<string>(`${this.baseUrl}/${groupId}/add-member/${userId}`, {});
+  }
+
+  removeMemberFromGroup(groupId: number, userId: number): Observable<string> {
+    return this.http.delete<string>(`${this.baseUrl}/${groupId}/remove-member/${userId}`);
   }
 }

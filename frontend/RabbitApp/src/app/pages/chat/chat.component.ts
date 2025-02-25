@@ -24,6 +24,8 @@ export class ChatComponent implements OnInit{
   selectedUserId: number = -1;
   profileUsername: { [key: number]: string } = {}; // Create an object to store usernames by senderId
   chatGroups: ChatGroupDTO[] = [];
+  isAdmin: boolean = false;
+  selectedGroup!: ChatGroupDTO;
 
   constructor(private webSocketService: WebSocketService, private chatService: ChatService, private userService: UserService, private profileService: ProfileService) {}
 
@@ -121,6 +123,7 @@ export class ChatComponent implements OnInit{
             this.openProfileFromId(message.sender);
           
         });
+        this.isAdmin = false;
       },
       (error) => {
         console.error('Error fetching messages:', error);
@@ -128,12 +131,23 @@ export class ChatComponent implements OnInit{
     );
   }
 
-  openGroupChat(groupId: number): void {
-    this.chatService.getGroupMessages(this.currentUser.id, groupId).subscribe(
+  openGroupChat(groupNow: ChatGroupDTO): void {
+    this.chatService.getGroupMessages(this.currentUser.id, groupNow.id).subscribe(
       (data) => {
         this.messages = data;
-        console.log(data);
-        this.selectedUserId = groupId+100;
+        this.selectedGroup = groupNow;
+        this.chatGroups.forEach(group => {
+          if(group.id === groupNow.id)
+          {
+            if(group.admin === this.currentUser.id)
+            {
+              this.isAdmin = true;
+            }
+            else {
+              this.isAdmin = false;
+            }
+          }
+        })
       },
       (error) => {
         console.error('Error fetching messages:', error);
@@ -185,6 +199,148 @@ export class ChatComponent implements OnInit{
           }
         });
       }
+    });
+  }
+
+
+  openManageUsersDialog(): void {
+    
+    const memberIds = new Set(this.selectedGroup.members);
+    const members = this.allProfiles.filter(user => memberIds.has(user.id));
+    const nonMembers = this.allProfiles.filter(user => !memberIds.has(user.id));
+
+    let htmlContent = `
+  <div class="swal-container" style="
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    max-width: 600px;
+    font-family: Arial, sans-serif;
+  ">
+    <div class="swal-section" style="
+      flex: 1;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    ">
+      <h3 style="
+        font-size: 18px;
+        color: #333;
+        text-align: left;
+      ">Members</h3>
+      <div class="swal-list" style="
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+      ">
+        ${members.length > 0 ? members.map(user => `
+          <div class="swal-item" style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            background: white;
+            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+          ">
+            <button class="remove-btn" onclick="removeUser(${user.id})" style="
+              width: 36px;
+              height: 36px;
+              border: none;
+              border-radius: 50%;
+              cursor: pointer;
+              font-size: 18px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #e74c3c;
+              color: white;
+            ">❌</button>
+            <span style="flex: 1;">${user.name} ${user.surname} (${user.username})</span>
+          </div>`).join('') : `<p class="empty-msg" style="font-size: 14px; color: gray; text-align: left;">No members</p>`}
+      </div>
+    </div>
+
+    <div class="swal-section" style="
+      flex: 1;
+      padding: 10px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    ">
+      <h3 style="
+        font-size: 18px;
+        color: #333;
+        text-align: left;
+      ">Non-members</h3>
+      <div class="swal-list" style="
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+      ">
+        ${nonMembers.length > 0 ? nonMembers.map(user => `
+          <div class="swal-item" style="
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            border-radius: 6px;
+            background: white;
+            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+          ">
+            <button class="add-btn" onclick="addUser(${user.id})" style="
+              width: 36px;
+              height: 36px;
+              border: none;
+              border-radius: 50%;
+              cursor: pointer;
+              font-size: 18px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #2ecc71;
+              color: white;
+            ">➕</button>
+            <span style="flex: 1;">${user.name} ${user.surname} (${user.username})</span>
+          </div>`).join('') : `<p class="empty-msg" style="font-size: 14px; color: gray; text-align: left;">No available users</p>`}
+      </div>
+    </div>
+  </div>
+`;
+
+
+
+
+    Swal.fire({
+      title: `Manage Users in ${this.selectedGroup.name}`,
+      html: htmlContent,
+      showCloseButton: true,
+      showConfirmButton: false,
+      didOpen: () => {
+        (window as any).removeUser = (userId: number) => this.removeUserFromGroup(userId);
+        (window as any).addUser = (userId: number) => this.addUserToGroup(userId);
+      }
+    });
+  }
+
+  addUserToGroup(userId: number): void {
+    if (!this.selectedGroup) return;
+
+    this.chatService.addMemberToGroup(this.selectedGroup.id, userId).subscribe(() => {
+      Swal.fire('Success', 'User added to the group!', 'success');
+      this.selectedGroup.members.push(userId);
+    });
+  }
+
+  removeUserFromGroup(userId: number): void {
+    if (!this.selectedGroup) return;
+
+    this.chatService.removeMemberFromGroup(this.selectedGroup.id, userId).subscribe(() => {
+      Swal.fire('Success', 'User removed from the group!', 'success');
+      this.selectedGroup.members = this.selectedGroup.members.filter(id => id !== userId);
     });
   }
   
