@@ -132,4 +132,7 @@ public class WebSecurityConfig {
                         "/**/*.html", "/**/*.css", "/**/*.js");
 
     }
+
+
+
 }

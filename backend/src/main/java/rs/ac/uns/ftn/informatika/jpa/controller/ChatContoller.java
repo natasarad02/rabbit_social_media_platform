@@ -62,7 +62,7 @@ public class ChatContoller {
             // Šaljemo poruku klijentima
         if (chatMessage.getReceiver() != null) {
             template.convertAndSendToUser(
-                    chatMessage.getReceiver().getEmail(), // Unikatni identifikator korisnika (može biti ID ili email)
+                    chatMessage.getReceiver().getUsername(), // Unikatni identifikator korisnika (može biti ID ili email)
                     "/queue/messages",
                     savedMessage
             );

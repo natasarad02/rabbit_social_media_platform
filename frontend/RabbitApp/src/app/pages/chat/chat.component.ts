@@ -22,6 +22,7 @@ export class ChatComponent implements OnInit{
   receiver!: ProfileDTO;
   allProfiles: ProfileViewDTO[] = [];
   selectedUserId: number = -1;
+  selectedGroupId: number = -1;
   profileUsername: { [key: number]: string } = {}; // Create an object to store usernames by senderId
   chatGroups: ChatGroupDTO[] = [];
   isAdmin: boolean = false;
@@ -32,9 +33,7 @@ export class ChatComponent implements OnInit{
   ngOnInit() {
     this.loadUser();
     this.webSocketService.connect();
-    
-
-    // Slušanje novih poruka
+  
     this.webSocketService.getMessages().subscribe((message) => {
       if (message) {
         this.messages.push(message);
@@ -81,10 +80,10 @@ export class ChatComponent implements OnInit{
       const message: ChatMessageDTO = {
         id: 0,
         message: this.newMessage,
-        sender: -1,
-        receiver: -1,
-        chatGroup: -1,
-        timeStamp: ''
+        sender: this.currentUser.id || -1,
+        receiver: this.selectedUserId,
+        chatGroup: this.selectedGroupId,
+        timeStamp: new Date().toISOString()
       };
 
       this.webSocketService.sendMessage('/socket-subscriber/send', message);
@@ -119,6 +118,7 @@ export class ChatComponent implements OnInit{
         this.messages = data;
         console.log(data);
         this.selectedUserId = receiverId;
+        this.selectedGroupId = -1;
         this.messages.forEach(message => {
             this.openProfileFromId(message.sender);
           
@@ -136,6 +136,8 @@ export class ChatComponent implements OnInit{
       (data) => {
         this.messages = data;
         this.selectedGroup = groupNow;
+        this.selectedGroupId = groupNow.id;
+        this.selectedUserId = -1;
         this.chatGroups.forEach(group => {
           if(group.id === groupNow.id)
           {

@@ -18,32 +18,32 @@ export class WebSocketService {
 
      if (this.connected) return;
 
-    //const socket = new SockJS('http://localhost:8080/socket');
-    // console.log('Socket created:', socket);
-    // this.stompClient = Stomp.over(socket);
+    const socket = new SockJS('http://localhost:8080/socket');
+    console.log('Socket created:', socket);
+    this.stompClient = Stomp.over(socket);
 
-    // this.stompClient.onConnect = (frame) => {
-    //   console.log('Connected: ', frame);
-    //   this.connected = true;
+    this.stompClient.onConnect = (frame) => {
+      console.log('Connected: ', frame);
+      this.connected = true;
 
-    //   // Pretplata na privatne poruke
-    //   this.stompClient.subscribe('/queue/messages', (message: IMessage) => {
-    //     const chatMessage: ChatMessageDTO = JSON.parse(message.body);
-    //     this.messageSubject.next(chatMessage);
-    //   });
+      // Pretplata na privatne poruke
+      this.stompClient.subscribe('/queue/messages', (message: IMessage) => {
+        const chatMessage: ChatMessageDTO = JSON.parse(message.body);
+        this.messageSubject.next(chatMessage);
+      });
 
-    //   // Pretplata na grupne poruke
-    //   this.stompClient.subscribe('/socket-publisher/messages', (message: IMessage) => {
-    //     const chatMessage: ChatMessageDTO = JSON.parse(message.body);
-    //     this.messageSubject.next(chatMessage);
-    //   });
-    // };
+      // Pretplata na grupne poruke
+      this.stompClient.subscribe('/socket-publisher/messages', (message: IMessage) => {
+        const chatMessage: ChatMessageDTO = JSON.parse(message.body);
+        this.messageSubject.next(chatMessage);
+      });
+    };
 
-    // this.stompClient.onWebSocketError = (error) => {
-    //   console.error('WebSocket Error:', error);
-    // };
+    this.stompClient.onWebSocketError = (error) => {
+      console.error('WebSocket Error:', error);
+    };
 
-    // this.stompClient.activate();
+    this.stompClient.activate();
   }
 
   sendMessage(destination: string, message: ChatMessageDTO) {
