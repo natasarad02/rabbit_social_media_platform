@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Client, IMessage, Message, Stomp } from '@stomp/stompjs';
+import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { ChatMessageDTO } from '../models/ChatMessageDTO.model';
 import { BehaviorSubject, Observable } from 'rxjs';
@@ -15,33 +15,34 @@ export class WebSocketService {
   constructor() {}
 
   connect() {
+    if (this.connected) return;
 
-     if (this.connected) return;
+    const socketUrl = 'http://localhost:8080/socket';
 
-    const socket = new SockJS('http://localhost:8080/socket');
-    console.log('Socket created:', socket);
-    this.stompClient = Stomp.over(socket);
+    this.stompClient = new Client({
+      webSocketFactory: () => new SockJS(socketUrl),
+      debug: (msg) => console.log(msg),
+      reconnectDelay: 5000, // Automatski pokušaj ponovnog povezivanja nakon 5 sekundi
+      onConnect: (frame) => {
+        console.log('Connected: ', frame);
+        this.connected = true;
 
-    this.stompClient.onConnect = (frame) => {
-      console.log('Connected: ', frame);
-      this.connected = true;
+        // Pretplata na privatne poruke
+        this.stompClient.subscribe('/user/queue/messages', (message: IMessage) => {
+          const chatMessage: ChatMessageDTO = JSON.parse(message.body);
+          this.messageSubject.next(chatMessage);
+        });
 
-      // Pretplata na privatne poruke
-      this.stompClient.subscribe('/queue/messages', (message: IMessage) => {
-        const chatMessage: ChatMessageDTO = JSON.parse(message.body);
-        this.messageSubject.next(chatMessage);
-      });
-
-      // Pretplata na grupne poruke
-      this.stompClient.subscribe('/socket-publisher/messages', (message: IMessage) => {
-        const chatMessage: ChatMessageDTO = JSON.parse(message.body);
-        this.messageSubject.next(chatMessage);
-      });
-    };
-
-    this.stompClient.onWebSocketError = (error) => {
-      console.error('WebSocket Error:', error);
-    };
+        // Pretplata na grupne poruke
+        this.stompClient.subscribe('/socket-publisher/messages', (message: IMessage) => {
+          const chatMessage: ChatMessageDTO = JSON.parse(message.body);
+          this.messageSubject.next(chatMessage);
+        });
+      },
+      onWebSocketError: (error) => {
+        console.error('WebSocket Error:', error);
+      },
+    });
 
     this.stompClient.activate();
   }
@@ -60,7 +61,4 @@ export class WebSocketService {
   getMessages(): Observable<ChatMessageDTO | null> {
     return this.messageSubject.asObservable();
   }
-
-  
-  
 }

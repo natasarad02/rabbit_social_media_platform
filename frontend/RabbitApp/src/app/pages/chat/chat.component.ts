@@ -76,19 +76,22 @@ export class ChatComponent implements OnInit{
 
 
   sendMessage() : void {
-    if (this.newMessage.trim()) {
-      const message: ChatMessageDTO = {
-        id: 0,
-        message: this.newMessage,
-        sender: this.currentUser.id || -1,
-        receiver: this.selectedUserId,
-        chatGroup: this.selectedGroupId,
-        timeStamp: new Date().toISOString()
-      };
-
-      this.webSocketService.sendMessage('/socket-subscriber/send', message);
-      this.newMessage = '';
-    }
+    if(this.selectedGroupId != -1 || this.selectedUserId != -1)
+    {
+      if (this.newMessage.trim()) {
+        const message: ChatMessageDTO = {
+          id: 0,
+          message: this.newMessage,
+          sender: this.currentUser.id || -1,
+          receiver: this.selectedUserId,
+          chatGroup: this.selectedGroupId,
+          timeStamp: new Date().toISOString()
+        };
+  
+        this.webSocketService.sendMessage('/socket-subscriber/send', message);
+        this.newMessage = '';
+      }
+    } 
   }
 
   //dobavlja sve profile za pretragu

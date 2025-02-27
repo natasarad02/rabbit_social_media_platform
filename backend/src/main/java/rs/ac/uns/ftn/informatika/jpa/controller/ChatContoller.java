@@ -38,42 +38,49 @@ public class ChatContoller {
         this.profileService = profileService;
     }
 
-    @MessageMapping("/send") // Klijent šalje poruke na /socket-subscriber/send
+    @MessageMapping("/send")
     public ChatMessageDTO sendMessage(ChatMessageDTO chatMessageDto) {
+        System.out.println("📩 Poruka primljena: " + chatMessageDto.getMessage());
 
         ChatMessage chatMessage = new ChatMessage();
         chatMessage.setMessage(chatMessageDto.getMessage());
         chatMessage.setSender(profileService.findOne(chatMessageDto.getSender()));
         chatMessage.setTimestamp(LocalDateTime.now());
-
-        if (chatMessageDto.getReceiver() != null) {
-            chatMessage.setReceiver(profileService.findOne(chatMessageDto.getReceiver()));
-        }
-        else chatMessage.setReceiver(null);
-
-        if (chatMessageDto.getChatGroup() != null) {
-            chatMessage.setChatGroup(chatService.findGroup(chatMessageDto.getChatGroup()));
-            }
-        else chatMessage.setChatGroup(null);
+        chatMessage.setDeleted(false);
 
 
-        ChatMessage savedMessage = chatService.saveMessage(chatMessage);
 
-            // Šaljemo poruku klijentima
+
+
+        // Šaljemo poruku klijentima
         if (chatMessage.getReceiver() != null) {
             template.convertAndSendToUser(
-                    chatMessage.getReceiver().getUsername(), // Unikatni identifikator korisnika (može biti ID ili email)
+                    profileService.getUsernameById(chatMessageDto.getReceiver()),
                     "/queue/messages",
-                    savedMessage
+                    chatMessageDto
+            );
+            template.convertAndSendToUser(
+                    profileService.getUsernameById(chatMessageDto.getSender()),
+                    "/queue/messages",
+                    chatMessageDto
             );
         } else {
-            // Grupna poruka, šalje se svim klijentima
-            template.convertAndSend("/socket-publisher/messages", savedMessage);
+            template.convertAndSend("/socket-publisher/messages", chatMessageDto);
         }
 
-        return chatMessageDto;
+        if (chatMessageDto.getReceiver() != null && chatMessageDto.getReceiver() != -1) {
+            chatMessage.setReceiver(profileService.findOne(chatMessageDto.getReceiver()));
+            System.out.println("📤 Privatna poruka korisniku: ");
+        } else {
+            chatMessage.setChatGroup(chatService.findGroup(chatMessageDto.getChatGroup()));
+            System.out.println("📢 Grupna poruka!");
+        }
 
+        chatService.saveMessage(chatMessage);
+
+        return chatMessageDto;
     }
+
 
     @PreAuthorize("hasAuthority('User')")
     @GetMapping

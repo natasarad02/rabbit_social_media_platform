@@ -96,9 +96,6 @@ public class Profile implements UserDetails, Serializable {
             joinColumns = @JoinColumn(name = "profile_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "followed_profile_id", referencedColumnName = "id")
     )
-
-
-
     private Set<Profile> following = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER, mappedBy = "following")
@@ -121,6 +118,9 @@ public class Profile implements UserDetails, Serializable {
 
     @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatGroupMember> members;
+
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> receivedMessages;
 
     public Profile() {
     }

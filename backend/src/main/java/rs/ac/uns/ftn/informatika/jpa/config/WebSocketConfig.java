@@ -17,7 +17,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/socket") // Definisemo endpoint koji ce klijenti koristiti da se povezu sa serverom.
                 // U ovom slucaju, URL za konekciju ce biti http://localhost:8080/socket/
-                .setAllowedOrigins("*") // Dozvoljavamo serveru da prima zahteve bilo kog porekla
+                .setAllowedOrigins("http://localhost:4200") // Dozvoljavamo serveru da prima zahteve bilo kog porekla
                 .withSockJS(); // Koristi se SockJS: https://github.com/sockjs/sockjs-protocol
     }
 
@@ -35,6 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // SimpleBroker cuva poruke u memoriji i salje ih klijentima na definisane topic-e.
         // Server kada salje poruke, salje ih na rute koje su ovde definisane, a klijenti cekaju na poruke.
         // Vise ruta odvajamo zarezom, npr. enableSimpleBroker("/ruta1", "/ruta2");
+        registry.setUserDestinationPrefix("/user");
     }
 
 

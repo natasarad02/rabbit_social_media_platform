@@ -24,7 +24,7 @@ public class ChatMessage {
     @JoinColumn(name = "sender_id", nullable = false)
     private Profile sender;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "receiver_id", nullable = true)
     private Profile receiver;
 

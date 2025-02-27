@@ -242,4 +242,19 @@ public class ProfileService {
         profile.setActive(false);
         return profileRepository.save(profile);
     }
+
+    public String getUsernameById(int id)
+    {
+        Profile profile = profileRepository.findById(id).orElse(null);
+        if(profile == null)
+        {
+            return "";
+        }
+        else return profile.getUsername();
+    }
+
+    public Profile findById(int id)
+    {
+        return profileRepository.findById(id).orElse(null);
+    }
 }
