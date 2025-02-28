@@ -48,10 +48,6 @@ public class ChatContoller {
         chatMessage.setTimestamp(LocalDateTime.now());
         chatMessage.setDeleted(false);
 
-
-
-
-
         // Šaljemo poruku klijentima
         if (chatMessage.getReceiver() != null) {
             template.convertAndSendToUser(
@@ -59,11 +55,7 @@ public class ChatContoller {
                     "/queue/messages",
                     chatMessageDto
             );
-            template.convertAndSendToUser(
-                    profileService.getUsernameById(chatMessageDto.getSender()),
-                    "/queue/messages",
-                    chatMessageDto
-            );
+
         } else {
             template.convertAndSend("/socket-publisher/messages", chatMessageDto);
         }
@@ -76,7 +68,7 @@ public class ChatContoller {
             System.out.println("📢 Grupna poruka!");
         }
 
-        chatService.saveMessage(chatMessage);
+        chatService.saveMessage(chatMessage); //ovo proveriti da li je potrebno
 
         return chatMessageDto;
     }

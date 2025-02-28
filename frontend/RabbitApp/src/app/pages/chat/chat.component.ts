@@ -8,6 +8,7 @@ import { ProfileViewDTO } from '../../models/ProfileViewDTO.model';
 import { ProfileService } from '../../services/profile-service.service';
 import { ChatGroupDTO } from '../../models/ChatGroupDTO.model';
 import Swal from 'sweetalert2';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -27,14 +28,15 @@ export class ChatComponent implements OnInit{
   chatGroups: ChatGroupDTO[] = [];
   isAdmin: boolean = false;
   selectedGroup!: ChatGroupDTO;
+  private messageSubscription!: Subscription;
 
   constructor(private webSocketService: WebSocketService, private chatService: ChatService, private userService: UserService, private profileService: ProfileService) {}
 
   ngOnInit() {
     this.loadUser();
     this.webSocketService.connect();
-  
-    this.webSocketService.getMessages().subscribe((message) => {
+    
+    this.messageSubscription = this.webSocketService.getMessages().subscribe((message) => {
       if (message) {
         this.messages.push(message);
       }
@@ -87,7 +89,7 @@ export class ChatComponent implements OnInit{
           chatGroup: this.selectedGroupId,
           timeStamp: new Date().toISOString()
         };
-  
+        
         this.webSocketService.sendMessage('/socket-subscriber/send', message);
         this.newMessage = '';
       }
@@ -349,6 +351,11 @@ export class ChatComponent implements OnInit{
     });
   }
   
+  ngOnDestroy() {
+    if (this.messageSubscription) {
+      this.messageSubscription.unsubscribe();
+    }
+  }
 
   
 

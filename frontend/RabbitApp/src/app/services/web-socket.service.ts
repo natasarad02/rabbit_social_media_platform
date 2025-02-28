@@ -15,7 +15,7 @@ export class WebSocketService {
   constructor() {}
 
   connect() {
-    if (this.connected) return;
+    if (this.stompClient && this.stompClient.connected) return;
 
     const socketUrl = 'http://localhost:8080/socket';
 
