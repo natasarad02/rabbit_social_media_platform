@@ -48,30 +48,42 @@ public class ChatContoller {
         chatMessage.setTimestamp(LocalDateTime.now());
         chatMessage.setDeleted(false);
 
-        // Šaljemo poruku klijentima
-        if (chatMessage.getReceiver() != null) {
+        // Provera da li je poruka privatna
+        if (chatMessageDto.getReceiver() != null && chatMessageDto.getReceiver() != -1) {
+            String recipientId = String.valueOf(chatMessageDto.getReceiver());
+
             template.convertAndSendToUser(
-                    profileService.getUsernameById(chatMessageDto.getReceiver()),
+                    recipientId, // Koristimo ID direktno
                     "/queue/messages",
                     chatMessageDto
             );
 
-        } else {
-            template.convertAndSend("/socket-publisher/messages", chatMessageDto);
-        }
-
-        if (chatMessageDto.getReceiver() != null && chatMessageDto.getReceiver() != -1) {
+            // Povezujemo poruku sa primaocem
             chatMessage.setReceiver(profileService.findOne(chatMessageDto.getReceiver()));
-            System.out.println("📤 Privatna poruka korisniku: ");
-        } else {
+
+        } else if (chatMessageDto.getChatGroup() != null && chatMessageDto.getChatGroup() != -1) {
+            // Ako nema primaoca, proveravamo da li je poruka za grupu
+            System.out.println("📢 Grupna poruka u grupi: " + chatMessageDto.getChatGroup());
+
+            // Grupne poruke idu na `/topic/group/{groupId}`
+            template.convertAndSend(
+                    "/topic/group/" + chatMessageDto.getChatGroup(),
+                    chatMessageDto
+            );
+
             chatMessage.setChatGroup(chatService.findGroup(chatMessageDto.getChatGroup()));
-            System.out.println("📢 Grupna poruka!");
         }
 
-        chatService.saveMessage(chatMessage); //ovo proveriti da li je potrebno
+        // Čuvamo poruku u bazi ako je potrebno
+        chatService.saveMessage(chatMessage);
 
         return chatMessageDto;
     }
+
+
+
+
+
 
 
     @PreAuthorize("hasAuthority('User')")

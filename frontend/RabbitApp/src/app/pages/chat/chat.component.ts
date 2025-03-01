@@ -8,7 +8,7 @@ import { ProfileViewDTO } from '../../models/ProfileViewDTO.model';
 import { ProfileService } from '../../services/profile-service.service';
 import { ChatGroupDTO } from '../../models/ChatGroupDTO.model';
 import Swal from 'sweetalert2';
-import { Subscription, take } from 'rxjs';
+import { distinctUntilChanged, Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -28,19 +28,14 @@ export class ChatComponent implements OnInit{
   chatGroups: ChatGroupDTO[] = [];
   isAdmin: boolean = false;
   selectedGroup!: ChatGroupDTO;
-  private messageSubscription!: Subscription;
+  private privateMessageSubscription!: Subscription;
+  private groupMessageSubscription!: Subscription;
+  chatGroupIds: number[] = [];
 
   constructor(private webSocketService: WebSocketService, private chatService: ChatService, private userService: UserService, private profileService: ProfileService) {}
 
   ngOnInit() {
     this.loadUser();
-    this.webSocketService.connect();
-    
-    this.messageSubscription = this.webSocketService.getMessages().subscribe((message) => {
-      if (message) {
-        this.messages.push(message);
-      }
-    });
   }
 
   loadUser(): void {
@@ -53,7 +48,6 @@ export class ChatComponent implements OnInit{
           this.loadChatGroups();
         } else {
           console.log('No profile found or token expired');
-
         }
       },
       (error) => {
@@ -66,9 +60,12 @@ export class ChatComponent implements OnInit{
     this.chatService.getUserChatGroups(this.currentUser.id).subscribe({
       next: (groups) => {
         this.chatGroups = groups;
+        this.chatGroupIds = []; // Reset array
         this.chatGroups.forEach(grp => {
           this.openProfileFromId(grp.admin);
+          this.chatGroupIds.push(grp.id);
         });
+        this.connectSocket();
       },
       error: (error) => {
         console.error('Error fetching chat groups:', error);
@@ -76,24 +73,65 @@ export class ChatComponent implements OnInit{
     });
   }
 
+  connectSocket(): void {
+    this.webSocketService.connect(this.currentUser.id, this.chatGroupIds);
 
-  sendMessage() : void {
-    if(this.selectedGroupId != -1 || this.selectedUserId != -1)
-    {
-      if (this.newMessage.trim()) {
-        const message: ChatMessageDTO = {
-          id: 0,
-          message: this.newMessage,
-          sender: this.currentUser.id || -1,
-          receiver: this.selectedUserId,
-          chatGroup: this.selectedGroupId,
-          timeStamp: new Date().toISOString()
-        };
-        
-        this.webSocketService.sendMessage('/socket-subscriber/send', message);
-        this.newMessage = '';
+    // Slušamo privatne poruke
+    if (this.privateMessageSubscription) {
+      this.privateMessageSubscription.unsubscribe();
+    }
+    
+    this.privateMessageSubscription = this.webSocketService.getPrivateMessages().subscribe((message) => {
+      if (message) {
+        // Samo dodajemo poruku ako je trenutno otvoren chat sa pošiljaocem ili primaocem
+        if (this.selectedUserId !== -1 && 
+            (message.sender === this.selectedUserId || 
+             (message.sender === this.currentUser.id && message.receiver === this.selectedUserId))) {
+          this.messages.push(message);
+        }
       }
-    } 
+    });
+
+    // Otkazujemo prethodne pretplate
+    if (this.groupMessageSubscription) {
+      this.groupMessageSubscription.unsubscribe();
+    }
+
+    // Pretplaćujemo se samo na poruke za trenutno odabranu grupu
+    if (this.selectedGroupId !== -1) {
+      this.groupMessageSubscription = this.webSocketService
+        .getGroupMessagesForGroup(this.selectedGroupId)
+        .subscribe((message) => {
+          console.log("📥 Primljena poruka za grupu", this.selectedGroupId, ":", message);
+          this.messages.push(message);
+        });
+    }
+  }
+
+  sendMessage(): void { 
+    if (this.newMessage.trim()) {
+      const message: ChatMessageDTO = {
+        id: 0,
+        message: this.newMessage,
+        sender: this.currentUser.id || -1,
+        receiver: this.selectedUserId !== -1 ? this.selectedUserId : -1,
+        chatGroup: this.selectedGroupId !== -1 ? this.selectedGroupId : -1,
+        timeStamp: new Date().toISOString()
+      };
+      console.log(message);
+      if (this.selectedUserId !== -1) {
+        // Privatna poruka
+        this.webSocketService.sendPrivateMessage(message);
+        // Dodajemo našu poruku u listu poruka (jer backend ne vraća našu poruku nazad)
+        this.messages.push(message);
+      } else if (this.selectedGroupId !== -1) {
+        // Grupna poruka
+        this.webSocketService.sendGroupMessage(this.selectedGroupId, message);
+        // Grupne poruke će doći kroz WebSocket, ne moramo ih dodavati ručno
+      }
+  
+      this.newMessage = '';
+    }
   }
 
   //dobavlja sve profile za pretragu
@@ -125,10 +163,15 @@ export class ChatComponent implements OnInit{
         this.selectedUserId = receiverId;
         this.selectedGroupId = -1;
         this.messages.forEach(message => {
-            this.openProfileFromId(message.sender);
-          
+          this.openProfileFromId(message.sender);
         });
         this.isAdmin = false;
+        
+        // Resetovanje grupne pretplate
+        if (this.groupMessageSubscription) {
+          this.groupMessageSubscription.unsubscribe();
+          this.groupMessageSubscription = null as any;
+        }
       },
       (error) => {
         console.error('Error fetching messages:', error);
@@ -139,22 +182,42 @@ export class ChatComponent implements OnInit{
   openGroupChat(groupNow: ChatGroupDTO): void {
     this.chatService.getGroupMessages(this.currentUser.id, groupNow.id).subscribe(
       (data) => {
-        this.messages = data;
+        this.messages = [];
+        const allMessages = [...data]; // Ne dodajemo this.messages jer je prazno
+
+        // Filtriramo poruke da bismo uklonili duplikate na osnovu id
+        this.messages = allMessages.filter((message, index, self) =>
+          index === self.findIndex((m) => m.id === message.id)
+        );
+        console.log("Poruke grupe:", this.messages);
         this.selectedGroup = groupNow;
         this.selectedGroupId = groupNow.id;
         this.selectedUserId = -1;
         this.chatGroups.forEach(group => {
-          if(group.id === groupNow.id)
-          {
-            if(group.admin === this.currentUser.id)
-            {
+          if(group.id === groupNow.id) {
+            if(group.admin === this.currentUser.id) {
               this.isAdmin = true;
-            }
-            else {
+            } else {
               this.isAdmin = false;
             }
           }
-        })
+        });
+        
+        // Ažuriramo WebSocket pretplatu kada se promeni grupa
+        if (this.groupMessageSubscription) {
+          this.groupMessageSubscription.unsubscribe();
+        }
+        
+        this.groupMessageSubscription = this.webSocketService
+          .getGroupMessagesForGroup(this.selectedGroupId)
+          .subscribe((message) => {
+            console.log("📥 Primljena poruka za grupu", this.selectedGroupId, ":", message);
+            // Proveravamo da li poruka već postoji u nizu pre dodavanja
+            const exists = this.messages.some(m => m.id === message.id && message.id !== 0);
+            if (!exists) {
+              this.messages.push(message);
+            }
+          });
       },
       (error) => {
         console.error('Error fetching messages:', error);
@@ -168,7 +231,6 @@ export class ChatComponent implements OnInit{
       this.profileService.getProfile(senderId).subscribe(
         (data) => {
           this.profileUsername[senderId] = data?.username || 'No username available';
-          
         },
         (error) => {
           console.error('Error fetching profile:', error);
@@ -209,9 +271,7 @@ export class ChatComponent implements OnInit{
     });
   }
 
-
   openManageUsersDialog(): void {
-    
     const memberIds = new Set(this.selectedGroup.members);
     const members = this.allProfiles.filter(user => memberIds.has(user.id));
     const nonMembers = this.allProfiles.filter(user => !memberIds.has(user.id));
@@ -318,9 +378,6 @@ export class ChatComponent implements OnInit{
   </div>
 `;
 
-
-
-
     Swal.fire({
       title: `Manage Users in ${this.selectedGroup.name}`,
       html: htmlContent,
@@ -339,6 +396,7 @@ export class ChatComponent implements OnInit{
     this.chatService.addMemberToGroup(this.selectedGroup.id, userId).subscribe(() => {
       Swal.fire('Success', 'User added to the group!', 'success');
       this.selectedGroup.members.push(userId);
+      this.ngOnInit();
     });
   }
 
@@ -348,15 +406,17 @@ export class ChatComponent implements OnInit{
     this.chatService.removeMemberFromGroup(this.selectedGroup.id, userId).subscribe(() => {
       Swal.fire('Success', 'User removed from the group!', 'success');
       this.selectedGroup.members = this.selectedGroup.members.filter(id => id !== userId);
+      this.ngOnInit();
     });
   }
-  
+
+  // Čišćenje resursa pri uništavanju komponente
   ngOnDestroy() {
-    if (this.messageSubscription) {
-      this.messageSubscription.unsubscribe();
+    if (this.privateMessageSubscription) {
+      this.privateMessageSubscription.unsubscribe();
+    }
+    if (this.groupMessageSubscription) {
+      this.groupMessageSubscription.unsubscribe();
     }
   }
-
-  
-
 }
