@@ -86,6 +86,7 @@ public class WebSecurityConfig {
         // sve neautentifikovane zahteve obradi uniformno i posalji 401 gresku
         http.exceptionHandling().authenticationEntryPoint(restAuthenticationEntryPoint);
         http.authorizeRequests().antMatchers("/auth/**").permitAll()
+                .antMatchers("/api/balancer/**").permitAll()
                 .antMatchers("/actuator/**").permitAll()
                 .antMatchers("/metrics/**").permitAll()
                 .antMatchers("/images/**").permitAll()
