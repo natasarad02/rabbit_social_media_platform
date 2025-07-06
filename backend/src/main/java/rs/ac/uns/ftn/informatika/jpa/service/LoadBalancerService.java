@@ -37,7 +37,7 @@ public class LoadBalancerService {
                 return restTemplate.getForEntity(targetInstance + "/api/proxy/data", String.class);
             } catch (Exception e) {
                 // Ako instanca nije dostupna, logujemo grešku i pokušavamo sledeću, retry algoritam
-                System.out.println("❌ Instanca nije dostupna: " + targetInstance);
+                System.out.println("Instanca nije dostupna: " + targetInstance);
             }
         }
         // Ako nijedna instanca nije dostupna, vraćamo HTTP 503 (Service Unavailable)

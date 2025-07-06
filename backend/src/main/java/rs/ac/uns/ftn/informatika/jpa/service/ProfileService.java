@@ -143,8 +143,8 @@ public class ProfileService {
         return false;
     }
 
-    // za proveru svaki minut @Scheduled(cron = "0 * * * * ?")
-    @Scheduled(cron = "0 0 0 L * ?") // Runs at midnight on the last day of every month
+    // pokrece se u ponoc svakog meseca poslednji dan
+    @Scheduled(cron = "0 0 0 L * ?") //
     public void cleanupUnactivatedProfiles() {
         LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(1);
         List<Profile> unactivatedProfiles = profileRepository.findUnactivatedProfilesBefore(cutoffDate);
@@ -181,6 +181,7 @@ public class ProfileService {
         return profileRepository.findAll(specification, pageable);
     }
 
+    //uvek zapocinje novu, nezavisnu transakciju
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void followProfile(Integer profileId, Integer followedProfileId)
     {
@@ -206,12 +207,7 @@ public class ProfileService {
         }
 
         profileRepository.save(profile);
-
-        // Proceed with the follow action
-        logger.info("> follow");
         profileRepository.followProfile(profileId, followedProfileId);
-        logger.info("< follow");
-
     }
 
     @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)

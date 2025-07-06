@@ -62,13 +62,13 @@ INSERT INTO profile (
 -- Inserting data into Post
 INSERT INTO post (description, picture, deleted, posted_time, profile_id, address, longitude, latitude, like_count, version) VALUES
                                                                                                             ('This is my first post!', 'pic1.jpg', false, '2023-12-15 08:15:00', 1, 'Nemanjina 12, Beograd', 20.457273, 44.817611, 1, 0),
-                                                                                                            ('Beautiful day at the park!', 'pic2.jpg', false, '2024-11-05 09:00:00', 1, 'Bulevar kralja Aleksandra 54, Beograd', 20.476521, 44.805850, 1, 0),
-                                                                                                            ('Loving the city lights.', 'pic3.jpg', false, '2024-11-20 20:30:00', 2, 'Karađorđeva 65, Novi Sad', 19.842545, 45.255325, 1, 0),
-                                                                                                            ('Foodie adventures!', 'pic4.jpg', false, '2024-11-10 14:45:00', 3, 'Vojvode Stepe 130, Niš', 21.895758, 43.321206, 1, 0),
+                                                                                                            ('Beautiful day at the park!', 'pic2.jpg', false, '2025-07-05 09:00:00', 1, 'Bulevar kralja Aleksandra 54, Beograd', 20.476521, 44.805850, 1, 0),
+                                                                                                            ('Loving the city lights.', 'pic3.jpg', false, '2025-06-20 20:30:00', 2, 'Karađorđeva 65, Novi Sad', 19.842545, 45.255325, 1, 0),
+                                                                                                            ('Foodie adventures!', 'pic4.jpg', false, '2025-07-04 14:45:00', 3, 'Vojvode Stepe 130, Niš', 21.895758, 43.321206, 1, 0),
                                                                                                             ('Just finished a run, feeling great!', 'pic5.jpg', false, '2024-12-05 07:30:00', 4, 'Trg slobode 1, Subotica', 19.668652, 46.097435, 1, 0),
                                                                                                             ('Sunset at the beach.', 'pic6.jpg', false, '2024-12-01 18:00:00', 5, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
                                                                                                             ('Exploring the countryside.', 'pic7.jpg', false, '2024-12-10 11:00:00', 4, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
-                                                                                                            ('Weekend getaway in the mountains.', 'pic8.jpg', false, '2024-12-12 09:15:00', 7, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
+                                                                                                            ('Weekend getaway in the mountains.', 'pic8.jpg', false, '2025-01-02 09:15:00', 7, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
                                                                                                             ('Cozy evening by the fire.', 'pic9.jpg', false, '2024-12-17 20:30:00', 8, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0),
                                                                                                             ('Delicious homemade dinner.', 'pic10.jpg', false, '2024-12-18 19:45:00', 4, 'Cara Dušana 18, Kragujevac', 20.917978, 44.014167, 1, 0);
 
@@ -76,13 +76,13 @@ INSERT INTO post (description, picture, deleted, posted_time, profile_id, addres
 -- Inserting data into Comment
 INSERT INTO comment (text, profile_id, post_id, commented_time, deleted) VALUES
                                                                              ('Great post, Marko!', 2, 1, '2023-12-25 08:30:00', false),
-                                                                             ('I love this picture!', 3, 1, '2024-11-05 09:30:00', false),
+                                                                             ('I love this picture!', 3, 1, '2025-07-05 09:30:00', false),
                                                                              ('Nice place!', 1, 2, '2024-12-01 10:00:00', false),
-                                                                             ('Looks delicious!', 1, 4, '2024-12-03 12:45:00', false),
+                                                                             ('Looks delicious!', 1, 4, '2025-06-20 12:45:00', false),
                                                                              ('What a beautiful sunset!', 4, 6, '2024-11-29 17:00:00', false),
                                                                              ('Amazing view!', 5, 7, '2024-12-12 09:30:00', false),
                                                                              ('This looks so relaxing.', 6, 8, '2024-12-15 14:30:00', false),
-                                                                             ('Yum! I need this recipe!', 7, 10, '2024-12-18 20:00:00', false),
+                                                                             ('Yum! I need this recipe!', 7, 10, '2025-01-02 20:00:00', false),
                                                                              ('So peaceful!', 8, 9, '2024-12-17 21:15:00', false),
                                                                              ('What an adventure!', 9, 5, '2024-12-14 22:00:00', false);
 -- Inserting data into Likes (assumed the same as likedPosts)

@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 @SpringBootTest
 public class JpaExampleApplicationTests {
 
-
+	//bitno u profile klasi da ima @Version sto i ima
 	@Autowired
 	private ProfileService profileService;
 
@@ -69,9 +69,6 @@ public class JpaExampleApplicationTests {
 
 	}
 
-	@Test
-	public void contextLoads() {
-	}
 
 	@Test(expected = ObjectOptimisticLockingFailureException.class)
 	public void testOptimisticLockingLikingScenario() throws Throwable {
