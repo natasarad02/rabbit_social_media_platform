@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { PostViewDTO } from '../../../models/PostViewDTO.model';
 import { ProfileDTO } from '../../../models/ProfileDTO.model';
 import { PostService } from '../../../services/post-service.service';
@@ -25,6 +25,16 @@ export class ProfilePostsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadPosts();    
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['userId'] && !changes['userId'].firstChange) {
+      this.loadPosts();
+    }
+  }
+
+  loadPosts() {
     this.postService.getAllPosts().subscribe(
       (response) => {
         this.posts = response;
@@ -65,6 +75,5 @@ export class ProfilePostsComponent implements OnInit {
         console.error('Error loading posts', error);
       }
     );
-    
   }
 }

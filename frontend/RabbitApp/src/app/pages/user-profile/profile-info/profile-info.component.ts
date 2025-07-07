@@ -5,6 +5,7 @@ import { AuthService } from '../../../services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { ProfileService } from '../../../services/profile-service.service';
 import Swal from 'sweetalert2'; 
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-info',
@@ -38,16 +39,32 @@ export class ProfileInfoComponent implements OnInit {
   followersNum: number = 0;
   requestedProfileId: number | null = -1;
 
+  showFollowListModal = false;
+  followListTitle = '';
+  selectedFollowList: ProfileDTO[] = [];
+
   constructor(
     private userService: UserService, 
     private auth: AuthService, 
     private route: ActivatedRoute,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.loadUser();
+    this.route.paramMap.subscribe(params => {
+      const idParam = params.get('id');
+      this.requestedProfileId = idParam ? parseInt(idParam, 10) : null;
+      this.checkIsLoggedInUser(); // osveži logiku
+      if(this.isLoggedInUser){
+        this.loadUser();
+      }
+      else{
+        this.loadRequestedProfile();
+      }
+    });
   }
+
 
   // Load the logged-in user's profile
   loadUser(): void {
@@ -70,6 +87,39 @@ export class ProfileInfoComponent implements OnInit {
       }
     );
   }
+
+  loadRequestedProfile(): void {
+  if (this.requestedProfileId) {
+    this.profileService.getProfile(this.requestedProfileId).subscribe(
+      (data) => {
+        this.user = data;
+        this.checkIsLoggedInUser();
+        this.getFollowers();
+        this.getFollowing();
+      },
+      (error) => {
+        console.error('Error loading requested profile:', error);
+      }
+    );
+  }
+}
+
+
+  openFollowList(type: 'followers' | 'following'): void {
+    this.followListTitle = type === 'followers' ? 'Followers' : 'Following';
+    this.selectedFollowList = type === 'followers' ? this.followers : this.following;
+    this.showFollowListModal = true;
+  }
+
+  closeFollowListModal(): void {
+    this.showFollowListModal = false;
+  }
+
+  goToProfile(userId: number): void {
+    this.closeFollowListModal();
+    this.router.navigate(['/profile', userId]);
+  }
+
 
   // Check if the currently viewed profile is the logged-in user's profile
   checkIsLoggedInUser() {

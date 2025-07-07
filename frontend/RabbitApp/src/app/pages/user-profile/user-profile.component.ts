@@ -21,10 +21,15 @@ export class ProfileComponent implements OnInit{
   constructor(private userService: UserService, private auth: AuthService, 
     private profileService: ProfileService, private route: ActivatedRoute){}
 
-  ngOnInit(){
-    this.loadUser();
+  ngOnInit() {
+  this.route.paramMap.subscribe(params => {
+    const idParam = params.get('id');
+    this.requestedProfileId = idParam ? parseInt(idParam, 10) : -1;
     this.loadProfile();
-  }
+    this.loadUser();
+  });
+}
+
 
   loadProfile(){
     const idParam = this.route.snapshot.paramMap.get('id');

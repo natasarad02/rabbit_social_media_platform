@@ -13,15 +13,16 @@
 
   <!-- Followers and Following -->
   <div class="follow-stats">
-    <div>
-      <p>Followers</p>
-      <p><strong>{{ followersNum }}</strong></p>
-    </div>
-    <div>
-      <p>Following</p>
-      <p><strong>{{ followingNum }}</strong></p>
-    </div>
+  <div (click)="openFollowList('followers')" class="clickable">
+    <p>Followers</p>
+    <p><strong>{{ followersNum }}</strong></p>
   </div>
+  <div (click)="openFollowList('following')" class="clickable">
+    <p>Following</p>
+    <p><strong>{{ followingNum }}</strong></p>
+  </div>
+</div>
+
 
   <div class="profile-buttons">
     <button *ngIf="isLoggedInUser" (click)="openEditModal()">Edit Profile</button>
@@ -96,3 +97,29 @@
     </div>
   </div>
   
+
+  <!-- Followers/Following Modal -->
+<div class="modal" *ngIf="showFollowListModal">
+  <div class="modal-content">
+    <h3>{{ followListTitle }}</h3>
+
+    <div *ngIf="selectedFollowList.length === 0">
+      <p>No users to display.</p>
+    </div>
+
+    <div class="user-list" *ngIf="selectedFollowList.length > 0">
+      <div class="user-card" *ngFor="let user of selectedFollowList" (click)="goToProfile(user.id)">
+        <div class="avatar">{{ user.name.charAt(0) }}{{ user.surname.charAt(0) }}</div>
+        <div class="info">
+          <div class="username">&#64;{{ user.username }}</div>
+          <div class="fullname">{{ user.name }} {{ user.surname }}</div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="modal-buttons">
+      <button (click)="closeFollowListModal()">Close</button>
+    </div>
+  </div>
+</div>
