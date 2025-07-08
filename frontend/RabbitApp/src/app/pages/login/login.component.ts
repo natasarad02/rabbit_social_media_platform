@@ -42,6 +42,8 @@ export class LoginComponent {
             alert('Invalid username or password. Please try again.');
           } else if (error.status === 403) {
             alert('Account not activated. Please activate your account to log in.');
+          } else if (error.status === 429) {
+            alert(error.error || 'Too many login attempts. Please try again later.');
           } else {
             alert('An unexpected error occurred. Please try again later.');
           }
@@ -52,6 +54,27 @@ export class LoginComponent {
       alert('Please enter both username and password.');
     }
   }
+
+  spamLogin() {
+    const loginData = {
+      username: 'marko',
+      password: 'lozinka'
+    };
+
+    for (let i = 0; i < 6; i++) {
+      this.auth.login(loginData).subscribe({
+        next: (res) => console.log('✔️ Success', res),
+        error: (err) => {
+          console.error('❌ Error', err);
+          if (err.status === 429) {
+            alert('Previše pokušaja. Sačekajte malo pre nove prijave.');
+          }
+        }
+      });
+    }
+  }
+
+
   
 
   goBack() {
