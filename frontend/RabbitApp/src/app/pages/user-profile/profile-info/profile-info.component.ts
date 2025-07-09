@@ -55,33 +55,31 @@ export class ProfileInfoComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       this.requestedProfileId = idParam ? parseInt(idParam, 10) : null;
-      this.checkIsLoggedInUser(); // osveži logiku
-      if(this.isLoggedInUser){
-        this.loadUser();
-      }
-      else{
-        this.loadRequestedProfile();
-      }
+      this.loadRequestedProfile();
+      this.loadUser();
+      
     });
   }
 
 
   // Load the logged-in user's profile
-  loadUser(): void {
+  loadUser(): void {    
     this.userService.getUserProfile().subscribe(
       (data) => {
         if (data) {
-          console.log(data);
+          console.log(data);          
           this.loggedProfile = data;
           this.profileId = this.loggedProfile.id;  
           this.checkIsLoggedInUser();
         } else {
           console.log('No profile found or token expired');
+          alert('No profile found or token expired');
           this.profileId = -1;
         }
       },
       (error) => {
         console.error('Error loading profile:', error);
+        alert('Error loading profile:'+ error.message);
         this.auth.logout();
         this.profileId = -1;
       }
