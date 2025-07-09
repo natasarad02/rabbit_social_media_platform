@@ -32,7 +32,6 @@ export class SignupComponent {
   }  
 
   onSignup() {
-    alert("usao");
     if (!this.passwordMismatch && this.name && this.surname && this.email && this.username && this.password && this.address) {
       const signupData = {
         firstname: this.name,  

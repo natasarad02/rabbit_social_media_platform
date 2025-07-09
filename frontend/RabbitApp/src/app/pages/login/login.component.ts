@@ -45,7 +45,7 @@ export class LoginComponent {
           } else if (error.status === 429) {
             alert(error.error || 'Too many login attempts. Please try again later.');
           } else {
-            alert('An unexpected error occurred. Please try again later.');
+            alert(error.message);
           }
         }
       });
@@ -66,9 +66,6 @@ export class LoginComponent {
         next: (res) => console.log('✔️ Success', res),
         error: (err) => {
           console.error('❌ Error', err);
-          if (err.status === 429) {
-            alert('Previše pokušaja. Sačekajte malo pre nove prijave.');
-          }
         }
       });
     }
