@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
+import rs.ac.uns.ftn.informatika.jpa.exception.ResourceConflictException;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
@@ -39,10 +41,36 @@ public class ProfileService {
         this.profileRepository = profileRepository;
     }
 
+    @Transactional
+    public Profile createProfile(UserRequest userRequest) {
+        try {
+            profileRepository.findActiveProfileByUsername2(userRequest.getUsername())
+                    .ifPresent(existingUser -> {
+                        throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+                    });
+
+            Profile profileToSave = new Profile();
+            profileToSave.setUsername(userRequest.getUsername());
+            profileToSave.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            profileToSave.setRole(Role.User);
+            profileToSave.setFollowers(new HashSet<>());
+            profileToSave.setPosts(new HashSet<>());
+            profileToSave.setEmail(userRequest.getEmail());
+            profileToSave.setName(userRequest.getFirstname());
+            profileToSave.setSurname(userRequest.getLastname());
+            profileToSave.setAddress(userRequest.getAddress());
+
+            return profileRepository.save(profileToSave);
+        } catch (DataIntegrityViolationException e) {
+            throw new ResourceConflictException(userRequest.getId(), "Username already exists (via constraint)");
+        }
+    }
+
     @Transactional(readOnly = true)
     public Profile findOne(Integer id) {
         return profileRepository.findById(id).orElseGet(null);
     }
+
     public Profile findByUsername(String username) {
         return profileRepository.findActiveProfileByUsername(username);
     }
@@ -77,22 +105,6 @@ public class ProfileService {
 
         // Return the paged result wrapped in a Page object
         return new PageImpl<>(pagedProfiles, pageable, allProfiles.size());
-    }
-
-
-    public Profile saveProfile(UserRequest profile)
-    {
-        Profile profileToSave = new Profile();
-        profileToSave.setUsername(profile.getUsername());
-        profileToSave.setPassword(passwordEncoder.encode(profile.getPassword()));
-        profileToSave.setRole(Role.User);
-        profileToSave.setFollowers(new HashSet<>());
-        profileToSave.setPosts(new HashSet<>());
-        profileToSave.setEmail(profile.getEmail());
-        profileToSave.setName(profile.getFirstname());
-        profileToSave.setSurname(profile.getLastname());
-        profileToSave.setAddress(profile.getAddress());
-        return profileRepository.save(profileToSave);
     }
 
     public boolean updateProfile(ProfileDTO profileDTO) {

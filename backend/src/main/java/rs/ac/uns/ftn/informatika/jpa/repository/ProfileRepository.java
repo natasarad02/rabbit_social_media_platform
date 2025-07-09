@@ -3,13 +3,18 @@ package rs.ac.uns.ftn.informatika.jpa.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 
+import javax.persistence.LockModeType;
 import java.util.List;
+import java.util.Optional;
 
 public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT p FROM Profile p WHERE p.deleted = false")
@@ -21,6 +26,14 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT p FROM Profile p WHERE p.deleted = false AND p.role = :role")
     Page<Profile> findAllActiveProfiles(@Param("role") Role role, Pageable pageable);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE Profile p SET p.deleted = true WHERE p.username = :username AND p.deleted = false")
+    void deleteByUsername(@Param("username") String username);
+
+    @Query("SELECT COUNT(p) FROM Profile p WHERE p.username = :username AND p.deleted = false")
+    long countActiveByUsername(@Param("username") String username);
+
 
     @Query("SELECT p FROM Profile p WHERE p.deleted = false AND p.role = :role AND p.id IN :profileIds")
     List<Profile> findAllActiveProfilesSorted(@Param("role") Role role, @Param("profileIds") List<Integer> profileIds);
@@ -31,6 +44,10 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     // Fetch following profiles for a specific profile with pagination
     @Query("SELECT f FROM Profile p JOIN p.following f WHERE p.id = :profileId AND p.deleted = false")
     Page<Profile> findFollowingProfiles(@Param("profileId") Integer profileId, Pageable pageable);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p FROM Profile p WHERE p.username = :username AND p.deleted = false")
+    Optional<Profile> findActiveProfileByUsername2(@Param("username") String username);
 
     @Query("SELECT p FROM Profile p WHERE p.username = :username AND p.deleted = false")
     Profile findActiveProfileByUsername(@Param("username") String username);
