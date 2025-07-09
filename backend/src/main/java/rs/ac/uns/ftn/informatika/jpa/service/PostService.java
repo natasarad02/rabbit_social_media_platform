@@ -1,6 +1,7 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,6 +14,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.PostRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.repository.primer.StudentRepository;
+import org.springframework.cache.annotation.Cacheable;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -103,8 +105,6 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-
-
     public Post updatePost(Integer id, Post updatedPost) {
         Optional<Post> existingPostOpt = postRepository.findById(id);
 
@@ -123,6 +123,7 @@ public class PostService {
         }
     }
 
+    @CacheEvict(cacheNames = { "topWeeklyPosts", "topAllTimePosts", "topLikers" }, allEntries = true)
     public void addLike(Integer profileId, Integer postId) {
         postRepository.addLike(profileId, postId);
     }
@@ -145,6 +146,7 @@ public class PostService {
         return postsInLastMonth;
     }
 
+    @Cacheable(value = "topWeeklyPosts", key = "'topWeeklyPosts'")
     public List<Post> findTop5MostLikedPostsInLast7Days() {
         LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
         Pageable topFive = PageRequest.of(0, 5);
@@ -152,12 +154,14 @@ public class PostService {
         return topPostsLast7Days;
     }
 
+    @Cacheable(value = "topAllTimePosts", key = "'topAllTimePosts'")
     public  List<Post> getTop10MostLikedPosts(){
         Pageable topTen = PageRequest.of(0, 10);
         List<Post> topLikedPosts = postRepository.getTop10MostLikedPosts(topTen);
         return topLikedPosts;
     }
 
+    @Cacheable(value = "topLikers", key = "'topLikers'")
     public List<ProfileTrendDTO> findProfilesWithMostLikesGivenInLast7Days(){
         LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
         List<Object[]> topProfilesData = postRepository.findTopProfileIdsByLikesGivenInLast7Days(lastWeek);
