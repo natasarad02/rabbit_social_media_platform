@@ -1,0 +1,98 @@
+
+.map-wrapper {
+  position: relative;
+
+  /* --- VISUAL FIXES START HERE --- */
+
+  /* 1. Make it bigger and centered on the page */
+  width: 80%; /* Takes up 80% of the parent container's width */
+  max-width: 1200px; /* Prevents it from being excessively wide on large screens */
+  height: 600px; /* A much larger, fixed height */
+  margin: 2rem auto; /* Adds space on top/bottom and centers it horizontally */
+
+  /* 2. Style it as a rounded rectangle with a shadow */
+  border-radius: 15px; /* Creates the rounded corners */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow for depth */
+  border: 1px solid #ddd; /* A light border to define the edge */
+  
+  /* This is important: it ensures the map inside respects the rounded corners */
+  overflow: hidden; 
+  
+  /* --- VISUAL FIXES END HERE --- */
+}
+
+h2 {
+    color: #4a568a;
+    text-align: center;
+}
+
+
+.map-view {
+  height: 100%;
+  width: 100%;
+}
+
+.center-marker-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  z-index: 1000;
+  pointer-events: none;
+  
+  &::before, &::after {
+    content: '';
+    position: absolute;
+    background-color: #d92b2b;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+  }
+
+  &::before {
+    left: 50%;
+    top: 0;
+    width: 2px;
+    height: 100%;
+    margin-left: -1px;
+  }
+
+  &::after {
+    top: 50%;
+    left: 0;
+    height: 2px;
+    width: 100%;
+    margin-top: -1px;
+  }
+}
+
+::ng-deep {
+  .post-popup {
+    max-width: 200px; 
+    font-family: sans-serif;
+    line-height: 1.4;
+  }
+
+  .popup-image {
+    width: 100%; 
+    height: auto;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+
+  .popup-description {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+    word-wrap: break-word;
+  }
+
+  .leaflet-popup-content-wrapper {
+    border-radius: 8px;
+  }
+  .leaflet-popup-content {
+    margin: 12px;
+    padding: 0;
+    width: auto !important; 
+  }
+}
