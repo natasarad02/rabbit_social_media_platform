@@ -82,11 +82,22 @@ public class AuthenticationController {
 
     // Endpoint za registraciju novog korisnika
     @PostMapping("/signup")
-    public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-        Profile user = this.userService.createProfile(userRequest);
-        this.userService.sendActivationEmail(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
+    public ResponseEntity<Object> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
+        try {
+            Profile user = this.userService.createProfile(userRequest);
+            this.userService.sendActivationEmail(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        } catch (ResourceConflictException ex) {
+            // Konflikt zbog postojećeg username-a
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Username already exists, please use another one.");
+        } catch (Exception ex) {
+            // Opšti handler za sve ostale greške
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error occured: " + ex.getMessage());
+        }
     }
+
 
     @GetMapping("/userFromToken")
     public ResponseEntity<ProfileDTO> GetUserProfile(@RequestHeader(value = "Authorization") String authorizationHeader) {

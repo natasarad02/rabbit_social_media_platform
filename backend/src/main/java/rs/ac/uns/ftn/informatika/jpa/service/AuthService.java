@@ -1,5 +1,6 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
+import com.google.common.hash.BloomFilter;
 import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.slf4j.Logger;
@@ -22,7 +23,8 @@ public class AuthService implements IAuthService {
     private final AuthenticationManager authenticationManager;
     private final TokenUtils tokenUtils;
 
-    public AuthService(AuthenticationManager authenticationManager, TokenUtils tokenUtils) {
+
+    public AuthService(AuthenticationManager authenticationManager, TokenUtils tokenUtils ) {
         this.authenticationManager = authenticationManager;
         this.tokenUtils = tokenUtils;
     }

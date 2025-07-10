@@ -1,5 +1,7 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
+import com.google.common.hash.BloomFilter;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -19,11 +21,14 @@ import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 @Service
 public class ProfileService {
+    private static final Logger logger = LoggerFactory.getLogger(ProfileService.class);
     private final ProfileRepository profileRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -37,17 +42,29 @@ public class ProfileService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    public ProfileService(@Autowired ProfileRepository profileRepository) {
+    private final BloomFilter<String> bloomFilter;
+
+    public ProfileService(@Autowired ProfileRepository profileRepository, BloomFilter<String> bloomFilter) {
         this.profileRepository = profileRepository;
+        this.bloomFilter = bloomFilter;
     }
 
     @Transactional
     public Profile createProfile(UserRequest userRequest) {
-        try {
-            profileRepository.findActiveProfileByUsername2(userRequest.getUsername())
-                    .ifPresent(existingUser -> {
+        String username = userRequest.getUsername();
+        if(bloomFilter.mightContain(userRequest.getUsername())) {
+            logger.warn("Bloom filter suspects username '{}' might exist. Falling back to DB check with pessimistic lock.", username);
+            profileRepository.findIdByUsername(username)
+                    .ifPresent(existingId -> {
+                        logger.error("Pessimistic lock confirmed that username '{}' with ID {} already exists.", username, existingId);
                         throw new ResourceConflictException(userRequest.getId(), "Username already exists");
                     });
+            logger.info("False positive in Bloom filter for username '{}', proceeding with registration.", username);
+        }
+        else{
+            logger.info("Bloom filter confirms username '{}' is new. Skipping DB check.", username);
+        }
+        try {
 
             Profile profileToSave = new Profile();
             profileToSave.setUsername(userRequest.getUsername());
@@ -60,7 +77,12 @@ public class ProfileService {
             profileToSave.setSurname(userRequest.getLastname());
             profileToSave.setAddress(userRequest.getAddress());
 
-            return profileRepository.save(profileToSave);
+            Profile savedProfile = profileRepository.save(profileToSave);
+
+            bloomFilter.put(savedProfile.getUsername());
+            logger.info("Successfully registered '{}' and added to Bloom filter.", savedProfile.getUsername());
+
+            return savedProfile;
         } catch (DataIntegrityViolationException e) {
             throw new ResourceConflictException(userRequest.getId(), "Username already exists (via constraint)");
         }

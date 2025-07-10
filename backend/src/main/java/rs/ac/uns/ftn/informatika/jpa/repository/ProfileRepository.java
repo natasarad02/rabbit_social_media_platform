@@ -15,10 +15,14 @@ import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import javax.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT p FROM Profile p WHERE p.deleted = false")
     List<Profile> findAllActiveProfiles();
+
+    @Query("SELECT p.username FROM Profile p WHERE p.deleted = false")
+    Stream<String> findAllActiveProfilesUsernames();
 
     @Query("SELECT f FROM Profile p JOIN p.following f WHERE p.id = :profileId AND p.deleted = false")
     List<Profile> findFollowingProfiles(@Param("profileId") Integer profileId);
@@ -48,6 +52,10 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT p FROM Profile p WHERE p.username = :username AND p.deleted = false")
     Optional<Profile> findActiveProfileByUsername2(@Param("username") String username);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT p.id FROM Profile p WHERE p.username = :username AND p.deleted = false")
+    Optional<Long> findIdByUsername(@Param("username") String username);
 
     @Query("SELECT p FROM Profile p WHERE p.username = :username AND p.deleted = false")
     Profile findActiveProfileByUsername(@Param("username") String username);
