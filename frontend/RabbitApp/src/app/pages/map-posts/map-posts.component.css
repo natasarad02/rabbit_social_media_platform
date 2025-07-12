@@ -1,31 +1,22 @@
-
+/* ------------------------------
+   Container Styles
+------------------------------ */
 .map-wrapper {
   position: relative;
-
-  /* --- VISUAL FIXES START HERE --- */
-
-  /* 1. Make it bigger and centered on the page */
-  width: 80%; /* Takes up 80% of the parent container's width */
-  max-width: 1200px; /* Prevents it from being excessively wide on large screens */
-  height: 600px; /* A much larger, fixed height */
-  margin: 2rem auto; /* Adds space on top/bottom and centers it horizontally */
-
-  /* 2. Style it as a rounded rectangle with a shadow */
-  border-radius: 15px; /* Creates the rounded corners */
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow for depth */
-  border: 1px solid #ddd; /* A light border to define the edge */
-  
-  /* This is important: it ensures the map inside respects the rounded corners */
-  overflow: hidden; 
-  
-  /* --- VISUAL FIXES END HERE --- */
+  width: 80%;
+  max-width: 1200px;
+  height: 600px;
+  margin: 2rem auto;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  border: 1px solid #ddd;
+  overflow: hidden;
 }
 
 h2 {
-    color: #4a568a;
-    text-align: center;
+  color: #4a568a;
+  text-align: center;
 }
-
 
 .map-view {
   height: 100%;
@@ -41,58 +32,127 @@ h2 {
   height: 30px;
   z-index: 1000;
   pointer-events: none;
-  
-  &::before, &::after {
-    content: '';
-    position: absolute;
-    background-color: #d92b2b;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.center-marker-overlay::before,
+.center-marker-overlay::after {
+  content: '';
+  position: absolute;
+  background-color: #d92b2b;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.6);
+}
+
+.center-marker-overlay::before {
+  left: 50%;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  margin-left: -1px;
+}
+
+.center-marker-overlay::after {
+  top: 50%;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  margin-top: -1px;
+}
+
+/* ------------------------------
+   Leaflet and Popup Overrides
+------------------------------ */
+::ng-deep {
+  .leaflet-popup-content-wrapper {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 8px;
   }
 
-  &::before {
-    left: 50%;
-    top: 0;
-    width: 2px;
-    height: 100%;
-    margin-left: -1px;
+  .leaflet-popup-content {
+    margin: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
   }
 
-  &::after {
-    top: 50%;
-    left: 0;
-    height: 2px;
-    width: 100%;
-    margin-top: -1px;
+  .leaflet-popup-tip-container {
+    display: none;
+  }
+
+  .post-marker-icon {
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+    background-color: #eee;
+    object-fit: cover;
   }
 }
 
-::ng-deep {
-  .post-popup {
-    max-width: 200px; 
-    font-family: sans-serif;
-    line-height: 1.4;
-  }
+/* ------------------------------
+   Popup Post Card Styling
+------------------------------ */
 
-  .popup-image {
-    width: 100%; 
-    height: auto;
-    border-radius: 5px;
-    margin-bottom: 10px;
-  }
+/* THIS IS THE CORRECTED SECTION */
+.map-popup-wrapper {
+  width: fit-content; /* This is the key change! */
+  max-height: 350px;
+  overflow-y: auto;
+  display: block;
+}
 
-  .popup-description {
-    margin: 0;
-    font-size: 14px;
-    color: #333;
-    word-wrap: break-word;
-  }
+::ng-deep .map-popup-wrapper .post-card,
+::ng-deep .map-popup-wrapper .post-card * {
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+}
 
-  .leaflet-popup-content-wrapper {
-    border-radius: 8px;
-  }
-  .leaflet-popup-content {
-    margin: 12px;
-    padding: 0;
-    width: auto !important; 
-  }
+::ng-deep .map-popup-wrapper .post-card {
+  width: 100% !important;
+  height: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+::ng-deep .map-popup-wrapper .post-image {
+  height: 90% !important; /* velicina slike, promeniti */
+  width: 90% !important;
+  object-fit: cover !important;
+  display: block;
+  border-radius: 8px;
+  flex-shrink: 0 !important;
+  flex-grow: 0 !important;
+}
+
+::ng-deep .map-popup-wrapper .post-content {
+  padding: 8px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  flex-grow: 0 !important;
+  flex-shrink: 0 !important;
+  background: transparent !important;
+}
+
+::ng-deep .map-popup-wrapper .post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+  justify-content: flex-start;
+  flex-shrink: 0;
+}
+
+::ng-deep .map-popup-wrapper .post-actions button {
+  font-size: 12px !important;
+  line-height: 1 !important;
+  padding: 2px 6px !important;
+  min-height: 0 !important;
+  min-width: 0 !important;
+  height: auto !important;
 }

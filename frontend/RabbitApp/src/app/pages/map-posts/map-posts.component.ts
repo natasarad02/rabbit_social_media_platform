@@ -1,10 +1,11 @@
-// src/app/map-posts/map-posts.component.ts
-
-import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core'; // Changed imports
+import { Component, OnInit, OnDestroy, Output, EventEmitter, ViewContainerRef, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
 import { PostService } from '../../services/post-service.service';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
+import { PostComponent } from '../post/post.component';
+import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/auth.service';
 
 interface NominatimResponse {
   lat: string;
@@ -18,7 +19,7 @@ interface NominatimResponse {
   styleUrls: ['./map-posts.component.scss']
 })
 export class MapPostsComponent implements OnInit, OnDestroy {
-  private addressToDisplay = 'FTN, Novi Sad';
+  private addressToDisplay = ''; // FTN, Novi Sad
   public mapId = `map-posts-${Math.random().toString(36).substring(2)}`;
   private map: L.Map | null = null;
   private readonly nominatimUrl = 'https://nominatim.openstreetmap.org/search?format=json&q=';
@@ -26,20 +27,42 @@ export class MapPostsComponent implements OnInit, OnDestroy {
   filteredPosts: PostViewDTO[] = [];
   imageStartPath: string = 'http://localhost:8080';
   private postsLayerGroup: L.LayerGroup | null = null;
-
   public currentCenterLocation: L.LatLng | null = null;
+  private viewContainerRef = inject(ViewContainerRef);
+  private componentRefs: any[] = [];
 
   @Output() centerLocationChanged = new EventEmitter<L.LatLng>();
 
 
   constructor(private http: HttpClient,
-              private postService: PostService) {}
+              private postService: PostService,
+              private userService: UserService, 
+                private auth: AuthService) {}
 
   ngOnInit(): void {
-    if (this.addressToDisplay) {
-      this.geocodeAndInitializeMap();
-      this.loadPosts();
-    }    
+    this.loadUser();
+    
+  }
+
+  loadUser(): void {    
+    this.userService.getUserProfile().subscribe(
+      (data) => {
+        if (data) {
+          console.log(data);
+          this.addressToDisplay = data.address;
+          this.geocodeAndInitializeMap();
+          this.loadPosts();
+        } else {
+          console.log('No profile found or token expired');
+          alert('No profile found or token expired');
+        }
+      },
+      (error) => {
+        console.error('Error loading profile:', error);
+        alert('Error loading profile:'+ error.message);
+        this.auth.logout();
+      }
+    );
   }
 
   private geocodeAndInitializeMap(): void {
@@ -114,28 +137,51 @@ export class MapPostsComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Clear previous markers and component references
     this.postsLayerGroup.clearLayers();
+    this.componentRefs.forEach(ref => ref.destroy());
+    this.componentRefs = [];
 
     this.filteredPosts.forEach(post => {
       if (post.latitude == null || post.longitude == null) {
         return;
       }
 
-      const marker = L.marker([post.latitude, post.longitude]);
+      const postIcon = L.icon({
+        iconUrl: post.picture,
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -42],
+        className: 'post-marker-icon'
+      });
 
-      const popupContent = `
-        <div class="post-popup">
-          <img src="${post.picture}" alt="Post image" class="popup-image">
-          <p class="popup-description">${post.description}</p>
-        </div>
-      `;
+      const marker = L.marker([post.latitude, post.longitude], {
+        icon: postIcon
+      });
 
-      marker.bindPopup(popupContent);
+      const componentRef = this.viewContainerRef.createComponent(PostComponent);
+      componentRef.instance.post = post;
+      const popupWrapper = document.createElement('div');
+      popupWrapper.className = 'map-popup-wrapper'; 
+
+      popupWrapper.appendChild(componentRef.location.nativeElement);
+
+      popupWrapper.style.width = '260px';
+      popupWrapper.style.maxWidth = '260px';
+
+
+      marker.bindPopup(popupWrapper, {
+        className: 'map-popup-wrapper'
+      });
+
+      
+      this.componentRefs.push(componentRef); 
       this.postsLayerGroup?.addLayer(marker);
     });
   }
 
   ngOnDestroy(): void {
+    this.componentRefs.forEach(ref => ref.destroy());
     if (this.map) {
       this.map.remove();
     }
