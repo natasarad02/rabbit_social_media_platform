@@ -1,8 +1,11 @@
 package rs.ac.uns.ftn.informatika.jpa.model;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 import javax.persistence.*;
+import javax.persistence.Version;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 @SQLDelete(sql = "UPDATE profile SET deleted = true WHERE id = ?")
 @Where(clause = "deleted = false")
 @Entity
-public class Profile implements UserDetails {
+public class Profile implements UserDetails, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -52,12 +55,40 @@ public class Profile implements UserDetails {
     @Column(name = "activated")
     private boolean activated;
 
+    @Column(name = "minute_following")
+    private Integer minute_following;
+
+    @Column(name = "last_follow_time")
+    private LocalDateTime lastFollowTime;
+
+    @Version
+    private Integer version;
+
     public boolean isActivated() {
         return activated;
     }
 
+    @Column(name = "registration_time")
+    private LocalDateTime registrationTime;
+
     @Column(name = "last_password_reset_date")
     private Timestamp lastPasswordResetDate;
+
+
+    @Column(name = "last_active_date")
+    private Timestamp lastActiveDate;
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean currentlyActive) {
+        isActive = currentlyActive;
+    }
+
+    @Column(name = "currently_active")
+    private boolean isActive;
+   // @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinTable(
@@ -85,6 +116,12 @@ public class Profile implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"))
     private Set<Post> likedPosts = new HashSet<>();
 
+    @OneToMany(mappedBy = "profile", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChatGroupMember> members;
+
+    @OneToMany(mappedBy = "receiver", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> receivedMessages;
+
     public Profile() {
     }
 
@@ -105,7 +142,7 @@ public class Profile implements UserDetails {
         return address;
     }
 
-    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, String address) {
+    public Profile(Integer id, String email, String password, String name, String surname, Role role, boolean deleted, String address, Timestamp lastActiveDate) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -114,7 +151,28 @@ public class Profile implements UserDetails {
         this.role = role;
         this.deleted = deleted;
         this.address = address;
+        this.lastActiveDate = lastActiveDate;
 
+    }
+
+    public Profile(Integer id, String email, String username, String password, String firstName,
+                   String lastName, boolean deleted, Role role, Timestamp lastDate,
+                   LocalDateTime registartion_time, boolean active, String address, int minute_following,
+                   LocalDateTime last_follow_time) {
+        this.id = id;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+        this.name = firstName;
+        this.surname = lastName;
+        this.deleted = deleted;
+        this.role = role;
+        this.lastPasswordResetDate = lastDate;
+        this.address = address;
+        this.activated = active;
+        this.registrationTime = registartion_time;
+        this.minute_following = minute_following;
+        this.lastFollowTime = last_follow_time;
     }
 
     @JsonIgnore
@@ -165,6 +223,14 @@ public class Profile implements UserDetails {
 
     public String getPassword() {
         return password;
+    }
+
+    public Timestamp getLastActiveDate() {
+        return lastActiveDate;
+    }
+
+    public void setLastActiveDate(Timestamp lastActiveDate) {
+        this.lastActiveDate = lastActiveDate;
     }
 
     public void setPassword(String password) {
@@ -242,12 +308,26 @@ public class Profile implements UserDetails {
         post.setProfile(this);
     }
 
+    public Integer getMinute_following() {
+        return minute_following;
+    }
+
+    public void setMinute_following(Integer minute_following) {
+        this.minute_following = minute_following;
+    }
+
     public void removePost(Post post) {
         posts.remove(post);
         post.setProfile(this);
     }
 
+    public LocalDateTime getRegistrationTime() {
+        return registrationTime;
+    }
 
+    public void setRegistrationTime(LocalDateTime registrationTime) {
+        this.registrationTime = registrationTime;
+    }
 
     public Set<Post> getLikedPosts() {
         return likedPosts;
@@ -261,8 +341,24 @@ public class Profile implements UserDetails {
         return deleted;
     }
 
+    public LocalDateTime getLastFollowTime() {
+        return lastFollowTime;
+    }
+
+    public void setLastFollowTime(LocalDateTime lastFollowTime) {
+        this.lastFollowTime = lastFollowTime;
+    }
+
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     @Override

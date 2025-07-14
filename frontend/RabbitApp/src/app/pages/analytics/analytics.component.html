@@ -1,1 +1,43 @@
-<p>analytics works!</p>
+<h1 style="margin-top: 5px;">Analytics</h1>
+<div class="analytics-container" *ngIf="analytics">
+      <div class="table-container">
+        <!-- Table with the first 6 items -->
+        <table class="profile-table">
+          <thead>
+            <h3 class="tableChart">Post and Comment</h3>
+            <tr>
+              <th>Type</th>
+              <th>Weekly</th>
+              <th>Monthly</th>
+              <th>Yearly</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-size: 18px;">Posts:</td>
+              <td>{{ analytics.weeklyPostsCount }}</td>
+              <td>{{ analytics.monthlyPostsCount }}</td>
+              <td>{{ analytics.yearlyPostsCount }}</td>
+            </tr>
+            <tr>
+              <td style="font-size: 18px;">Comments:</td>
+              <td>{{ analytics.weeklyCommentsCount }}</td>
+              <td>{{ analytics.monthlyCommentsCount }}</td>
+              <td>{{ analytics.yearlyCommentsCount }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <!-- User Activity Percentages (Pie Chart) -->
+      <div class="chart-container">
+        <h3 class="titleChart">User Activity Percentages</h3>
+        <canvas #chart baseChart
+          [datasets]="pieChartData.datasets"
+          [labels]="pieChartData.labels"
+          [options]="pieChartOptions"
+          [type]="'pie'">
+        </canvas>
+      </div>
+    </div>
+  

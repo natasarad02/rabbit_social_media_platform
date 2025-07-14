@@ -1,35 +1,43 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
 import com.google.common.hash.BloomFilter;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.repository.query.Param;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
+import org.springframework.web.server.ResponseStatusException;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
 import rs.ac.uns.ftn.informatika.jpa.exception.ResourceConflictException;
+import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
-import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
 public class ProfileService {
     private static final Logger logger = LoggerFactory.getLogger(ProfileService.class);
+
     private final ProfileRepository profileRepository;
+    private final ActiveUsersMetricService activeUsersMetricService;
+    private final BloomFilter<String> bloomFilter;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -42,11 +50,17 @@ public class ProfileService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    private final BloomFilter<String> bloomFilter;
-
-    public ProfileService(@Autowired ProfileRepository profileRepository, BloomFilter<String> bloomFilter) {
+    @Autowired
+    public ProfileService(ProfileRepository profileRepository, ActiveUsersMetricService activeUsersMetricService, BloomFilter<String> bloomFilter) {
         this.profileRepository = profileRepository;
+        this.activeUsersMetricService = activeUsersMetricService;
         this.bloomFilter = bloomFilter;
+    }
+
+    @Scheduled(fixedRate = 5000)
+    public void updateActiveUserCount() {
+        int activeUsers = profileRepository.countByIsActive(true);
+        activeUsersMetricService.setActiveUserCount(activeUsers);
     }
 
     @Transactional
@@ -60,8 +74,7 @@ public class ProfileService {
                         throw new ResourceConflictException(userRequest.getId(), "Username already exists");
                     });
             logger.info("False positive in Bloom filter for username '{}', proceeding with registration.", username);
-        }
-        else{
+        } else {
             logger.info("Bloom filter confirms username '{}' is new. Skipping DB check.", username);
         }
         try {
@@ -88,7 +101,6 @@ public class ProfileService {
         }
     }
 
-    @Transactional(readOnly = true)
     public Profile findOne(Integer id) {
         return profileRepository.findById(id).orElseGet(null);
     }
@@ -114,18 +126,15 @@ public class ProfileService {
 
         allProfiles.sort(Comparator.comparingInt(profile -> orderedProfileIds.indexOf(profile.getId())));
 
-        // Apply pagination manually
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), allProfiles.size());
         List<Profile> pagedProfiles = allProfiles.subList(start, end);
 
-        // Set followers for each profile in the paged list
         for (Profile profile : pagedProfiles) {
             List<Profile> followingProfiles = profileRepository.findFollowingProfiles(profile.getId());
             profile.setFollowers(new HashSet<>(followingProfiles));
         }
 
-        // Return the paged result wrapped in a Page object
         return new PageImpl<>(pagedProfiles, pageable, allProfiles.size());
     }
 
@@ -186,6 +195,8 @@ public class ProfileService {
         mailSender.send(mailMessage);
     }
 
+
+
     public boolean activateUser(String token) {
         if (tokenUtils.isTokenExpired(token)) {
             return false;
@@ -198,5 +209,120 @@ public class ProfileService {
             return true;
         }
         return false;
+    }
+
+    // za proveru svaki minut @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0 0 L * ?") // Runs at midnight on the last day of every month
+    public void cleanupUnactivatedProfiles() {
+        LocalDateTime cutoffDate = LocalDateTime.now().minusMonths(1);
+        List<Profile> unactivatedProfiles = profileRepository.findUnactivatedProfilesBefore(cutoffDate);
+
+        if (!unactivatedProfiles.isEmpty()) {
+            profileRepository.deleteAll(unactivatedProfiles);
+            System.out.println("Deleted " + unactivatedProfiles.size() + " unactivated profiles.");
+        }
+    }
+
+    //new
+    public Page<Profile> getProfiles(String name, String surname, String email, Integer minPosts, Integer maxPosts,
+                                            String sortBy, String sortDirection, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortDirection), sortBy));
+
+        Specification<Profile> specification = Specification.where(null);
+
+        if (name != null && !name.isEmpty()) {
+            specification = specification.and((root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%"));
+        }
+        if (surname != null && !surname.isEmpty()) {
+            specification = specification.and((root, query, cb) -> cb.like(cb.lower(root.get("surname")), "%" + surname.toLowerCase() + "%"));
+        }
+        if (email != null && !email.isEmpty()) {
+            specification = specification.and((root, query, cb) -> cb.like(cb.lower(root.get("email")), "%" + email.toLowerCase() + "%"));
+        }
+        if (minPosts != null) {
+            specification = specification.and((root, query, cb) -> cb.greaterThanOrEqualTo(root.get("postCount"), minPosts));
+        }
+        if (maxPosts != null) {
+            specification = specification.and((root, query, cb) -> cb.lessThanOrEqualTo(root.get("postCount"), maxPosts));
+        }
+
+        return profileRepository.findAll(specification, pageable);
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public void followProfile(Integer profileId, Integer followedProfileId)
+    {
+        Profile profile = profileRepository.findById(profileId).orElse(null);
+        if(profile == null)
+        {
+            return;
+        }
+
+
+        LocalDateTime now = LocalDateTime.now();
+
+        // Proverava da li je poslednji bio pre minut
+        if (profile.getLastFollowTime() == null || profile.getLastFollowTime().isBefore(now.minusMinutes(1))) {
+            profile.setMinute_following(1); // Reset counter
+            profile.setLastFollowTime(now);
+        } else {
+            // Inkeremntira koliko je u minuti
+            if (profile.getMinute_following() >= 50) {
+                throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "You can follow a maximum of 50 profiles per minute.");
+            }
+            profile.setMinute_following(profile.getMinute_following() + 1);
+        }
+
+        profileRepository.save(profile);
+
+        // Proceed with the follow action
+        logger.info("> follow");
+        profileRepository.followProfile(profileId, followedProfileId);
+        logger.info("< follow");
+
+    }
+
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public void unfollowProfile(Integer profileId, Integer followedProfileId)
+    {
+        logger.info("> unfollow");
+        profileRepository.unfollowProfile(profileId, followedProfileId);
+        logger.info("< unfollow");
+    }
+
+    public List<Profile> getFollowers(@Param("profileId") Integer profileId)
+    {
+        return profileRepository.getFollowers(profileId);
+    }
+
+    public void save(Profile profile)
+    {
+        profileRepository.save(profile);
+    }
+
+    public Profile updateProfileCurrentlyActiveStatus(Integer id) {
+        Profile profile = findOne(id);
+
+        if (profile == null) {
+            return null;
+        }
+
+        profile.setActive(false);
+        return profileRepository.save(profile);
+    }
+
+    public String getUsernameById(int id)
+    {
+        Profile profile = profileRepository.findById(id).orElse(null);
+        if(profile == null)
+        {
+            return "";
+        }
+        else return profile.getUsername();
+    }
+
+    public Profile findById(int id)
+    {
+        return profileRepository.findById(id).orElse(null);
     }
 }

@@ -24,12 +24,16 @@ import { PostComponent } from './pages/post/post.component';
 import { ProfilePostsComponent } from './pages/user-profile/profile-posts/profile-posts.component';
 import { ProfileInfoComponent } from './pages/user-profile/profile-info/profile-info.component';
 import { ChatComponent } from './pages/chat/chat.component';
-import { MatRadioModule } from '@angular/material/radio';
+import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { LoginComponent } from './pages/login/login.component';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { TokenInterceptor } from './interceptor/TokenInterceptor';
-
+import { MatOption, MatOptionSelectionChange } from '@angular/material/core';
+import { MatSelectChange, MatSelectModule, MatSelectTrigger } from '@angular/material/select';
+import { provideCharts, withDefaultRegisterables, BaseChartDirective } from 'ng2-charts';
+import { WebSocketService } from './services/web-socket.service';
+import { MatRadioModule } from '@angular/material/radio';
 
 
 @NgModule({
@@ -48,7 +52,7 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     ProfileInfoComponent,
     ProfilePostsComponent,
     PostComponent,
-    ChatComponent
+    ChatComponent,
   ],
   imports: [
     MatRadioModule,
@@ -63,11 +67,19 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     MatCardModule,    
     ReactiveFormsModule,
     RouterModule,
-    CommonModule
+    CommonModule,
+    MatListModule,
+    MatSelectionList,
+    MatOption,
+    MatSelectModule,
+    BaseChartDirective,
+    MatRadioModule
+    
   ],
   providers: [
     provideAnimationsAsync(),
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    provideCharts(withDefaultRegisterables())
   ],
   bootstrap: [AppComponent] 
 })

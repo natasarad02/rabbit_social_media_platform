@@ -6,6 +6,7 @@ import rs.ac.uns.ftn.informatika.jpa.model.Comment;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.repository.CommentRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -17,7 +18,30 @@ public class CommentService {
     }
 
     public Comment addComment(Comment comment) {
-        return commentRepository.save(comment);
+        if(isCommentNumberLessThanLimit(comment)) {
+            return commentRepository.save(comment);
+        }
+       return null;
+    }
+
+    private boolean isCommentNumberLessThanLimit(Comment comment) {
+        List<Comment> allCommentsByProfile = commentRepository.findAllCommentsByProfileId(comment.getProfile().getId());
+        Integer count = 0;
+        LocalDateTime oneHourAgo = LocalDateTime.now().minusHours(1);
+        for(Comment c : allCommentsByProfile) {
+            if(c.getCommentedTime().isAfter(oneHourAgo)) {
+                count++;
+
+            }
+        }
+
+        if(count < 61)
+            return true;
+
+        return false;
+
+
+
     }
 
     public List<Comment> findAllActive() {

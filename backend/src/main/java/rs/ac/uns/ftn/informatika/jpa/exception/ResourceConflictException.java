@@ -14,6 +14,8 @@ public class ResourceConflictException extends RuntimeException {
         this.setResourceId(resourceId);
     }
 
+
+
     public Long getResourceId() {
         return resourceId;
     }
@@ -23,3 +25,6 @@ public class ResourceConflictException extends RuntimeException {
     }
 
 }
+
+
+

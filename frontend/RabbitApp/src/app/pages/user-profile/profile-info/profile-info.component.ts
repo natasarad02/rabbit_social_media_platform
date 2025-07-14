@@ -1,11 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, OnChanges, SimpleChanges } from '@angular/core';
 import { ProfileDTO } from '../../../models/ProfileDTO.model';
 import { UserService } from '../../../services/user.service';
 import { AuthService } from '../../../services/auth.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProfileService } from '../../../services/profile-service.service';
 import Swal from 'sweetalert2'; 
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-profile-info',
@@ -16,10 +15,14 @@ export class ProfileInfoComponent implements OnInit {
   
   @Input() user: any;
   @Input() isLoggedInUser: boolean = false;
+  @Output() updated: EventEmitter<void> = new EventEmitter<void>();
 
   // Modals
   showEditProfileModal: boolean = false;
   showChangePasswordModal: boolean = false;
+  showFollowListModal = false;
+  followListTitle = '';
+  selectedFollowList: ProfileDTO[] = [];
 
   // Edit Profile
   editedUser: any = {};
@@ -30,18 +33,15 @@ export class ProfileInfoComponent implements OnInit {
   confirmPassword: string = '';
   passwordsDoNotMatch: boolean = false;
 
-  // Followers and Following
+  // User & Follower State
   loggedProfile: ProfileDTO | null = null;
-  profileId: number = -1;
-  following: ProfileDTO[] = []; 
+  profileId: number = -1; // Logged-in user's ID
+  requestedProfileId: number | null = null; // ID of profile being viewed
+  isFollowed: boolean = false;
   followers: ProfileDTO[] = []; 
+  following: ProfileDTO[] = []; 
   followingNum: number = 0;
   followersNum: number = 0;
-  requestedProfileId: number | null = -1;
-
-  showFollowListModal = false;
-  followListTitle = '';
-  selectedFollowList: ProfileDTO[] = [];
 
   constructor(
     private userService: UserService, 
@@ -52,117 +52,138 @@ export class ProfileInfoComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // This subscription ensures the component reloads when the route parameter changes
     this.route.paramMap.subscribe(params => {
       const idParam = params.get('id');
       this.requestedProfileId = idParam ? parseInt(idParam, 10) : null;
-      this.loadRequestedProfile();
-      this.loadUser();
       
+      // Load both the logged-in user and the requested profile data
+      this.loadUser();
+      this.loadRequestedProfile();
     });
   }
 
-
-  // Load the logged-in user's profile
+  // Load the logged-in user's profile to know who "we" are
   loadUser(): void {    
-    this.userService.getUserProfile().subscribe(
-      (data) => {
+    this.userService.getUserProfile().subscribe({
+      next: (data) => {
         if (data) {
-          console.log(data);          
           this.loggedProfile = data;
           this.profileId = this.loggedProfile.id;  
-          this.checkIsLoggedInUser();
+          this.checkIfViewingOwnProfile();
         } else {
-          console.log('No profile found or token expired');
-          alert('No profile found or token expired');
-          this.profileId = -1;
+          console.log('No profile found for logged-in user or token expired');
         }
       },
-      (error) => {
-        console.error('Error loading profile:', error);
-        alert('Error loading profile:'+ error.message);
+      error: (error) => {
+        console.error('Error loading logged-in user profile:', error);
         this.auth.logout();
-        this.profileId = -1;
       }
-    );
+    });
   }
 
+  // Load the profile for the user ID in the URL
   loadRequestedProfile(): void {
-  if (this.requestedProfileId) {
-    this.profileService.getProfile(this.requestedProfileId).subscribe(
-      (data) => {
-        this.user = data;
-        this.checkIsLoggedInUser();
-        this.getFollowers();
-        this.getFollowing();
-      },
-      (error) => {
-        console.error('Error loading requested profile:', error);
-      }
-    );
+    if (this.requestedProfileId) {
+      this.profileService.getProfile(this.requestedProfileId).subscribe({
+        next: (data) => {
+          this.user = data;
+          this.getFollowers();
+          this.getFollowing();
+          this.checkIfViewingOwnProfile();
+        },
+        error: (error) => {
+          console.error('Error loading requested profile:', error);
+        }
+      });
+    }
   }
-}
-
-
-  openFollowList(type: 'followers' | 'following'): void {
-    this.followListTitle = type === 'followers' ? 'Followers' : 'Following';
-    this.selectedFollowList = type === 'followers' ? this.followers : this.following;
-    this.showFollowListModal = true;
-  }
-
-  closeFollowListModal(): void {
-    this.showFollowListModal = false;
-  }
-
-  goToProfile(userId: number): void {
-    this.closeFollowListModal();
-    this.router.navigate(['/profile', userId]);
-  }
-
 
   // Check if the currently viewed profile is the logged-in user's profile
-  checkIsLoggedInUser() {
-    const idParam = this.route.snapshot.paramMap.get('id');
-    this.requestedProfileId = idParam ? parseInt(idParam, 10) : null; 
-    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile?.id;
-    this.getFollowers();
-    this.getFollowing();
+  checkIfViewingOwnProfile() {
+    // Return if we don't have both IDs yet
+    if (this.requestedProfileId === null || !this.loggedProfile) {
+      return;
+    }
+    
+    this.isLoggedInUser = this.requestedProfileId === this.loggedProfile.id;
+
+    // If we are viewing someone else's profile, check if we follow them
+    if (!this.isLoggedInUser) {
+      this.checkIfFollowed();
+    }
+  }
+  
+  // Check if the logged-in user follows the currently viewed profile
+  checkIfFollowed(): void {
+    if (this.profileId !== -1 && this.requestedProfileId !== null) {
+      this.profileService.getFollowing(this.profileId).subscribe({
+        next: (followingList) => {
+          this.isFollowed = followingList.some(profile => profile.id === this.requestedProfileId);
+        },
+        error: (err) => console.error('Error fetching logged-in user following list:', err)
+      });
+    }
   }
 
-  // Get followers
+  // Get followers for the viewed profile
   getFollowers() {
     if (this.requestedProfileId) {
-      this.profileService.getFollowers(this.requestedProfileId).subscribe(
-        (data: ProfileDTO[]) => {
+      this.profileService.getFollowers(this.requestedProfileId).subscribe({
+        next: (data) => {
           this.followers = data; 
           this.followersNum = data.length; 
         },
-        (error) => {
-          console.error('Error fetching followers:', error);
-        }
-      );
+        error: (error) => console.error('Error fetching followers:', error)
+      });
     }
   }
 
-  // Get following
+  // Get following for the viewed profile
   getFollowing() {
     if (this.requestedProfileId) {
-      this.profileService.getFollowing(this.requestedProfileId).subscribe(
-        (data: ProfileDTO[]) => {
+      this.profileService.getFollowing(this.requestedProfileId).subscribe({
+        next: (data) => {
           this.following = data;
           this.followingNum = data.length;
         },
-        (error) => {
-          console.error('Error fetching following:', error);
-        }
-      );
+        error: (error) => console.error('Error fetching following:', error)
+      });
     }
   }
 
-  // Open modals
+  // Follow/Unfollow Actions
+  followUser() {
+    if (this.profileId === -1 || this.requestedProfileId === null) return;
+    this.profileService.followProfile(this.profileId, this.requestedProfileId).subscribe({
+      next: () => {
+        this.isFollowed = true;
+        this.getFollowers(); // Refresh follower count
+      },
+      error: (err) => console.error('Error while following user:', err)
+    });
+  }
+
+  unfollowUser() {
+    if (this.profileId === -1 || this.requestedProfileId === null) return;
+    this.profileService.unfollowProfile(this.profileId, this.requestedProfileId).subscribe({
+      next: () => {
+        this.isFollowed = false;
+        this.getFollowers(); // Refresh follower count
+      },
+      error: (err) => console.error('Error while unfollowing user:', err)
+    });
+  }
+
+  // Modal Controls
   openEditModal() {
     this.editedUser = { ...this.user };
     this.allFieldsFilled = true;
     this.showEditProfileModal = true;
+  }
+
+  closeEditProfileModal() {
+    this.showEditProfileModal = false;
   }
 
   openChangePasswordModal() {
@@ -172,123 +193,65 @@ export class ProfileInfoComponent implements OnInit {
     this.showChangePasswordModal = true;
   }
 
-  // Close modals
-  closeEditProfileModal() {
-    this.showEditProfileModal = false;
-  }
-
   closeChangePasswordModal() {
     this.showChangePasswordModal = false;
   }
+  
+  openFollowList(type: 'followers' | 'following'): void {
+    this.followListTitle = type.charAt(0).toUpperCase() + type.slice(1);
+    this.selectedFollowList = type === 'followers' ? this.followers : this.following;
+    this.showFollowListModal = true;
+  }
 
-  // Save profile changes
+  closeFollowListModal(): void {
+    this.showFollowListModal = false;
+  }
+
+  // Save Actions
   saveChanges() {
-    this.allFieldsFilled = !!(
-      this.editedUser.name &&
-      this.editedUser.surname &&
-      this.editedUser.address
-    );
-  
-    if (!this.allFieldsFilled) {
-      return;
-    }
-  
-    console.log('Saving changes:', {
-      name: this.editedUser.name,
-      surname: this.editedUser.surname,
-      address: this.editedUser.address
-    });
-  
+    this.allFieldsFilled = !!(this.editedUser.name && this.editedUser.surname && this.editedUser.address);
+    if (!this.allFieldsFilled) return;
+
     this.profileService.updateProfile(this.editedUser).subscribe({
       next: () => {
-        this.user.name = this.editedUser.name;
-        this.user.surname = this.editedUser.surname;
-        this.user.address = this.editedUser.address;
-  
+        this.user = { ...this.user, ...this.editedUser }; // Update local user object
         this.closeEditProfileModal();
+        Swal.fire('Success!', 'Your profile has been updated.', 'success');
       },
       error: (err) => {
-        Swal.fire({
-          title: 'Error!',
-          text: 'Failed to update the profile. Please try again later.',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
-  
+        Swal.fire('Error!', 'Failed to update the profile. Please try again.', 'error');
         console.error('Profile update failed:', err);
       }
     });
   }
-  
 
-  // Save new password
   savePassword() {
     this.passwordsDoNotMatch = this.newPassword !== this.confirmPassword;
-  
     if (this.passwordsDoNotMatch || !this.newPassword || !this.confirmPassword) {
       return;
     }
-  
-    console.log('Changing password to:', this.newPassword);
-  
+
     this.profileService.updatePassword(this.profileId, this.newPassword).subscribe({
       next: () => {
-        // Success handler
-        Swal.fire({
-          title: 'Success!',
-          text: 'Your password has been updated successfully.',
-          icon: 'success',
-          confirmButtonText: 'OK'
-        });
+        Swal.fire('Success!', 'Your password has been updated successfully.', 'success');
         this.closeChangePasswordModal();
       },
       error: (err) => {
-        // Error handler
-        Swal.fire({
-          title: 'Error!',
-          text: 'Please try again later!',
-          icon: 'error',
-          confirmButtonText: 'OK'
-        });
+        Swal.fire('Error!', 'Failed to update your password. Please try again.', 'error');
         console.error('Password update failed:', err);
       }
     });
   }
-  
 
-  updatePassword(): void {
-    const profileId = this.profileId;
-    const newPassword = this.newPassword;
-  
-    this.profileService.updatePassword(profileId, newPassword).subscribe(
-      response => {
-        console.log('Password update response:', response);
-        alert(response);
-      },
-      error => {
-        console.error('Error updating password:', error);
-        alert('Password update failed');
-      }
-    );
-  }
-  
-  // Component code for updating profile
-  updateProfileInfo(): void {
-     
-    this.profileService.updateProfile(this.editedUser).subscribe(
-      response => {
-        console.log('Profile update response:', response);
-        alert(response);
-      },
-      error => {
-        console.error('Error updating profile:', error);
-        alert('Profile update failed');
-      }
-    );
+  // Navigation and Refresh
+  goToProfile(userId: number): void {
+    this.closeFollowListModal();
+    this.router.navigate(['/profile', userId]).then(() => {
+      this.refreshParentPosts();
+    });
   }
 
-  followUser() {
-    console.log('Follow button clicked!');
-    // Handle follow logic here
+  private refreshParentPosts(): void {
+    this.updated.emit();
   }
 }

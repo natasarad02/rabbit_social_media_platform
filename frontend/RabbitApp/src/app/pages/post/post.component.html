@@ -1,21 +1,41 @@
 <div class="post-card">
-  <img [src]="post.picture" alt="Post Image" class="post-image" />
+  <img [src]="cachedImage" alt="Post Image" class="post-image" />
 
   <div class="post-content">
     <p>{{ post.description }}</p>
     <small>Posted by: {{ post.profile?.name || 'Anonymous' }}</small>
+    <p style="font-weight: bold;">Likes: {{ post.likeCount }}</p>
+    <p style="font-weight: bold;">Comments:</p>
+    <ul>
+      <li *ngFor="let comment of post.comments" (click)="showCommentCreatorInfo(comment)">
+        {{ comment.text }}
+      </li>
+    </ul>
   </div>
 
   <div class="post-actions">
+
+    
     <button mat-button
       [color]="loggedProfile ? 'primary' : 'warn'"
       (click)="loggedProfile ? likePost(post.id) : showLoginAlert()"
-      [disabled]="likeIds.includes(post.id)">
-      {{ likeIds.includes(post.id) ? 'Liked' : 'Like' }}
+      *ngIf="!likeIds.includes(post.id)">
+      Like
     </button>
-    <button (click)="commentOnPost()">Comment</button>
-    <button *ngIf="post.profile?.id === loggedProfile?.id" (click)="deletePost()">Delete</button>
-    <button (click)="goToUpdate()">Edit</button>
-    <button (click)="showCreatorInfo()">Creator Info</button>
+    <button mat-button
+      [color]="loggedProfile ? 'primary' : 'warn'"
+      (click)="loggedProfile ? dislikePost(post.id) : showLoginAlert()"
+      *ngIf="likeIds.includes(post.id)">
+      Liked
+    </button>
+    <button  mat-button (click)="commentOnPost()">Comment</button>
+    <button  mat-button *ngIf="post.profile?.id === loggedProfile?.id" (click)="deletePost()">Delete</button>
+    <button  mat-button (click)="goToUpdate()" *ngIf="loggedProfile?.id === post.profile?.id">Edit</button>
+    <button  mat-button (click)="navigateToUser(post.profile?.id || -1)">Creator Info</button>
+    
+  </div>
+  <div *ngIf="commentClicked == true" class="comment-container">
+  <input type="text" [(ngModel)] = "commentText"/>
+  <button mat-button (click)="postComment()">Post comment</button>
   </div>
 </div>
