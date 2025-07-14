@@ -1,4 +1,4 @@
-<div class="profile-info-container">
+<div class="profile-info-container" *ngIf="user">
   <!-- Username and Name -->
   <div class="username">
     <strong>{{ user.username }}</strong>
@@ -69,7 +69,7 @@
 
     <div class="modal-buttons">
       <button (click)="saveChanges()">Save</button>
-      <button (click)="closeEditProfileModal()">Cancel</button>
+      <button (click)="closeEditModal()">Cancel</button>
     </div>
   </div>
 </div>
@@ -112,7 +112,8 @@
       <div class="user-card" *ngFor="let user of selectedFollowList" (click)="goToProfile(user.id)">
         <div class="avatar">{{ user.name.charAt(0) }}{{ user.surname.charAt(0) }}</div>
         <div class="info">
-          <div class="username">@{{ user.username }}</div>
+          <!-- THE FIX IS HERE -->
+          <div class="username">&#64;{{ user.username }}</div>
           <div class="fullname">{{ user.name }} {{ user.surname }}</div>
         </div>
       </div>

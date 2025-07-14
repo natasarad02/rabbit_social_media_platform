@@ -30,6 +30,11 @@ export class ProfileComponent implements OnInit{
   });
 }
 
+refreshData(): void {
+    console.log('Refresh event received from profile-info component!');
+    // Later, you can add logic here to re-fetch the user's posts
+  }
+
 
   loadProfile(){
     const idParam = this.route.snapshot.paramMap.get('id');
