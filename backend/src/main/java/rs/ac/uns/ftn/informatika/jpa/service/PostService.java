@@ -140,7 +140,7 @@ public class PostService {
         }
     }
 
-    @CacheEvict(cacheNames = { "topWeeklyPosts", "topAllTimePosts", "topLikers" }, allEntries = true)
+    @CacheEvict(cacheNames = { "topWeeklyPosts", "topAllTimePosts", "topLikers" }, allEntries = true, cacheManager = "ehCacheManager")
     @org.springframework.transaction.annotation.Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void addLike(Integer profileId, Integer postId) {
 
@@ -154,6 +154,7 @@ public class PostService {
 
     }
 
+    @CacheEvict(cacheNames = { "topWeeklyPosts", "topAllTimePosts", "topLikers" }, allEntries = true, cacheManager = "ehCacheManager")
     public void removeLike(Integer profileId, Integer postId) {
         postRepository.removeLike(profileId, postId);
     }
@@ -169,7 +170,8 @@ public class PostService {
     public int getNumberOfPosts(){
         return postRepository.getTotalNumberOfPosts();
     }
-    
+
+    // proveriti!
     @Cacheable(value = "locations", key = "#postId")
     public double[] getLocation(Integer postId) {
         Post post = postRepository. findByIdForUpdate(postId)
@@ -190,7 +192,7 @@ public class PostService {
         return postsInLastMonth;
     }
 
-    @Cacheable(value = "topWeeklyPosts", key = "'topWeeklyPosts'")
+    @Cacheable(value = "topWeeklyPosts", key = "'topWeeklyPosts'", cacheManager= "ehCacheManager")
     public List<Post> findTop5MostLikedPostsInLast7Days() {
         LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
         Pageable topFive = PageRequest.of(0, 5);
@@ -198,14 +200,14 @@ public class PostService {
         return topPostsLast7Days;
     }
 
-    @Cacheable(value = "topAllTimePosts", key = "'topAllTimePosts'")
+    @Cacheable(value = "topAllTimePosts", key = "'topAllTimePosts'", cacheManager= "ehCacheManager")
     public  List<Post> getTop10MostLikedPosts(){
         Pageable topTen = PageRequest.of(0, 10);
         List<Post> topLikedPosts = postRepository.getTop10MostLikedPosts(topTen);
         return topLikedPosts;
     }
 
-    @Cacheable(value = "topLikers", key = "'topLikers'")
+    @Cacheable(value = "topLikers", key = "'topLikers'", cacheManager= "ehCacheManager")
     public List<ProfileTrendDTO> findProfilesWithMostLikesGivenInLast7Days(){
         LocalDateTime lastWeek = LocalDateTime.now().minusDays(7);
         List<Object[]> topProfilesData = postRepository.findTopProfileIdsByLikesGivenInLast7Days(lastWeek);
