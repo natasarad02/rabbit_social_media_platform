@@ -37,7 +37,9 @@
         <app-post
           *ngFor="let post of displayedPosts"
           [post]="post"
-          [likeIds]="[]"
+          [loggedProfile]="loggedProfile" 
+          [likeIds]="likeIds"
+          (postUpdated)="ngOnInit()"
           class="post-card"
         ></app-post>
       </div>

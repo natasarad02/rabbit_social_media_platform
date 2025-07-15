@@ -3,6 +3,8 @@ import { PostService } from '../../services/post-service.service';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
 import { ProfileTrendDTO } from '../../models/ProfileTrendDTO.model';
 import { Router } from '@angular/router';
+import { ProfileDTO } from '../../models/ProfileDTO.model';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-trends',
@@ -16,14 +18,46 @@ export class TrendsComponent implements OnInit {
   top5Posts: PostViewDTO[] = [];
   trendingProfiles: ProfileTrendDTO[] = [];
   displayedPosts: PostViewDTO[] = [];
-
+  loggedProfile: ProfileDTO | null = null;
   selectedTrend: string = 'top10';
+  likeIds: number[] = [];
 
-  constructor(private trendService: PostService, private router: Router) {}
+  constructor(private trendService: PostService, private userService: UserService, private router: Router) {}
 
-  ngOnInit(): void {
-    this.fetchAlwaysVisibleData();
-    this.fetchTrendData();
+  ngOnInit(): void {    
+    this.loadProfile();
+  }
+
+  loadProfile(): void{
+    this.userService.getUserProfile().subscribe(
+      (data) => {
+        if (data) {
+          console.log(data);
+          this.loggedProfile = data;
+          this.loadLikedPosts();                   
+        } else {
+          console.log('No profile found or token expired');
+        }
+      },
+      (error) => {
+        console.error('Error loading profile:', error);
+      }
+    );
+  }
+
+  loadLikedPosts(): void {
+    if (this.loggedProfile) {
+      this.trendService.getLikedPosts(this.loggedProfile.id).subscribe(
+        (response) => {
+          this.likeIds = response;
+          this.fetchAlwaysVisibleData();
+          this.fetchTrendData(); 
+        },
+        (error) => {
+          console.error('Error loading liked posts', error);
+        }
+      );
+    }
   }
 
   fetchAlwaysVisibleData(): void {

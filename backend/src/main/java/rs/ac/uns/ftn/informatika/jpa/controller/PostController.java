@@ -212,6 +212,13 @@ public class PostController {
         List<PostDTO> postDTOs = posts.stream()
                 .map(PostDTO::new)
                 .collect(Collectors.toList());
+        for(PostDTO postDTO: postDTOs){
+            List<CommentDTO> commentDTOs = new ArrayList<>();
+            for (Comment comment : commentService.findAllForPost(postDTO.getId())) {
+                commentDTOs.add(new CommentDTO(comment));
+            }
+            postDTO.setLikeCount(postService.countLikesForPost(postDTO.getId()));
+        }
         return ResponseEntity.ok(postDTOs);
     }
 
@@ -222,6 +229,13 @@ public class PostController {
         List<PostDTO> postDTOs = posts.stream()
                 .map(PostDTO::new) // Convert each Post to PostDTO
                 .collect(Collectors.toList());
+        for(PostDTO postDTO: postDTOs){
+            List<CommentDTO> commentDTOs = new ArrayList<>();
+            for (Comment comment : commentService.findAllForPost(postDTO.getId())) {
+                commentDTOs.add(new CommentDTO(comment));
+            }
+            postDTO.setLikeCount(postService.countLikesForPost(postDTO.getId()));
+        }
         return ResponseEntity.ok(postDTOs);
     }
 
