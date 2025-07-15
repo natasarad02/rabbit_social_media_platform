@@ -15,5 +15,6 @@ export interface PostDTO{
     longitude: number;
     imageBase64: string;
     
+    
    
 }

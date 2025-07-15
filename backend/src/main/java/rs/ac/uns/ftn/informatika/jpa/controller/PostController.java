@@ -25,8 +25,10 @@ import javax.annotation.security.PermitAll;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 @RestController
 @RequestMapping(value = "api/posts")
 public class PostController {
@@ -34,21 +36,24 @@ public class PostController {
     private CommentService commentService;
     private ProfileService profileService;
     private ImageService imageService;
-
+    private final MeterRegistry meterRegistry;
     private PostDTOMapper postDTOMapper;
-    public PostController(@Autowired PostService postService, @Autowired CommentService commentService, @Autowired ProfileService profileService, @Autowired ImageService imageService ) {
+    public PostController(@Autowired PostService postService, @Autowired CommentService commentService, @Autowired ProfileService profileService, @Autowired ImageService imageService, MeterRegistry meterRegistry ) {
         this.postService = postService;
         this.commentService = commentService;
         this.profileService = profileService;
         this.imageService = imageService;
+        this.meterRegistry = meterRegistry;
     }
-    /*
+
     @GetMapping(value = "/forProfile/{id}")
+    @PreAuthorize("hasAnyAuthority('User')")
     public ResponseEntity<List<PostDTO>> getAllPostsForProfile(@PathVariable Integer id) {
 
         List<Post> posts = postService.findByProfileId(id);
 
-        // convert students to DTOs
+        posts.sort((p1, p2) -> p2.getPostedTime().compareTo(p1.getPostedTime()));
+
         List<PostDTO> postDTOs = new ArrayList<>();
         for (Post post : posts) {
             PostDTO postDTO = new PostDTO();
@@ -56,21 +61,22 @@ public class PostController {
             postDTO.setPostedTime(post.getPostedTime());
             postDTO.setPicture(post.getPicture());
             postDTO.setDescription(post.getDescription());
-            postDTO.setAddress(post.getAddress());
-            postDTO.setLongitude(post.getLongitude());
-            postDTO.setLatitude(post.getLatitude());
             postDTO.setLikeCount(postService.countLikesForPost(post.getId()));
             List<CommentDTO> commentDTOs = new ArrayList<>();
             for (Comment comment : commentService.findAllForPost(post.getId())) {
                 commentDTOs.add(new CommentDTO(comment));
             }
             postDTO.setComments(commentDTOs);
+            postDTO.setAddress(post.getAddress());
+            postDTO.setLongitude(post.getLongitude());
+            postDTO.setLatitude(post.getLatitude());
+            postDTO.setProfile(new ProfileDTO(post.getProfile()));
             postDTOs.add(postDTO);
 
         }
 
         return new ResponseEntity<>(postDTOs, HttpStatus.OK);
-    }*/
+    }
 
 
 
@@ -142,19 +148,26 @@ public class PostController {
     @PreAuthorize("hasAuthority('User')")
     @PostMapping("/createpost/{profileId}")
     public ResponseEntity<PostDTO> createPost(@RequestBody PostDTO postDTO, @PathVariable Integer profileId) throws IOException {
-        Post post = postDTOMapper.fromDTOtoPost(postDTO);
-        Profile profile = profileService.findOne(profileId);
-        String imagePath = imageService.saveImage(postDTO.getImageBase64());
-        post.setPicture(imagePath);
-        post.setProfile(profile);
-        if(post == null)
-        {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        long start = System.nanoTime();
+
+        try {
+            Post post = postDTOMapper.fromDTOtoPost(postDTO);
+            Profile profile = profileService.findOne(profileId);
+            String imagePath = imageService.saveImage(postDTO.getImageBase64());
+            post.setPicture(imagePath);
+            post.setProfile(profile);
+            post.setLikeCount(0);
+            if (post == null) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
+            post = postService.save(post);
+            return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
+        }finally {
+            long end = System.nanoTime();
+            long durationInMillis = TimeUnit.NANOSECONDS.toMillis(end - start);
+            meterRegistry.timer("http.server.requests", "endpoint", "createPost").record(durationInMillis, TimeUnit.MILLISECONDS);
         }
-
-        post = postService.save(post);
-        return new ResponseEntity<>(new PostDTO(post), HttpStatus.OK);
-
     }
 
 
@@ -162,6 +175,13 @@ public class PostController {
     @PostMapping("/like")
     public ResponseEntity<Void> likePost(@RequestParam Integer profileId, @RequestParam Integer postId) {
         postService.addLike(profileId, postId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PreAuthorize("hasAuthority('User')")
+    @PostMapping("/dislike")
+    public ResponseEntity<Void> dislikePost(@RequestParam Integer profileId, @RequestParam Integer postId) {
+        postService.removeLike(profileId, postId);
         return ResponseEntity.ok().build();
     }
 

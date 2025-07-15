@@ -3,10 +3,7 @@ package rs.ac.uns.ftn.informatika.jpa.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-<<<<<<< HEAD
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-=======
->>>>>>> parent of 503dbad (Merge branch 'student2' into merging)
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,10 +11,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional; // Use Spring's Transactional
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
-<<<<<<< HEAD
-=======
-import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
->>>>>>> parent of 503dbad (Merge branch 'student2' into merging)
 
 import javax.persistence.LockModeType;
 import java.time.LocalDateTime;
@@ -25,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-<<<<<<< HEAD
 public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaSpecificationExecutor<Profile> {
 
     Integer countAllByDeleted(boolean deleted);
@@ -40,9 +32,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer>, JpaS
             "AND NOT EXISTS (SELECT 1 FROM Post post WHERE post.profile = p)")
     long countProfilesWithCommentWithoutPosts();
 
-=======
-public interface ProfileRepository extends JpaRepository<Profile, Integer> {
->>>>>>> parent of 503dbad (Merge branch 'student2' into merging)
     @Query("SELECT p FROM Profile p WHERE p.deleted = false")
     List<Profile> findAllActiveProfiles();
 
@@ -89,7 +78,6 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
     @Query("SELECT MAX(p.id) FROM Profile p")
     Integer findMaxId();
 
-<<<<<<< HEAD
     @Query("SELECT p FROM Profile p WHERE p.activated = false AND p.registrationTime < :cutoffDate")
     List<Profile> findUnactivatedProfilesBefore(@Param("cutoffDate") LocalDateTime cutoffDate);
 
@@ -108,6 +96,3 @@ public interface ProfileRepository extends JpaRepository<Profile, Integer> {
             "WHERE pf.profile_id = :profileId", nativeQuery = true)
     List<Profile> getFollowers(@Param("profileId") Integer profileId);
 }
-=======
-}
->>>>>>> parent of 503dbad (Merge branch 'student2' into merging)

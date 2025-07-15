@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostService } from '../../services/post-service.service';
 import { AuthService } from '../../services/auth.service';
@@ -6,6 +6,9 @@ import Swal from 'sweetalert2';
 import { ProfileDTO } from '../../models/ProfileDTO.model';
 import { PostViewDTO } from '../../models/PostViewDTO.model';
 import { UserService } from '../../services/user.service';
+import { ImageCacheService } from '../../services/image-cache.service';
+import { CommentDTO } from '../../models/CommentDTO.model';
+import { CommentService } from '../../services/comment.service';
 
 @Component({
   selector: 'app-post',
@@ -17,16 +20,40 @@ export class PostComponent implements OnInit {
   @Input() loggedProfile!: ProfileDTO | null; // The logged-in user's profile
   @Input() likeIds: number[] = []; // IDs of liked posts
   imageStartPath: string = 'http://localhost:8080';
+  @Output() postUpdated: EventEmitter<void> = new EventEmitter<void>();
+  cachedImage: string = '';
 
+  commentClicked: boolean = false;
+  commentText: string = '';
+  newComment: CommentDTO = {} as CommentDTO;
+  sortedComments: CommentDTO[] = [];
   constructor(
     private postService: PostService,
     private router: Router,
     private auth: AuthService,
-    private userService: UserService
-  ) {}
+    private userService: UserService,
+    private imageCacheService: ImageCacheService,
+    private commentService: CommentService
+  ) {
+    
+  }
 
   ngOnInit(): void {
-    // Initialize any data specific to the PostComponent if needed
+    console.log(this.post);
+    console.log(this.loggedProfile);
+    this.cacheImage();
+   
+    this.sortedComments = this.post.comments.slice().reverse();
+  }
+
+  private async cacheImage(): Promise<void> {
+    try {
+
+      this.cachedImage = await this.imageCacheService.fetchImage(this.post.picture);
+      console.log(`Image cached for post ${this.post.id}:`, this.cachedImage);
+    } catch (error) {
+      console.error(`Error caching image for post ${this.post.id}:`, error);
+    }
   }
 
   likePost(postId: number): void {
@@ -45,6 +72,20 @@ export class PostComponent implements OnInit {
     }
   }
 
+  dislikePost(postId: number): void {
+    if (this.loggedProfile) {
+      this.postService.dislikePost(this.loggedProfile.id, postId).subscribe(() => {
+        this.refreshPostData();
+        console.log("success");
+      },
+      (error) => {
+        console.error('Error liking post', error);
+      });
+    } else {
+      this.showLoginAlert();  
+    }
+  }
+
   public showLoginAlert(): void {
     Swal.fire({
       icon: 'warning',
@@ -55,15 +96,37 @@ export class PostComponent implements OnInit {
   }
 
   private refreshPostData(): void {
-    // Refresh the component's state; replace this with actual re-fetching logic if needed
-    console.log('Refreshing post data...');
+    this.postUpdated.emit();
+  
   }
 
   commentOnPost(): void {
     if (this.loggedProfile) {
       console.log(`Commenting on post with ID: ${this.post.id}`);
+      this.commentClicked = true;
     } else {
       this.showLoginAlert();
+    }
+  }
+
+  postComment(): void{
+
+    this.newComment.text = this.commentText;
+    if(this.loggedProfile)
+    {
+
+    
+      this.commentService.createComment(this.post.id, this.loggedProfile.id, this.newComment).subscribe(
+        () => {
+          //console.log(`Post ${this.post.id} deleted successfully`);
+          this.refreshPostData();
+        },
+        (error) => {
+          console.error('Error posting comment:', error);
+          alert("You posted too many comments in the past hour");
+        }
+      );
+
     }
   }
 
@@ -72,7 +135,8 @@ export class PostComponent implements OnInit {
     if (confirmed) {
       this.postService.deletePost(this.post.id).subscribe(
         () => {
-          console.log(`Post ${this.post.id} deleted successfully`);
+          //console.log(`Post ${this.post.id} deleted successfully`);
+          this.refreshPostData();
         },
         (error) => {
           console.error('Error deleting post:', error);
@@ -112,4 +176,14 @@ export class PostComponent implements OnInit {
   goToUpdate(): void {
     this.router.navigate([`/update-post/${this.post.id}`]);
   }
+
+  navigateToUser(userId: number) : void {
+    this.router.navigate([`/profile/${userId}`]).then(() => {
+    });
+    
+  }
+
+  
+
+  
 }

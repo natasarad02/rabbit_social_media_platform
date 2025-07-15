@@ -38,17 +38,8 @@ import { PostComponent } from './pages/post/post.component';
 import { ProfilePostsComponent } from './pages/user-profile/profile-posts/profile-posts.component';
 import { ProfileInfoComponent } from './pages/user-profile/profile-info/profile-info.component';
 import { ChatComponent } from './pages/chat/chat.component';
-<<<<<<< HEAD
 import { LoginComponent } from './pages/login/login.component';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-=======
-import { MatRadioModule } from '@angular/material/radio';
-import { LoginComponent } from './pages/login/login.component';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { TokenInterceptor } from './interceptor/TokenInterceptor';
-
->>>>>>> parent of 503dbad (Merge branch 'student2' into merging)
 
 
 @NgModule({
@@ -67,7 +58,7 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     ProfileInfoComponent,
     ProfilePostsComponent,
     PostComponent,
-    ChatComponent
+    ChatComponent,
   ],
   imports: [
     // Angular Core Modules
@@ -85,7 +76,6 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     MatButtonModule,
     MatIconModule,
     MatCardModule,    
-<<<<<<< HEAD
     MatListModule,
     MatSelectModule,
     MatRadioModule,
@@ -93,15 +83,11 @@ import { TokenInterceptor } from './interceptor/TokenInterceptor';
     // Other third-party modules
     BaseChartDirective,
     LoginComponent,
-=======
-    ReactiveFormsModule,
-    RouterModule,
-    CommonModule
->>>>>>> parent of 503dbad (Merge branch 'student2' into merging)
   ],
   providers: [
     provideAnimationsAsync(),
-    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+    provideCharts(withDefaultRegisterables())
   ],
   bootstrap: [AppComponent] 
 })

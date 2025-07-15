@@ -4,7 +4,8 @@
       *ngFor="let post of posts"
       [post]="post"
       [loggedProfile]="loggedProfile" 
-      [likeIds]="[]"
+      [likeIds]="likeIds"
+      (postUpdated)="ngOnInit()"
     ></app-post>
   </div>
 </div>
