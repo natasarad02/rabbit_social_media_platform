@@ -8,7 +8,9 @@ import rs.ac.uns.ftn.informatika.jpa.dto.CommentDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.Comment;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
-import rs.ac.uns.ftn.informatika.jpa.service.*;
+import rs.ac.uns.ftn.informatika.jpa.service.CommentService;
+import rs.ac.uns.ftn.informatika.jpa.service.PostService;
+import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 
 import java.time.LocalDateTime;
 
@@ -18,13 +20,11 @@ public class CommentController {
     private CommentService commentService;
     private ProfileService profileService;
     private PostService postService;
-    private final TokenBucketRateLimiterService rateLimiterService;
 
-    public CommentController(@Autowired CommentService commentService , @Autowired ProfileService profileService , @Autowired PostService postService, @Autowired TokenBucketRateLimiterService rateLimiterService) {
+    public CommentController(@Autowired CommentService commentService , @Autowired ProfileService profileService , @Autowired PostService postService) {
         this.commentService = commentService;
         this.profileService = profileService;
         this.postService = postService;
-        this.rateLimiterService = rateLimiterService;
     }
 
     @PostMapping
@@ -32,11 +32,6 @@ public class CommentController {
             @RequestParam Integer idPost,
             @RequestParam Integer idProfile,
             @RequestBody CommentDTO commentDTO) {
-
-        if (!rateLimiterService.isAllowed(idProfile)) {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(commentDTO);
-        }
-
         Comment comment = new Comment();
         comment.setText(commentDTO.getText());
         comment.setCommentedTime(LocalDateTime.now());
@@ -54,11 +49,6 @@ public class CommentController {
         comment.setProfile(profile);
 
         Comment savedComment = commentService.addComment(comment);
-
-        if(savedComment == null)
-        {
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(commentDTO);
-        }
         CommentDTO c = new CommentDTO(savedComment);
         return ResponseEntity.status(HttpStatus.CREATED).body(c);
     }

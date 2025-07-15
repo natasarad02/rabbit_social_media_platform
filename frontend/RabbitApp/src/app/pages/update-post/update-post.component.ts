@@ -122,7 +122,7 @@ export class UpdatePostComponent implements OnInit {
         (response) => {
           console.log(response);
           this.path = response.picture;
-          this.router.navigate([`/profile/${this.newPost.profile?.id}`]);
+          this.router.navigate([`/view-posts`]);
         },
         (error) => {
           console.error('Error updating post', error);

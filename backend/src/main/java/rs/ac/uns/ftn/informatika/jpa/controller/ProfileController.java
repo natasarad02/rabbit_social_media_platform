@@ -11,11 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.primer.StudentDTO;
-import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
 import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
@@ -26,13 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Set;
-
 
 @RestController
 @RequestMapping(value = "api/profiles")
@@ -50,7 +44,7 @@ public class ProfileController {
     }
 
     @GetMapping(value = "/all")
-    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
+    @PreAuthorize("hasAuthority('Administrator')")
     public ResponseEntity<List<ProfileViewDTO>> getAllProfiles() {
 
         List<Profile> profiles = profileService.getAllProfilesWithFollowersAndPosts();
@@ -61,11 +55,9 @@ public class ProfileController {
             if (profile.getRole() == Role.User) {
                 ProfileViewDTO profileViewDTO = new ProfileViewDTO();
                 profileViewDTO.setId(profile.getId());
-                profileViewDTO.setUsername(profile.getUsername());
                 profileViewDTO.setName(profile.getName());
                 profileViewDTO.setEmail(profile.getEmail());
                 profileViewDTO.setSurname(profile.getSurname());
-                profileViewDTO.setRole(profile.getRole());
                 profileViewDTO.setFollowingCount(profile.getFollowers().size());
                 profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
                 profileViewDTOs.add(profileViewDTO);
@@ -88,9 +80,7 @@ public class ProfileController {
             profileViewDTO.setId(profile.getId());
             profileViewDTO.setName(profile.getName());
             profileViewDTO.setEmail(profile.getEmail());
-            profileViewDTO.setUsername(profile.getUsername());
             profileViewDTO.setSurname(profile.getSurname());
-            profileViewDTO.setRole(profile.getRole());
             profileViewDTO.setFollowingCount(profile.getFollowers().size());
             profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
             profileViewDTOs.add(profileViewDTO);
@@ -101,40 +91,6 @@ public class ProfileController {
 
         return new ResponseEntity<>(new PageImpl<>(profileViewDTOs, pageable, profiles.getTotalElements()), HttpStatus.OK);
     }
-
-    //new
-    @GetMapping("/allNew")
-    @PreAuthorize("hasAuthority('Administrator')")
-    public ResponseEntity<Page<ProfileViewDTO>> getProfiles(
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String surname,
-            @RequestParam(required = false) String email,
-            @RequestParam(required = false) Integer minPosts,
-            @RequestParam(required = false) Integer maxPosts,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDirection,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
-        Page<Profile> profiles = profileService.getProfiles(name, surname, email, minPosts, maxPosts, sortBy, sortDirection, page, size);
-        List<ProfileViewDTO> profileViewDTOs = new ArrayList<>();
-        for (Profile profile : profiles.getContent()) {
-            ProfileViewDTO profileViewDTO = new ProfileViewDTO();
-            profileViewDTO.setId(profile.getId());
-            profileViewDTO.setName(profile.getName());
-            profileViewDTO.setEmail(profile.getEmail());
-            profileViewDTO.setUsername(profile.getUsername());
-            profileViewDTO.setSurname(profile.getSurname());
-            profileViewDTO.setRole(profile.getRole());
-            profileViewDTO.setFollowingCount(profile.getFollowers().size());
-            profileViewDTO.setPostCount(postService.countPostsForProfile(profile.getId()));
-            profileViewDTOs.add(profileViewDTO);
-
-        }
-
-
-        return new ResponseEntity<>(new PageImpl<>(profileViewDTOs), HttpStatus.OK);
-    }
-
 
     @GetMapping(value = "/followers/{id}")
     @PreAuthorize("hasAuthority('User')")
@@ -248,51 +204,5 @@ public class ProfileController {
             return ResponseEntity.badRequest().body("Invalid activation token."+ e.getMessage());
         }
     }
-
-    @PostMapping("/follow")
-    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
-    public ResponseEntity<Void> followProfile(@RequestParam Integer profileId, @RequestParam Integer followedProfileId) {
-        LocalDateTime oneMinuteAgo = LocalDateTime.now().minusMinutes(1);
-        profileService.followProfile(profileId, followedProfileId);
-        return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/currently_active/{id}")
-    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
-    public ResponseEntity<Void> updateProfileCurrentlyActiveStatus(@PathVariable Integer id) throws IOException {
-
-       Profile updatedProfile = profileService.updateProfileCurrentlyActiveStatus(id);
-
-        if (updatedProfile == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
-        return ResponseEntity.ok().build();
-    }
-
-
-    @PostMapping("/unfollow")
-    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
-    public ResponseEntity<Void> unfollowProfile(@RequestParam Integer profileId, @RequestParam Integer followedProfileId) {
-        profileService.unfollowProfile(profileId, followedProfileId);
-        return ResponseEntity.ok().build();
-    }
-/*
-    @GetMapping("/followers/{id}")
-    @PreAuthorize("hasAnyAuthority('User', 'Administrator')")
-    public ResponseEntity<List<ProfileDTO>> getFollowers(@PathVariable Integer id) {
-        List<Profile> profiles = profileService.getFollowers(id);
-
-        if (profiles == null || profiles.isEmpty()) {
-            return null;
-        }
-
-        List<ProfileDTO> profileDTOs = profiles.stream()
-                .map(ProfileDTO::new)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(profileDTOs);
-    }*/
-
 
 }

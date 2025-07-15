@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileTrendDTO;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
@@ -27,7 +26,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-
 public class PostService {
 
     private PostRepository postRepository;
@@ -107,20 +105,6 @@ public class PostService {
         postRepository.deleteById(id);
     }
 
-    @CacheEvict(value = "address", key = "#postId + '_address'")
-    public void evictAddress(Integer postId) {
-
-        System.out.println("Evicting cache for address of postId: " + postId);
-    }
-
-
-    @CacheEvict(value = "locations", key = "#postId + '_longitude'")
-    public void evictLongitudeLatitude(Integer postId) {
-
-        System.out.println("Evicting cache for longitude of postId: " + postId);
-    }
-
-    @CacheEvict(value = "locations", key = "#postId")
     public Post updatePost(Integer id, Post updatedPost) {
         Optional<Post> existingPostOpt = postRepository.findById(id);
 
@@ -129,11 +113,10 @@ public class PostService {
             existingPost.setPicture(updatedPost.getPicture());
             existingPost.setDeleted(updatedPost.isDeleted());
             existingPost.setDescription(updatedPost.getDescription());
-            existingPost.setAddress(getAddress(id));
-            existingPost.setLongitude(getLocation(id)[1]);
-            existingPost.setLatitude(getLocation(id)[0]);
-            evictAddress(id);
-            evictLongitudeLatitude(id);
+            existingPost.setAddress(updatedPost.getAddress());
+            existingPost.setLongitude(updatedPost.getLongitude());
+            existingPost.setLatitude(updatedPost.getLatitude());
+
             return postRepository.save(existingPost);
         } else {
             throw new EntityNotFoundException("Post with id " + id + " not found.");
@@ -141,21 +124,8 @@ public class PostService {
     }
 
     @CacheEvict(cacheNames = { "topWeeklyPosts", "topAllTimePosts", "topLikers" }, allEntries = true)
-    @org.springframework.transaction.annotation.Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
     public void addLike(Integer profileId, Integer postId) {
-
-
-        Post post = postRepository.findByIdForUpdate(postId).orElseThrow(() -> new IllegalArgumentException("Post not found"));
-
         postRepository.addLike(profileId, postId);
-
-        post.setLikeCount(post.getLikeCount() + 1);
-        postRepository.save(post);
-
-    }
-
-    public void removeLike(Integer profileId, Integer postId) {
-        postRepository.removeLike(profileId, postId);
     }
 
     public List<Integer> getPostIdsForProfile(Integer profileId) {
@@ -168,20 +138,6 @@ public class PostService {
 
     public int getNumberOfPosts(){
         return postRepository.getTotalNumberOfPosts();
-    }
-    
-    @Cacheable(value = "locations", key = "#postId")
-    public double[] getLocation(Integer postId) {
-        Post post = postRepository. findByIdForUpdate(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
-        return new double[]{post.getLatitude(), post.getLongitude()};
-    }
-
-    @Cacheable(value = "address", key = "#postId")
-    public String getAddress(Integer postId) {
-        Post post = postRepository.findByIdForUpdate(postId)
-                .orElseThrow(() -> new IllegalArgumentException("Post not found"));
-        return post.getAddress();
     }
 
     public int getNumberOfPostsInLastMonth(){

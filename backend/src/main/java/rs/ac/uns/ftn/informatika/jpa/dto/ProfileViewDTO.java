@@ -1,26 +1,20 @@
 package rs.ac.uns.ftn.informatika.jpa.dto;
 
-import rs.ac.uns.ftn.informatika.jpa.model.Role;
-
 public class ProfileViewDTO {
     private Integer id;
     private String name;
     private String email;
-    private String username;
     private String surname;
-    private Role role;
     private int postCount;
     private int followingCount;
 
     public ProfileViewDTO() {}
 
-    public ProfileViewDTO(Integer id, String name, String email, Role role, String username, String surname, int postCount, int followingCount) {
+    public ProfileViewDTO(Integer id, String name, String email, String surname, int postCount, int followingCount) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.surname = surname;
-        this.username = username;
-        this.role = role;
         this.postCount = postCount;
         this.followingCount = followingCount;
     }
@@ -70,21 +64,5 @@ public class ProfileViewDTO {
 
     public void setFollowingCount(int followingCount) {
         this.followingCount = followingCount;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

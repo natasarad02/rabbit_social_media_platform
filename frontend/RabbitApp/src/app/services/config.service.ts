@@ -6,7 +6,6 @@ import {Injectable} from '@angular/core';
 export class ConfigService {
 
   private _auth_url = 'http://localhost:8080/auth';
-  private _socket_url = 'http://localhost:8080/socket';
 
   private _login_url = this._auth_url + '/login';
 
@@ -24,10 +23,6 @@ export class ConfigService {
 
   get signup_url(): string {
     return this._signup_url;
-  }
-
-  get socket_url(): string {
-    return this._socket_url;
   }
 
 }

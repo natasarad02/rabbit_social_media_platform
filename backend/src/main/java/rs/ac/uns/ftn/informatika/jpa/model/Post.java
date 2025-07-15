@@ -41,30 +41,8 @@ public class Post {
     @Column(name = "deleted")
     private boolean deleted;
 
-    @Column(name = "like_count")
-    private Integer likeCount;
-
-    public Integer getLikeCount() {
-        return likeCount;
-    }
-
-    public void setLikeCount(Integer likeCount) {
-        this.likeCount = likeCount;
-    }
-
     @Column(name = "posted_time", nullable = false)
     private LocalDateTime postedTime;
-
-    @Version
-    private Integer version;
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
 
     @PrePersist
     protected void onCreate() {
@@ -88,7 +66,6 @@ public class Post {
 
     @OneToMany(mappedBy = "post", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments = new HashSet<>();
-
 
     /*@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "location_id", referencedColumnName = "id")
