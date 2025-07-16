@@ -1,11 +1,13 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostAdDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.PostDTO;
 
 @Service
+@Profile("rabbitmq")
 public class PostSubscriberService {
 
     @RabbitListener(queues = "#{queue1.name}")

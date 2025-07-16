@@ -80,7 +80,6 @@ public class AuthenticationController {
     }
 
 
-    // Endpoint za registraciju novog korisnika
     @PostMapping("/signup")
     public ResponseEntity<Object> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
         try {
@@ -88,11 +87,9 @@ public class AuthenticationController {
             this.userService.sendActivationEmail(user);
             return ResponseEntity.status(HttpStatus.CREATED).body(user);
         } catch (ResourceConflictException ex) {
-            // Konflikt zbog postojećeg username-a
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body("Username already exists, please use another one.");
         } catch (Exception ex) {
-            // Opšti handler za sve ostale greške
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Unexpected error occured: " + ex.getMessage());
         }

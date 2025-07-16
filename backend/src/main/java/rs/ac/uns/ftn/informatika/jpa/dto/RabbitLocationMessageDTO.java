@@ -3,17 +3,17 @@ package rs.ac.uns.ftn.informatika.jpa.dto;
 public class RabbitLocationMessageDTO {
 
     private String id;
-    private String name; // Renamed from naziv
-    private GeoLocation locationData; // Renamed from lokacija and type changed to GeoLocation
+    private String name;
+    private GeoLocation locationData;
 
-    // Manual Getters, Setters, Constructor if not using Lombok:
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-    public String getName() { return name; } // Getter for name
-    public void setName(String name) { this.name = name; } // Setter for name
-    public GeoLocation getLocationData() { return locationData; } // Getter for locationData
-    public void setLocationData(GeoLocation locationData) { this.locationData = locationData; } // Setter for locationData
 
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public GeoLocation getLocationData() { return locationData; }
+    public void setLocationData(GeoLocation locationData) { this.locationData = locationData; }
 
     public RabbitLocationMessageDTO() {}
 

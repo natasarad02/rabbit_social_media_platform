@@ -171,7 +171,6 @@ public class PostService {
         return postRepository.getTotalNumberOfPosts();
     }
 
-    // proveriti!
     @Cacheable(value = "locations", key = "#postId")
     public double[] getLocation(Integer postId) {
         Post post = postRepository. findByIdForUpdate(postId)
@@ -219,7 +218,6 @@ public class PostService {
                     .orElseThrow(() -> new RuntimeException("Profile not found: " + profileId));
 
             Long likeCount = ((BigInteger) data[1]).longValue();
-            // System.out.println("Profile ID: " + profileId + ", Like Count: " + likeCount);
             profileTrendDTOs.add(new ProfileTrendDTO(profile, likeCount));
         }
         return profileTrendDTOs;

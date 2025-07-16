@@ -16,7 +16,7 @@ import javax.cache.spi.CachingProvider;
 import java.net.URISyntaxException;
 
 @Configuration
-public class CacheConfig {
+public class CacheConfig { // napravljeno posto je na zasebnim granama koirscen drugaciji metod kesiranja
 
     @Bean
     @Primary

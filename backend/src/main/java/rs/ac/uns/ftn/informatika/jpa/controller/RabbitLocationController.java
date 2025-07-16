@@ -11,7 +11,7 @@ import rs.ac.uns.ftn.informatika.jpa.service.RabbitLocationService; // Import va
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/rabbit-locations") // Bazni URL za ove endpointe
+@RequestMapping("/api/rabbit-locations")
 public class RabbitLocationController {
 
     private final RabbitLocationService rabbitLocationService;
@@ -24,7 +24,6 @@ public class RabbitLocationController {
     @GetMapping
     public ResponseEntity<List<RabbitLocation>> getAllRabbitLocations() {
         List<RabbitLocation> locations = rabbitLocationService.getAllLocations();
-        System.out.println("-> API: Requested all rabbit locations. Found: " + locations.size());
         return ResponseEntity.ok(locations);
     }
 

@@ -165,17 +165,15 @@ public class ProfileService {
         if (optionalProfile.isPresent()) {
             Profile profile = optionalProfile.get();
 
-            // Encrypt the new password
             String encodedPassword = passwordEncoder.encode(newPassword);
 
-            // Update the profile with the new password
             profile.setPassword(encodedPassword);
             profileRepository.save(profile);
 
             return true;
         }
 
-        return false; // Profile not found
+        return false;
     }
 
     public void sendActivationEmail(Profile user) {
