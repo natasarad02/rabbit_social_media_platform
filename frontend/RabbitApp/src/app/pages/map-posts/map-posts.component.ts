@@ -8,6 +8,8 @@ import { UserService } from '../../services/user.service';
 import { AuthService } from '../../services/auth.service';
 import { RabbitLocation } from '../../models/rabbit-location.model';
 import { RabbitLocationService } from '../../services/rabbit-location.service';
+import { Subscription, interval } from 'rxjs'; 
+import { startWith, switchMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-map-posts',
@@ -30,6 +32,7 @@ export class MapPostsComponent implements OnInit, OnDestroy {
   filteredRabbitLocations: RabbitLocation[] = []; 
   private rabbitLocationsLayerGroup: L.LayerGroup | null = null;
   rabbitLocationIcon: L.Icon;
+  private locationUpdateInterval: any;
 
   @Output() centerLocationChanged = new EventEmitter<L.LatLng>();
 
@@ -52,6 +55,9 @@ export class MapPostsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.loadUser();
+    this.locationUpdateInterval = setInterval(() => {
+      this.loadRabbitLocations(); 
+    }, 15000);
     
   }
 
@@ -275,6 +281,9 @@ export class MapPostsComponent implements OnInit, OnDestroy {
     this.componentRefs.forEach(ref => ref.destroy());
     if (this.map) {
       this.map.remove();
+    }
+    if (this.locationUpdateInterval) {
+      clearInterval(this.locationUpdateInterval);
     }
   }
 
