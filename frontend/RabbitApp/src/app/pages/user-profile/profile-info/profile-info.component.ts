@@ -48,7 +48,7 @@ export class ProfileInfoComponent implements OnInit {
 
   constructor(
     private userService: UserService, 
-    private auth: AuthService, 
+    private authService: AuthService, 
     private route: ActivatedRoute,
     private profileService: ProfileService,
     private router: Router
@@ -196,24 +196,39 @@ export class ProfileInfoComponent implements OnInit {
   }
 
   savePassword() {
-    this.passwordsDoNotMatch = this.newPassword !== this.confirmPassword;
-    if (this.passwordsDoNotMatch || !this.newPassword || !this.confirmPassword) {
-      return;
-    }
-
-    if(this.loggedProfile) {
-        this.profileService.updatePassword(this.loggedProfile.id, this.newPassword).subscribe({
-            next: () => {
-              Swal.fire('Success!', 'Your password has been updated successfully.', 'success');
-              this.closeChangePasswordModal();
-            },
-            error: (err) => {
-              Swal.fire('Error!', 'Failed to update your password. Please try again.', 'error');
-              console.error('Password update failed:', err);
-            }
-          });
-    }
+  this.passwordsDoNotMatch = this.newPassword !== this.confirmPassword;
+  if (this.passwordsDoNotMatch || !this.newPassword || !this.confirmPassword) {
+    return;
   }
+
+  if (this.loggedProfile) {
+    this.profileService.updatePassword(this.loggedProfile.id, this.newPassword).subscribe({
+      next: () => {
+        Swal.fire({
+          title: 'Success!',
+          text: 'Your password has been updated successfully. You will need to log in again.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        }).then(() => {
+          if(this.loggedProfile){
+              this.profileService.updateProfileCurrentlyActiveStatus(this.loggedProfile.id).subscribe(() => {
+            
+          });
+          this.authService.logout();
+            this.router.navigate(['/login']);
+          }          
+        });
+
+        this.closeChangePasswordModal();
+      },
+      error: (err) => {
+        Swal.fire('Error!', 'Failed to update your password. Please try again.', 'error');
+        console.error('Password update failed:', err);
+      }
+    });
+  }
+}
+
 
   goToProfile(userId: number): void {
     this.closeFollowListModal();
