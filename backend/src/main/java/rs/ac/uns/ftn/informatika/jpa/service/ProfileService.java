@@ -165,11 +165,6 @@ public class ProfileService {
         if (optionalProfile.isPresent()) {
             Profile profile = optionalProfile.get();
 
-            // Validate the new password (e.g., length, strength)
-            if (newPassword.length() < 8) {
-                return false; // Password must be at least 8 characters (for example)
-            }
-
             // Encrypt the new password
             String encodedPassword = passwordEncoder.encode(newPassword);
 
