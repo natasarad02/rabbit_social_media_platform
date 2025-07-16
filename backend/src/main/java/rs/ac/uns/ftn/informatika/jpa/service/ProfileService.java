@@ -1,7 +1,11 @@
 package rs.ac.uns.ftn.informatika.jpa.service;
 
+import com.google.common.hash.BloomFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.Param;
@@ -12,30 +16,29 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
-import org.springframework.web.server.ResponseStatusException;
-import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
 import org.springframework.transaction.annotation.Transactional;
-import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
+import org.springframework.web.server.ResponseStatusException;
 import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.ProfileViewDTO;
+import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
+import rs.ac.uns.ftn.informatika.jpa.exception.ResourceConflictException;
 import rs.ac.uns.ftn.informatika.jpa.model.Post;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
 import rs.ac.uns.ftn.informatika.jpa.model.Role;
-import rs.ac.uns.ftn.informatika.jpa.model.primer.Student;
 import rs.ac.uns.ftn.informatika.jpa.repository.ProfileRepository;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+
 @Service
 public class ProfileService {
-    private final ActiveUsersMetricService activeUsersMetricService;
+    private static final Logger logger = LoggerFactory.getLogger(ProfileService.class);
+
     private final ProfileRepository profileRepository;
+    private final ActiveUsersMetricService activeUsersMetricService;
+    private final BloomFilter<String> bloomFilter;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -48,22 +51,61 @@ public class ProfileService {
     @Value("${spring.mail.username}")
     private String fromEmail;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
-
-    public ProfileService(@Autowired ProfileRepository profileRepository, @Autowired ActiveUsersMetricService activeUsersMetricService) {
+    @Autowired
+    public ProfileService(ProfileRepository profileRepository, ActiveUsersMetricService activeUsersMetricService, BloomFilter<String> bloomFilter) {
         this.profileRepository = profileRepository;
         this.activeUsersMetricService = activeUsersMetricService;
+        this.bloomFilter = bloomFilter;
     }
 
-    @Scheduled(fixedRate = 5000) // Update every 1 minute
+    @Scheduled(fixedRate = 5000)
     public void updateActiveUserCount() {
         int activeUsers = profileRepository.countByIsActive(true);
         activeUsersMetricService.setActiveUserCount(activeUsers);
     }
 
+    @Transactional
+    public Profile createProfile(UserRequest userRequest) {
+        String username = userRequest.getUsername();
+        if(bloomFilter.mightContain(userRequest.getUsername())) {
+            logger.warn("Bloom filter suspects username '{}' might exist. Falling back to DB check with pessimistic lock.", username);
+            profileRepository.findIdByUsername(username)
+                    .ifPresent(existingId -> {
+                        logger.error("Pessimistic lock confirmed that username '{}' with ID {} already exists.", username, existingId);
+                        throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+                    });
+            logger.info("False positive in Bloom filter for username '{}', proceeding with registration.", username);
+        } else {
+            logger.info("Bloom filter confirms username '{}' is new. Skipping DB check.", username);
+        }
+        try {
+
+            Profile profileToSave = new Profile();
+            profileToSave.setUsername(userRequest.getUsername());
+            profileToSave.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            profileToSave.setRole(Role.User);
+            profileToSave.setFollowers(new HashSet<>());
+            profileToSave.setPosts(new HashSet<>());
+            profileToSave.setEmail(userRequest.getEmail());
+            profileToSave.setName(userRequest.getFirstname());
+            profileToSave.setSurname(userRequest.getLastname());
+            profileToSave.setAddress(userRequest.getAddress());
+
+            Profile savedProfile = profileRepository.save(profileToSave);
+
+            bloomFilter.put(savedProfile.getUsername());
+            logger.info("Successfully registered '{}' and added to Bloom filter.", savedProfile.getUsername());
+
+            return savedProfile;
+        } catch (DataIntegrityViolationException e) {
+            throw new ResourceConflictException(userRequest.getId(), "Username already exists (via constraint)");
+        }
+    }
+
     public Profile findOne(Integer id) {
         return profileRepository.findById(id).orElseGet(null);
     }
+
     public Profile findByUsername(String username) {
         return profileRepository.findActiveProfileByUsername(username);
     }
@@ -97,21 +139,41 @@ public class ProfileService {
         return new PageImpl<>(pagedProfiles, pageable, allProfiles.size());
     }
 
+    public boolean updateProfile(ProfileDTO profileDTO) {
+        Optional<Profile> optionalProfile = profileRepository.findById(profileDTO.getId());
 
-    public Profile saveProfile(UserRequest profile)
-    {
-        // proveriti da li su sva polja namestena
-        Profile profileToSave = new Profile();
-        profileToSave.setUsername(profile.getUsername());
-        profileToSave.setPassword(passwordEncoder.encode(profile.getPassword()));
-        profileToSave.setRole(Role.User);
-        profileToSave.setFollowers(new HashSet<>());
-        profileToSave.setPosts(new HashSet<>());
-        profileToSave.setEmail(profile.getEmail());
-        profileToSave.setName(profile.getFirstname());
-        profileToSave.setSurname(profile.getLastname());
-        profileToSave.setAddress(profile.getAddress());
-        return profileRepository.save(profileToSave);
+        if (optionalProfile.isPresent()) {
+            Profile profile = optionalProfile.get();
+
+            // Update only allowed fields
+            profile.setName(profileDTO.getName());
+            profile.setSurname(profileDTO.getSurname());
+            profile.setAddress(profileDTO.getAddress());
+
+            // Save the updated profile
+            profileRepository.save(profile);
+
+            return true; // Indicates success
+        }
+
+        return false; // Indicates profile not found
+    }
+
+    public boolean updatePassword(int profileId, String newPassword) {
+        Optional<Profile> optionalProfile = profileRepository.findById(profileId);
+
+        if (optionalProfile.isPresent()) {
+            Profile profile = optionalProfile.get();
+
+            String encodedPassword = passwordEncoder.encode(newPassword);
+
+            profile.setPassword(encodedPassword);
+            profileRepository.save(profile);
+
+            return true;
+        }
+
+        return false;
     }
 
     public void sendActivationEmail(Profile user) {

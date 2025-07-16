@@ -39,6 +39,19 @@ export class ProfileService {
         return this.http.get<PaginatedResponse<ProfileViewDTO>>(`${this.apiUrl}/allPaged`, { params });
     }
 
+    updatePassword(profileId: number, newPassword: string): Observable<string> {
+        const url = `${this.apiUrl}/updatepassword`;
+        const params = { profileId: profileId.toString(), newPassword };
+      
+        return this.http.put(url, null, { params, responseType: 'text' }) as Observable<string>;
+    }      
+
+    updateProfile(profileDTO: ProfileDTO): Observable<string> {
+        const url = `${this.apiUrl}/updateprofile`;
+      
+        return this.http.put(url, profileDTO, { responseType: 'text' }) as Observable<string>;
+    }
+            
     followProfile(profileId: number, followedProfileId: number): Observable<void> {
         const params = new HttpParams()
           .set('profileId', profileId.toString())

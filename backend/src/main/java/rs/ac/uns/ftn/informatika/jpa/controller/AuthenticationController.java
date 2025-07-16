@@ -2,6 +2,7 @@ package rs.ac.uns.ftn.informatika.jpa.controller;
 
 import javax.servlet.http.HttpServletResponse;
 
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,10 +20,13 @@ import rs.ac.uns.ftn.informatika.jpa.dto.ProfileDTO;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.JwtAuthenticationRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserRequest;
 import rs.ac.uns.ftn.informatika.jpa.dto.util.UserTokenState;
+import rs.ac.uns.ftn.informatika.jpa.exception.AccountNotActivatedException;
 import rs.ac.uns.ftn.informatika.jpa.exception.ResourceConflictException;
 import rs.ac.uns.ftn.informatika.jpa.model.Profile;
+import rs.ac.uns.ftn.informatika.jpa.service.AuthService;
 import rs.ac.uns.ftn.informatika.jpa.service.ProfileService;
 import rs.ac.uns.ftn.informatika.jpa.utils.TokenUtils;
+import rs.ac.uns.ftn.informatika.jpa.service.inferface.IAuthService;
 
 import java.security.Principal;
 
@@ -39,60 +43,58 @@ public class AuthenticationController {
 
     @Autowired
     private ProfileService userService;
+
     @Autowired
-    private ProfileService profileService;
+    private IAuthService authService;
 
     // Prvi endpoint koji pogadja korisnik kada se loguje.
     // Tada zna samo svoje korisnicko ime i lozinku i to prosledjuje na backend.
     @PostMapping("/login")
     public ResponseEntity<Object> createAuthenticationToken(
-            @RequestBody JwtAuthenticationRequest authenticationRequest, HttpServletResponse response) {
+            @RequestBody JwtAuthenticationRequest authenticationRequest) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            authenticationRequest.getUsername(),
-                            authenticationRequest.getPassword()
-                    )
+            // Pozivamo servisnu metodu koja ima Rate Limiter na sebi
+            UserTokenState token = authService.login(
+                    authenticationRequest.getUsername(),
+                    authenticationRequest.getPassword()
             );
+            return ResponseEntity.ok(token);
 
-            // Da li je aktiviran
-            Profile user = (Profile) authentication.getPrincipal();
-            if (!user.isActivated()) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Account not activated. Please activate your account via email.");
-            }
-
-
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt = tokenUtils.generateToken(user.getUsername(), user.getRole());
-            int expiresIn = tokenUtils.getExpiredIn();
-            user.setActive(true);
-            userService.save(user);
-            return ResponseEntity.ok(new UserTokenState(jwt, expiresIn));
-
-        } catch (BadCredentialsException e) {
+        } catch (RequestNotPermitted ex) {
+            // Hvatamo izuzetak bačen iz fallback metode
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS) // HTTP 429
+                    .body("Previše neuspelih pokušaja logovanja. Molimo pokušajte ponovo kasnije.");
+        } catch (BadCredentialsException ex) {
+            // Hvatamo grešku za pogrešne kredencijale
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid username or password.");
-        } catch (Exception e) {
+                    .body("Pogrešno korisničko ime ili lozinka.");
+        } catch (AccountNotActivatedException ex) {
+            // Hvatamo grešku za neaktiviran nalog
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(ex.getMessage());
+        } catch (Exception ex) {
+            // Opšti handler za sve ostale greške
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("An error occurred during login: " + e.getMessage());
+                    .body("Došlo je do greške prilikom logovanja: " + ex.getMessage());
         }
     }
 
 
-    // Endpoint za registraciju novog korisnika
     @PostMapping("/signup")
-    public ResponseEntity<Profile> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
-        Profile existUser = this.userService.findByUsername(userRequest.getUsername());
-
-        if (existUser != null) {
-            throw new ResourceConflictException(userRequest.getId(), "Username already exists");
+    public ResponseEntity<Object> addUser(@RequestBody UserRequest userRequest, UriComponentsBuilder ucBuilder) {
+        try {
+            Profile user = this.userService.createProfile(userRequest);
+            this.userService.sendActivationEmail(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(user);
+        } catch (ResourceConflictException ex) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("Username already exists, please use another one.");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unexpected error occured: " + ex.getMessage());
         }
-
-        Profile user = this.userService.saveProfile(userRequest);
-        profileService.sendActivationEmail(user);
-        return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/userFromToken")
     public ResponseEntity<ProfileDTO> GetUserProfile(@RequestHeader(value = "Authorization") String authorizationHeader) {

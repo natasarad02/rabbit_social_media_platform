@@ -1,17 +1,31 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { AppComponent } from './app.component';
-import { AppRoutingModule } from './app.routes';
-import { ViewProfileComponent } from './pages/view-profile/view-profile.component';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; // <-- ADD THIS
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
+// Angular Material Modules
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
-import { ViewPostsRegisteredComponent } from './pages/view-posts-registered/view-posts-registered.component';
 import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
+import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
+
+// ng2-charts
+import { provideCharts, withDefaultRegisterables, BaseChartDirective } from 'ng2-charts';
+
+// App-specific imports
+import { AppRoutingModule } from './app.routes';
+import { AppComponent } from './app.component';
+import { TokenInterceptor } from './interceptor/TokenInterceptor';
+
+// Component Imports
+import { ViewProfileComponent } from './pages/view-profile/view-profile.component';
+import { ViewPostsRegisteredComponent } from './pages/view-posts-registered/view-posts-registered.component';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { MapComponent } from './pages/map/map.component';
 import { HomePageComponent } from './pages/home-page/home-page.component';
@@ -24,17 +38,8 @@ import { PostComponent } from './pages/post/post.component';
 import { ProfilePostsComponent } from './pages/user-profile/profile-posts/profile-posts.component';
 import { ProfileInfoComponent } from './pages/user-profile/profile-info/profile-info.component';
 import { ChatComponent } from './pages/chat/chat.component';
-import { MatListModule, MatSelectionList, MatSelectionListChange } from '@angular/material/list';
 import { LoginComponent } from './pages/login/login.component';
-import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { TokenInterceptor } from './interceptor/TokenInterceptor';
-import { MatOption, MatOptionSelectionChange } from '@angular/material/core';
-import { MatSelectChange, MatSelectModule, MatSelectTrigger } from '@angular/material/select';
-import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
-import { BaseChartDirective } from 'ng2-charts';
-import { WebSocketService } from './services/web-socket.service';
-import { MatRadioModule } from '@angular/material/radio';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 
 @NgModule({
@@ -56,25 +61,28 @@ import { MatRadioModule } from '@angular/material/radio';
     ChatComponent,
   ],
   imports: [
+    // Angular Core Modules
     BrowserModule,
+    BrowserAnimationsModule, // <-- ADD THIS
     AppRoutingModule,
     HttpClientModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+
+    // Angular Material Modules
     MatInputModule,
     MatFormFieldModule,
     MatButtonModule,
-    FormsModule,
     MatIconModule,
     MatCardModule,    
-    ReactiveFormsModule,
-    RouterModule,
-    CommonModule,
     MatListModule,
-    MatSelectionList,
-    MatOption,
     MatSelectModule,
+    MatRadioModule,
+
+    // Other third-party modules
     BaseChartDirective,
-    MatRadioModule
-    
+    LoginComponent,
   ],
   providers: [
     provideAnimationsAsync(),

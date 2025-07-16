@@ -5,6 +5,7 @@ import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
 import { PaginatedResponse } from "../models/Pagebale.model";
 import { PostViewDTO } from "../models/PostViewDTO.model";
 import { PostDTO } from "../models/PostDTO.mode";
+import { ProfileTrendDTO } from "../models/ProfileTrendDTO.model";
 import { CommentDTO } from "../models/CommentDTO.model";
 import { PostAdDTO } from "../models/PostAdDTO.model";
 
@@ -61,6 +62,9 @@ export class PostService {
         return this.http.put<PostViewDTO>(this.apiUrl, postDTO);
     }
 
+    getNumberOfPosts(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/count`);
+    }
 
     sendForAds(post: PostAdDTO): Observable<PostAdDTO>{
         const url = "http://localhost:8080/api/post_ads/send_ad";
@@ -68,8 +72,20 @@ export class PostService {
     }
 
     
+    getNumberOfPostsInLastMonth(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/count/last-month`);
+    }
     
-
+    findTop5MostLikedPostsInLast7Days(): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/top-liked/last-7-days`);
+    }
     
-
+    getTop10MostLikedPosts(): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/top-liked`);
+    }  
+    
+    findProfilesWithMostLikesGivenInLast7Days(): Observable<ProfileTrendDTO[]> {
+        return this.http.get<ProfileTrendDTO[]>(`${this.apiUrl}/profiles-trending`);
+    }
+    
 }

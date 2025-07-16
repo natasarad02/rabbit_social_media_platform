@@ -195,8 +195,8 @@ export class ViewPostsRegisteredComponent implements OnInit {
 
   showCreatorInfo(post: PostViewDTO): void {
     const creatorInfo = `
-      <strong>Name:</strong> ${post.profile?.name || 'N/A'}<br>
-      <strong>Surname:</strong> ${post.profile?.surname || 'N/A'}<br>
+      <strong>Ime:</strong> ${post.profile?.name || 'N/A'}<br>
+      <strong>Prezime:</strong> ${post.profile?.surname || 'N/A'}<br>
       <strong>Email:</strong> ${post.profile?.email || 'N/A'}
     `;
     
@@ -204,7 +204,15 @@ export class ViewPostsRegisteredComponent implements OnInit {
       title: 'Creator Information',
       html: creatorInfo,
       icon: 'info',
-      confirmButtonText: 'Close'
+      showCancelButton: true,
+      confirmButtonText: 'Go to profile',
+      cancelButtonText: 'Close',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33'
+    }).then((result) => {
+      if (result.isConfirmed && post.profile?.id) {
+        window.location.href = `http://localhost:4200/profile/${post.profile.id}`;
+      }
     });
   }
 

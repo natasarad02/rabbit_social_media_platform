@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, OnChanges } from '@angular/core';
 import { PostViewDTO } from '../../../models/PostViewDTO.model';
 import { ProfileDTO } from '../../../models/ProfileDTO.model';
 import { PostService } from '../../../services/post-service.service';
@@ -25,44 +25,38 @@ export class ProfilePostsComponent implements OnInit, OnChanges {
     private auth: AuthService
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['userId']) {
-      this.ngOnInit();  // Reload posts when userId changes
+  ngOnInit() {
+    this.getLoggedUser();
+    this.loadPosts();    
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Reload posts if the userId input changes (but not on the initial load)
+    if (changes['userId'] && !changes['userId'].firstChange) {
+      this.loadPosts();
     }
   }
 
-  ngOnInit() {
-    this.getLoggedUser();
+  loadPosts() {
     this.postService.getAllPosts().subscribe(
       (response) => {
-        this.posts = response;
+        // Filter posts to show only those belonging to the current profile's user
         this.posts = response.filter(post => post.profile?.id === this.userId);
-        console.log(this.posts);
-  
+        
+        // Sort posts by posted time, newest first
         this.posts.sort((a, b) => {
           const aTime = new Date(Date.UTC(
-            a.postedTime[0], 
-            a.postedTime[1] - 1, 
-            a.postedTime[2], 
-            a.postedTime[3], 
-            a.postedTime[4], 
-            a.postedTime[5], 
-            a.postedTime[6]  
+            a.postedTime[0], a.postedTime[1] - 1, a.postedTime[2], 
+            a.postedTime[3], a.postedTime[4], a.postedTime[5], a.postedTime[6]
           ));
-  
           const bTime = new Date(Date.UTC(
-            b.postedTime[0], 
-            b.postedTime[1] - 1, 
-            b.postedTime[2], 
-            b.postedTime[3], 
-            b.postedTime[4], 
-            b.postedTime[5], 
-            b.postedTime[6]  
+            b.postedTime[0], b.postedTime[1] - 1, b.postedTime[2], 
+            b.postedTime[3], b.postedTime[4], b.postedTime[5], b.postedTime[6]
           ));
-  
           return bTime.getTime() - aTime.getTime(); 
         });
   
+        // Prepend server path to image URLs
         this.posts.forEach(post => {
           if (post.picture.includes("/images")) {
             post.picture = this.imageStartPath + post.picture;
@@ -73,17 +67,14 @@ export class ProfilePostsComponent implements OnInit, OnChanges {
         console.error('Error loading posts', error);
       }
     );
-    
   }
 
-  getLoggedUser()
-  {
+  getLoggedUser() {
     this.userService.getUserProfile().subscribe(
       (data) => {
         if (data) {
-          console.log(data);
           this.loggedProfile = data;
-          this.loadLikedPosts();
+          this.loadLikedPosts(); // After getting the user, load their liked posts
         } else {
           console.log('No profile found or token expired');
         }
@@ -92,7 +83,6 @@ export class ProfilePostsComponent implements OnInit, OnChanges {
         console.error('Error loading profile:', error);
       }
     );
-  
   }
 
   loadLikedPosts(): void {
@@ -100,7 +90,6 @@ export class ProfilePostsComponent implements OnInit, OnChanges {
       this.postService.getLikedPosts(this.loggedProfile.id).subscribe(
         (response) => {
           this.likeIds = response;
-          console.log(this.likeIds);
         },
         (error) => {
           console.error('Error loading liked posts', error);

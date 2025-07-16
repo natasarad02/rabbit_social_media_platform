@@ -1,1 +1,69 @@
-<p>trends works!</p>
+<div class="trends-page">
+  <div class="summary-section">
+    <h2>Network Trends</h2>
+    <p>Total Posts: {{ totalPosts }}</p>
+    <p>Posts in Last Week: {{ postsLastWeek }}</p>
+  </div>
+
+  <div class="content">
+    <!-- Post Options -->
+    <div class="options">
+      <h3>Choose Posts to View</h3>
+      <div class="button-radio-group">
+        <button
+          class="radio-button"
+          [class.selected]="selectedTrend === 'top10'"
+          (click)="setTrend('top10')"
+        >
+          Top 10 Most Liked Posts (All Time)
+        </button>
+        <button
+          class="radio-button"
+          [class.selected]="selectedTrend === 'top5'"
+          (click)="setTrend('top5')"
+        >
+          Top 5 Most Liked Posts (Last 7 Days)
+        </button>
+      </div>
+
+      <!-- Move the titles here outside of .post-list -->
+      <div class="posts-title">
+        <h3 *ngIf="selectedTrend === 'top10'">Top 10 Most Liked Posts</h3>
+        <h3 *ngIf="selectedTrend === 'top5'">Top 5 Most Liked Posts (Last 7 Days)</h3>
+      </div>
+
+      <!-- Posts -->
+      <div class="post-list">
+        <app-post
+          *ngFor="let post of displayedPosts"
+          [post]="post"
+          [loggedProfile]="loggedProfile" 
+          [likeIds]="likeIds"
+          (postUpdated)="ngOnInit()"
+          class="post-card"
+        ></app-post>
+      </div>
+    </div>
+
+    <!-- Trending Profiles -->
+    <div class="profiles">
+      <h3>Profiles with Most Likes (Last Week)</h3>
+      <ul>
+        <li *ngFor="let profile of trendingProfiles">
+          <div
+            class="profile-card"
+            (click)="showProfileId(profile.id)"
+          >
+            <div class="profile-name">
+              <strong>{{ profile.name }} {{ profile.surname }}</strong>
+              <span>{{ profile.username }}</span>
+            </div>
+            <div class="profile-likes">
+              {{ profile.likeCount }} likes
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -21,10 +21,20 @@ export class ProfileComponent implements OnInit{
   constructor(private userService: UserService, private auth: AuthService, 
     private profileService: ProfileService, private route: ActivatedRoute){}
 
-  ngOnInit(){
-    this.loadUser();
+  ngOnInit() {
+  this.route.paramMap.subscribe(params => {
+    const idParam = params.get('id');
+    this.requestedProfileId = idParam ? parseInt(idParam, 10) : -1;
     this.loadProfile();
+    this.loadUser();
+  });
+}
+
+refreshData(): void {
+    console.log('Refresh event received from profile-info component!');
+    // Later, you can add logic here to re-fetch the user's posts
   }
+
 
   loadProfile(){
     const idParam = this.route.snapshot.paramMap.get('id');
