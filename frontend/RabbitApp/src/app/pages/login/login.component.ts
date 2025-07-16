@@ -33,6 +33,7 @@ export class LoginComponent {
           console.log('Login successful:', response);
           alert('Successfully logged in');
           console.log(this.auth.getToken());
+          this.goBack();
           this.router.navigate(['/dashboard']);
         },
         error: (error) => {
@@ -63,9 +64,9 @@ export class LoginComponent {
 
     for (let i = 0; i < 6; i++) {
       this.auth.login(loginData).subscribe({
-        next: (res) => console.log('✔️ Success', res),
+        next: (res) => console.log('Success', res),
         error: (err) => {
-          console.error('❌ Error', err);
+          console.error('Error', err);
         }
       });
     }
