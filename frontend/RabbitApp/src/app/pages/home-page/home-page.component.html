@@ -1,17 +1,57 @@
-<div class="home-page-div">
+<h1 class="app-name">OnlyBuns</h1>
+<div class="search-container" *ngIf="loggedProfile?.role === 'User'" style="width: 100%; max-width: 500px; margin: 0 auto;">
+    <mat-form-field style="width: 100%;">
+      <mat-label>Find profiles to follow</mat-label>
+      <mat-select [(value)]="followers" style="width: 100%;">
+        <!-- Custom header content -->
+        <div class="custom-header" style="width: 100%;">
+          <mat-form-field style="width: 100%; margin: 8px 0;" >
+            <mat-label >Search...</mat-label>
+            <input matInput [(ngModel)]="searchQuery" (ngModelChange)="filterOptions()" placeholder="Type to search" style="width: 100%;" />
+          </mat-form-field>
+        </div>
+        <!-- Filtered options -->
+        <mat-option *ngFor="let user of filteredProfiles" [value]="user">
+            <div (click)="goToProfile(user.id)">
+          <span class="full-name">{{ user.name }} {{ user.surname }}</span> 
+          <span class="username-tag"> ({{ user.username }})</span>
+        </div>
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+  
+  
+  
+  
+<div class="all">
+    
+<div class="post-list" *ngIf="loggedProfile?.role === 'User'">
+    
+    
+    <app-post
+      *ngFor="let post of posts"
+      [post]="post"
+      [loggedProfile]="loggedProfile" 
+      [likeIds]="likeIds"
+      (postUpdated)="ngOnInit()"
+    ></app-post>
+</div>
+<div class="home-page-div" 
+[ngClass]="{'user-role-active': loggedProfile?.role === 'User'}">
     <div class="logo-container">
         <img class="logo" src="bunny.svg"/>
-        <h1 class="app-name">OnlyBuns</h1>
     </div>
     <div class = "home-page-content">
         <button (click)="logIn()" *ngIf="loggedProfile === null" mat-raised-button color="accent">Login</button>
         <button (click)="logOut()"  *ngIf="loggedProfile !== null" mat-raised-button color="accent">Logout</button>
         <button (click)="navigateToPost()" mat-raised-button color="accent">Posts</button>
-        <a href="posts-map"><button mat-raised-button color="accent">Map</button></a>
-        <a href="trends"><button mat-raised-button color="accent">Trends</button></a>
-        <a href="analytics"><button mat-raised-button color="accent">Analytics</button></a>
-        <a href="chat"><button mat-raised-button color="accent">Chat</button></a>
+        <a href="posts-map" *ngIf="loggedProfile?.role === 'User'"><button mat-raised-button color="accent">Map</button></a>
+        <a href="trends" *ngIf="loggedProfile?.role !== null"><button mat-raised-button color="accent">Trends</button></a>
+        <a href="analytics" *ngIf="loggedProfile?.role === 'Administrator'"><button mat-raised-button color="accent">Analytics</button></a>
+        <a href="chat" *ngIf="loggedProfile?.role === 'User'"><button mat-raised-button color="accent">Chat</button></a>
         <button (click)="navigateToProfile()" mat-raised-button color="accent">Profile</button>
 
     </div>
+</div>
 </div>

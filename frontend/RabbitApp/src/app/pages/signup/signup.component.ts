@@ -32,7 +32,6 @@ export class SignupComponent {
   }  
 
   onSignup() {
-    alert("usao");
     if (!this.passwordMismatch && this.name && this.surname && this.email && this.username && this.password && this.address) {
       const signupData = {
         firstname: this.name,  
@@ -50,9 +49,12 @@ export class SignupComponent {
           alert("sucessfully made a profile");
           this.router.navigate(['/login']); 
         },
-        error: error => {
-          console.error('Signup failed:', error);
-        }
+          error: error => {
+            console.error('Signup failed:', error);
+            // Try to get the specific message from the backend response
+            const errorMessage = typeof error?.error === 'string' ? error.error : error?.error?.message;
+            alert(errorMessage); // <-- QUICK FIX
+          }
       });
 
       console.log('Signup details:', this.name, this.surname, this.email, this.username, this.address);

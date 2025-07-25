@@ -1,0 +1,31 @@
+.profile-posts {
+  padding: 16px;
+  max-width: 1200px; /* Adjust the width to fit the layout */
+  margin: 0 auto;
+}
+
+h3 {
+  font-size: 1.8em;
+  margin-bottom: 16px;
+}
+
+
+.post-list {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Auto-fill with a minimum width */
+  margin: 20px;
+}
+
+@media (max-width: 768px) {
+  .post-list {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards on medium screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .post-list {
+    grid-template-columns: 1fr; /* 1 card on small screens */
+  }
+}
+

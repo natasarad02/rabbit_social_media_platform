@@ -5,3 +5,15 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+::ng-deep .leaflet-popup-content-wrapper {
+  width: 260px !important;
+  max-width: 260px !important;
+}
+
+::ng-deep .leaflet-popup-content {
+  width: 260px !important;
+  max-width: 260px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}

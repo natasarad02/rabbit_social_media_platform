@@ -7,7 +7,7 @@
 </a>
 <div class="post-list">
   <mat-card *ngFor="let post of posts" class="post-card">
-    <img mat-card-image [src]="post.picture" alt="Post image" class="post-image" />
+    <img mat-card-image [src]="cachedImages[post.id]" alt="Post image" class="post-image" />
     <div class="middle">
       <mat-card-header class="post-card-header">
         <mat-card-title>{{ post.description }}</mat-card-title>
@@ -24,11 +24,18 @@
       </mat-card-content>      
     </div>
     <mat-card-actions class="post-actions">
-      <button mat-button 
+      <button mat-button *ngIf="!likeIds.includes(post.id)"
         [color]="loggedProfile ? 'primary' : 'warn'" 
         (click)="loggedProfile ? likePost(post.id) : showLoginAlert()"
-        [disabled]="!loggedProfile && likeIds.includes(post.id)">
-        {{ likeIds.includes(post.id) ? 'Liked' : 'Like' }}
+        [disabled]="!loggedProfile">
+        Like
+      </button>
+
+      <button mat-button *ngIf="likeIds.includes(post.id)"
+        [color]="loggedProfile ? 'primary' : 'warn'" 
+        (click)="loggedProfile ? dislikePost(post.id) : showLoginAlert()"
+        [disabled]="!loggedProfile">
+        Liked
       </button>
     
       <button mat-button color="accent" 
@@ -40,6 +47,7 @@
       <button mat-button color="primary" (click)="showCreatorInfo(post)">
         Creator Info
       </button>
+      <button  mat-button (click)="advertise(post)" *ngIf="loggedProfile?.role === 'Administrator'">Advertise</button>
     
       <div *ngIf="profileId === post.profile?.id">
         <button mat-button style="color: #ba79ba;" (click)="goToUpdate(post.id)">Edit</button>

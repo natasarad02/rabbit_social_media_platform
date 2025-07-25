@@ -1,1 +1,12 @@
-<p>user-profile works!</p>
+<div class="profile-container">
+    <div class="top-section">
+      <!-- THIS IS THE CORRECT CODE -->
+<app-profile-info (updated)="refreshData()"></app-profile-info>
+    </div>
+    <div class="bottom-section">
+      <app-profile-posts
+        [userId]="requestedProfileId"
+      ></app-profile-posts>
+    </div>
+</div>
+  

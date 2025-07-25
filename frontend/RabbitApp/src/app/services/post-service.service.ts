@@ -5,6 +5,9 @@ import { ProfileViewDTO } from "../models/ProfileViewDTO.model";
 import { PaginatedResponse } from "../models/Pagebale.model";
 import { PostViewDTO } from "../models/PostViewDTO.model";
 import { PostDTO } from "../models/PostDTO.mode";
+import { ProfileTrendDTO } from "../models/ProfileTrendDTO.model";
+import { CommentDTO } from "../models/CommentDTO.model";
+import { PostAdDTO } from "../models/PostAdDTO.model";
 
 @Injectable({
     providedIn: 'root'
@@ -18,6 +21,10 @@ export class PostService {
         return this.http.get<PostViewDTO[]>(this.apiUrl);
     }
 
+    getPostsForProfile(profileId: number): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/forProfile/${profileId}`);
+    }
+
     deletePost(id: number): Observable<void>
     {
         return this.http.put<void>(`${this.apiUrl}/delete/${id}`, {});
@@ -29,6 +36,14 @@ export class PostService {
         .set('profileId', idProfile)
         .set('postId', idPost);
         return this.http.post<void>(`${this.apiUrl}/like`, null, { params });
+    }
+
+    dislikePost(idProfile: number, idPost: number): Observable<void>
+    {
+        const params = new HttpParams()
+        .set('profileId', idProfile)
+        .set('postId', idPost);
+        return this.http.post<void>(`${this.apiUrl}/dislike`, null, { params });
     }
 
     getLikedPosts(idProfile: number): Observable<number[]>
@@ -47,9 +62,30 @@ export class PostService {
         return this.http.put<PostViewDTO>(this.apiUrl, postDTO);
     }
 
-    
-    
+    getNumberOfPosts(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/count`);
+    }
+
+    sendForAds(post: PostAdDTO): Observable<PostAdDTO>{
+        const url = "http://localhost:8080/api/post_ads/send_ad";
+        return this.http.post<PostAdDTO>(url, post);
+    }
 
     
-
+    getNumberOfPostsInLastMonth(): Observable<number> {
+        return this.http.get<number>(`${this.apiUrl}/count/last-month`);
+    }
+    
+    findTop5MostLikedPostsInLast7Days(): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/top-liked/last-7-days`);
+    }
+    
+    getTop10MostLikedPosts(): Observable<PostViewDTO[]> {
+        return this.http.get<PostViewDTO[]>(`${this.apiUrl}/top-liked`);
+    }  
+    
+    findProfilesWithMostLikesGivenInLast7Days(): Observable<ProfileTrendDTO[]> {
+        return this.http.get<ProfileTrendDTO[]>(`${this.apiUrl}/profiles-trending`);
+    }
+    
 }
